@@ -1,0 +1,10 @@
+.narrowContainer {
+  padding: 10px;
+  margin: auto;
+  max-width: 700px;
+}
+.wideContainer {
+  padding: 10px;
+  margin: auto;
+  max-width: 1200px;
+}
