@@ -5,7 +5,7 @@ import { TestAnswer } from '../components/TestAnswer'
 import { V } from '../config'
 import { RoutesContext } from '../context/RoutesContext'
 import { getData } from '../misc/TT'
-const Tabletop = require('tabletop')
+import { Dimmer, Loader } from 'semantic-ui-react'
 
 export const Test = () => {
   const params = useParams()
@@ -24,10 +24,14 @@ export const Test = () => {
   }, [params.course])
 
   if (!params.course) {
-    return (
-      <div style={{ padding: 10 + 'px' }}>
+    return testTypes.length !== 0 ? (
+      <div style={{ padding: 25 + 'px' }}>
         <ChooseCourse histories={histories} user={params} testTypes={testTypes} />
       </div>
+    ) : (
+      <Dimmer active inverted>
+        <Loader inverted />
+      </Dimmer>
     )
   } else if (params.course && testState.length > 0) {
     return (
@@ -36,6 +40,10 @@ export const Test = () => {
       </div>
     )
   } else {
-    return null
+    return (
+      <Dimmer active inverted>
+        <Loader inverted />
+      </Dimmer>
+    )
   }
 }

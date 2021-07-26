@@ -27,7 +27,6 @@ export const TestItem = ({ e, i, answerHandler, answers }) => {
                 active={true}
                 key={i}
                 onClick={() => {
-                  console.log(id)
                   answerHandler(a, e, id)
                 }}
               >

@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
-import { Button, Form, Container, Header } from 'semantic-ui-react'
+import { Button, Form, Container, Header, Dimmer, Loader } from 'semantic-ui-react'
 import SearchName from '../components/SearchName'
 import { V } from '../config'
 import { RoutesContext } from '../context/RoutesContext'
 import { getData } from '../misc/TT'
 
+//Добавить в firebase таблицу: компания -название, урлы - для доступа к вопросам и списку сотрудников, коды - для проверки принадлежности
 export const Auth = () => {
   const { histories } = useContext(RoutesContext)
   const [formState, setFormState] = useState({
@@ -36,7 +37,13 @@ export const Auth = () => {
       <Container fluid className='container'>
         <Header as='h2'>Добро пожаловать в тестирование!</Header>
         <Form className='form'>
-          {emplList && emplList.length !== 0 && <SearchName source={emplList} filler={filler} />}
+          {emplList && emplList.length !== 0 ? (
+            <SearchName source={emplList} filler={filler} />
+          ) : (
+            <Dimmer active inverted>
+              <Loader inverted />
+            </Dimmer>
+          )}
           <div className='ui divider'></div>
           <Form.Field>
             <input name='position' value={formState.position} onChange={changeHandler} placeholder='Ваша должность' />

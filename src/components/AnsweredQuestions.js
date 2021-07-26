@@ -34,7 +34,7 @@ export const AnsweredQuestions = ({ answers, questions }) => {
                 })}
               </List.Description>
             </List.Content>
-            <div class='ui divider'></div>
+            <div className='ui divider'></div>
           </List>
         )
       })}
