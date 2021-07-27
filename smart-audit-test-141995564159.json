@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "smart-audit-test",
+  "private_key_id": "141995564159e93b8c980e46eba9ae3b07cb9284",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCxKBWUEsYbFUUk\nO5yY/QtKJX/WO4/QzNu9TmOOmy6OkBXLisOXL06KlHSladc1srQqeR83VXvpYG1w\niQ9lFUGFP2QXRL/yjVuwXXFRr9rJrGYAWNI2AbPCSqRSAWdDw4HjMJwawUPhFVQ8\nKOeYbRTNNPBPamQsoisu+GRJfoTUoKARghGiCrt594amoFISicCsEFXbRl1B9Jhp\nvITPDqDdpxOcY4HHoTlhs3AGp1fw1N6Qadz8KyW6sO1oV0hiA/lBPdTPI2j198uh\nJjXofMEMlxHXBAaCn8zTkCRlZB9yoaVI4T+HR/tYbUBiVWWZzwyRrDfYVtyITDyw\nDQDO3AohAgMBAAECggEAV2nJd/ZphPySUMYPR5f4hZ4KPZnHJUaoGHlA+6FLsDGd\nZ4ExcHx5uzx0cBhRBiCG8LwyMHoAOdAIQDKJA54g5dA5IZgdRGAGwXfiDeYBRWjJ\nLdul4dsmKTTubr5dh1zFTuZx6Gu7hCkjlsmyOQ596KF6AB2ljzZ3q2YKCg+hGE7V\nHvzSO1GhRNt8Dl+MbulxVxAFT6AG2J+OB99spR5iSkHiGu/aHDtkEqpYVteGIsyl\nXGqv3QWKo9kr/CjQ8XR2BNq70t9kCBseJlhHs8bAkPsS3ZbEhUcLDxrHg1d4tkP7\nmcyE3wCDKb9j4kxtTRVNlu9vyyB2jMlYaDI4c22k3wKBgQDhNdJpHnnjlxrpSPbi\n5J/xwHLGY2u2qawDD2OrGVdLEI0EcwyzACuZckjF1sAYaS0wYMaCy1aA1gddLbJJ\nKdqNlbIAR/n5s/W98+sO529GNi7JTch7pADDEWfptWefdP+CV83yjBdFDt3uRqo9\nA+SQXmH8IEnqaibdf3jSc2ErowKBgQDJYGw0NR1D/XiaKzF8JJe1SmekYOO9OBM0\nhM/CmejBMgQdol/4gJ5dWFe5efORAQdUkBWh/OMiTaweJ1BhbOoIiH1rtWmPHis3\nnFd9NuOjbXUGs3xivI1Tg+1BGlIp/u8fIbKXYV+dtV/TGiJgWXHlRzg1pHyiZ4x0\ngCudYJLPawKBgEXOgwvmUG3FNqg835nwt8sdlfX8dzTFXvYL3R752d8AoFVSvAr3\n8Iu9quT37c8jOsiWFrIQCR4iOWIeefbHrGDal7QSm19U8sUQSDn0br9aqCHppEz+\nxuWwDX+ZpSb+Av0J7mJSHhxfwVbMPJRxEnXVa5XVBFRO1wEtM+w3q1T1AoGAZ9Iq\ndxAbMn5vuywhqxtCi9j8bib1wwwx+pWud2naMiCTNqQMTpYhD4cIUzuoc03QdayD\nOqyifYEGB9XE/zWjwxp7bxhsf7jSFy2nfYra+droxreqnU0Qn8oYe8QSMEybA7Xf\n2WP+Y9Sqvq9uobX7nnWFaUKQbzprk3SxB8ZOalkCgYA+3S9yDEi+eWk0Oe1cUAVg\nXiag2Czb02/IqIxFynpuptagaiTtbWyabfHURPwf4glZoz8MBEpRB0hv3VefIIqi\nxIEKBnqbIrnGsvO2VCgcmKG8eDGQlWFjNm67+6GXdT1d4uDC8g0DmLK76xr1Na/D\n3nNnTcJ2MCdxX2b9yWAgcQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "github-action-sa-test@smart-audit-test.iam.gserviceaccount.com",
+  "client_id": "107712672594867287726",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/github-action-sa-test%40smart-audit-test.iam.gserviceaccount.com"
+}

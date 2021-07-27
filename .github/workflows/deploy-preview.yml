@@ -1,0 +1,16 @@
+name: Deploy to Preview Channel
+
+on:
+  pull_request:
+
+jobs:
+  build_and_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: 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
+          firebaseServiceAccount: FIREBASE_SERVICE_ACCOUNT_SA_TEST_30D4B
+          expires: 30d
+          projectId: sa-test-30d4b
