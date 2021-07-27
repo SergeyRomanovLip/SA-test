@@ -1,5 +1,6 @@
 import react, { useEffect, useState, useRef } from 'react'
 import { List, Button, Header } from 'semantic-ui-react'
+import { addBook } from '../backend/firebase'
 
 export const AnsweredQuestions = ({ answers, questions }) => {
   const [readyToSend, setReadyToSend] = useState(false)
@@ -16,7 +17,9 @@ export const AnsweredQuestions = ({ answers, questions }) => {
         <>
           <Header as='h4'>Вы ответили на все вопросы</Header>
           <Button.Group>
-            <Button positive>Отправить?</Button>
+            <Button positive onClick={addBook}>
+              Отправить?
+            </Button>
           </Button.Group>
           <div className='ui divider'></div>
         </>
