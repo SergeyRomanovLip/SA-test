@@ -13,13 +13,26 @@ const config = {
 
 firebase.initializeApp(config)
 const db = firebase.firestore()
-export const addBook = (event) => {
-  db.collection('cities')
-    .doc('LA')
+
+export const addTestResult = (results, user) => {
+  const answersArray = []
+  for (let answ in results) {
+    let question = results[answ].question
+    let rightAnswer = results[answ].answers.filter((e) => {
+      return e.choosen
+    })
+    rightAnswer = rightAnswer[0]
+    answersArray.push({ question, ...rightAnswer })
+  }
+  let date = Date.now().toString()
+  db.collection('testResults')
+    .doc(date)
     .set({
-      name: 'Los Angeles',
-      state: 'CA',
-      country: 'USA',
+      course: user.course,
+      fio: user.fio,
+      department: user.department,
+      position: user.position,
+      answers: answersArray,
     })
     .then(() => {
       console.log('Document successfully written!')

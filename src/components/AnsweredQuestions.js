@@ -1,8 +1,8 @@
 import react, { useEffect, useState, useRef } from 'react'
 import { List, Button, Header } from 'semantic-ui-react'
-import { addBook } from '../backend/firebase'
+import { addBook, addTestResult } from '../backend/firebase'
 
-export const AnsweredQuestions = ({ answers, questions }) => {
+export const AnsweredQuestions = ({ answers, questions, user }) => {
   const [readyToSend, setReadyToSend] = useState(false)
   useEffect(() => {
     if (Object.keys(answers).length === questions.length) {
@@ -17,7 +17,12 @@ export const AnsweredQuestions = ({ answers, questions }) => {
         <>
           <Header as='h4'>Вы ответили на все вопросы</Header>
           <Button.Group>
-            <Button positive onClick={addBook}>
+            <Button
+              positive
+              onClick={() => {
+                addTestResult(answers, user)
+              }}
+            >
               Отправить?
             </Button>
           </Button.Group>

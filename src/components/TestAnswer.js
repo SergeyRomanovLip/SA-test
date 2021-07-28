@@ -67,7 +67,7 @@ export const TestAnswer = ({ user, testState }) => {
           </Grid.Column>
           <Grid.Column>
             <Sticky context={contextRef}>
-              <AnsweredQuestions answers={answers} questions={questionList} />
+              <AnsweredQuestions answers={answers} questions={questionList} user={user} />
             </Sticky>
           </Grid.Column>
         </Grid>
