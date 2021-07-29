@@ -5,8 +5,8 @@ import { RoutesContext } from '../context/RoutesContext'
 import { Auth } from './Auth'
 import { Home } from './Home'
 import { Test } from './Test'
+import { TestResults } from './TestResults'
 export const Routes = () => {
-  const { appState } = useContext(AppContext)
   const histories = useHistory()
 
   return (
@@ -17,6 +17,9 @@ export const Routes = () => {
         </Route>
         <Route path='/testready/:fio?&:position?&:department?/:course?'>
           <Test />
+        </Route>
+        <Route path='/results'>
+          <TestResults />
         </Route>
         <Route path='/auth'>
           <Auth />

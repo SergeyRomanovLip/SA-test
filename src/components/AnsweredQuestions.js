@@ -2,8 +2,9 @@ import react, { useEffect, useState, useRef } from 'react'
 import { List, Button, Header } from 'semantic-ui-react'
 import { addBook, addTestResult } from '../backend/firebase'
 
-export const AnsweredQuestions = ({ answers, questions, user }) => {
+export const AnsweredQuestions = ({ answers, questions, user, reloadHandler }) => {
   const [readyToSend, setReadyToSend] = useState(false)
+
   useEffect(() => {
     if (Object.keys(answers).length === questions.length) {
       setReadyToSend(true)
@@ -20,7 +21,7 @@ export const AnsweredQuestions = ({ answers, questions, user }) => {
             <Button
               positive
               onClick={() => {
-                addTestResult(answers, user)
+                addTestResult(answers, user).then((res) => reloadHandler(res))
               }}
             >
               Отправить?

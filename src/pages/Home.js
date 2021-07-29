@@ -12,7 +12,7 @@ export const Home = () => {
             <Grid columns={2} divided>
               <Grid.Row>
                 <Grid.Column>
-                  <Card.Header>Ознакомиться с системой</Card.Header>
+                  <Link to='/results'>Открыть результаты теста</Link>
                 </Grid.Column>
                 <Grid.Column>
                   <Link to='/auth'>Войти в систему для сдачи теста</Link>

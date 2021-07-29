@@ -4,7 +4,7 @@ import { getRandom } from '../misc/getRandom'
 import { AnsweredQuestions } from './AnsweredQuestions'
 import { TestItem } from './TestItem'
 
-export const TestAnswer = ({ user, testState }) => {
+export const TestAnswer = ({ user, testState, reloadHandler }) => {
   const contextRef = useRef()
   const [questionList, setQuestionList] = useState([])
   const [answers, setAnswers] = useState({})
@@ -67,7 +67,7 @@ export const TestAnswer = ({ user, testState }) => {
           </Grid.Column>
           <Grid.Column>
             <Sticky context={contextRef}>
-              <AnsweredQuestions answers={answers} questions={questionList} user={user} />
+              <AnsweredQuestions answers={answers} questions={questionList} user={user} reloadHandler={reloadHandler} />
             </Sticky>
           </Grid.Column>
         </Grid>

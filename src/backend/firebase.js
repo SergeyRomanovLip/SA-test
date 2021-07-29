@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import { generateId } from '../misc/generateId'
 
 const config = {
   apiKey: 'AIzaSyAjgQ7hZHzAe6d6wddkGhd8n3hEAMTMO0s',
@@ -14,7 +15,7 @@ const config = {
 firebase.initializeApp(config)
 const db = firebase.firestore()
 
-export const addTestResult = (results, user) => {
+export const addTestResult = async (results, user) => {
   const answersArray = []
   for (let answ in results) {
     let question = results[answ].question
@@ -24,10 +25,12 @@ export const addTestResult = (results, user) => {
     rightAnswer = rightAnswer[0]
     answersArray.push({ question, ...rightAnswer })
   }
-  let date = Date.now().toString()
-  db.collection('testResults')
-    .doc(date)
+  let dateId = `${Date.now().toString()}${generateId()}`
+  const res = await db
+    .collection('testResults')
+    .doc(dateId)
     .set({
+      dateId,
       course: user.course,
       fio: user.fio,
       department: user.department,
@@ -36,8 +39,39 @@ export const addTestResult = (results, user) => {
     })
     .then(() => {
       console.log('Document successfully written!')
+      return dateId
     })
     .catch((error) => {
       console.error('Error writing document: ', error)
+      return error
     })
+  return res
+}
+
+export const getTestResult = async (dataId) => {
+  const collection = db.collection('testResults').doc(dataId)
+  try {
+    const testRes = await collection.get()
+    if (testRes.exists) {
+      alert('Спасибо! Тест загружен в систему')
+    } else {
+      alert('Произошла ошибка, пожалуйста попробуйте еще раз')
+    }
+  } catch (e) {
+    alert(e)
+  }
+}
+
+export const getAllTestResults = async () => {
+  const collection = await db.collection('testResults').get()
+  try {
+    const testRes = collection.docs.map((res) => res.data())
+    if (testRes && testRes.length > 0) {
+      return testRes
+    } else {
+      alert('Произошла ошибка, пожалуйста попробуйте еще раз')
+    }
+  } catch (e) {
+    alert(e)
+  }
 }

@@ -6,12 +6,16 @@ import { V } from '../config'
 import { RoutesContext } from '../context/RoutesContext'
 import { getData } from '../misc/TT'
 import { Dimmer, Loader } from 'semantic-ui-react'
+import { getTestResult } from '../backend/firebase'
 
 export const Test = () => {
   const params = useParams()
   const { histories } = useContext(RoutesContext)
   const [testState, setTestState] = useState([])
   const [testTypes, setTestTypes] = useState([])
+  const reloadHandler = (data) => {
+    getTestResult(data).then(histories.push(`/testready/${params.fio}&${params.position}&${params.department}/`))
+  }
 
   useEffect(() => {
     getData(V.QUEST, setTestTypes, 'Data')
@@ -36,7 +40,7 @@ export const Test = () => {
   } else if (params.course && testState.length > 0) {
     return (
       <div style={{ padding: 25 + 'px' }}>
-        <TestAnswer user={params} testState={testState} />
+        <TestAnswer user={params} testState={testState} reloadHandler={reloadHandler} />
       </div>
     )
   } else {
