@@ -1,4 +1,3 @@
-import react from 'react'
 import { Container, Header, Card } from 'semantic-ui-react'
 export const ChooseCourse = ({ histories, user, testTypes }) => {
   return (

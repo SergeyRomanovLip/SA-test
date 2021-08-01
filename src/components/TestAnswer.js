@@ -1,5 +1,5 @@
-import react, { useEffect, useState, useRef } from 'react'
-import { Container, Divider, Sticky, Ref, Card, Segment, Grid } from 'semantic-ui-react'
+import { useEffect, useState, useRef } from 'react'
+import { Container, Sticky, Ref, Card, Grid } from 'semantic-ui-react'
 import { getRandom } from '../misc/getRandom'
 import { AnsweredQuestions } from './AnsweredQuestions'
 import { TestItem } from './TestItem'
@@ -50,14 +50,12 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
       <Ref innerRef={contextRef}>
         <Grid columns={2} divided>
           <Grid.Column>
-            <Sticky context={contextRef}>
+            <Sticky context={contextRef} offset={50}>
               <Card color={'blue'} fluid>
                 <Card.Content>
                   <Card.Header as='h2'>Добро пожаловать {user && user.fio}!</Card.Header>
                   <Card.Description>Вам необходимо ответить на все вопросы</Card.Description>
-                  <Card.Meta>
-                    Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}
-                  </Card.Meta>
+                  <Card.Meta>Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}</Card.Meta>
                 </Card.Content>
               </Card>
             </Sticky>

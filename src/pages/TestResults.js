@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getAllTestResults } from '../backend/firebase'
-import { List, Input, Form, Button, Accordion, Menu, Container, Dropdown } from 'semantic-ui-react'
-import { filter } from 'lodash'
+import { Input, Form, Button, Container, Dropdown, Sticky } from 'semantic-ui-react'
 import { ResultItem } from '../components/ResultItem'
 import { generateId } from '../misc/generateId'
 import { Link } from 'react-router-dom'
@@ -17,7 +16,7 @@ export const TestResults = () => {
     setFilterDate((prev) => {
       return {
         ...prev,
-        [event.target.name]: event.target.value,
+        [event.target.name]: event.target.value
       }
     })
   }
@@ -26,7 +25,7 @@ export const TestResults = () => {
       setFilterDate((prev) => {
         return {
           ...prev,
-          end: filterDate.start,
+          end: filterDate.start
         }
       })
     }
@@ -72,42 +71,41 @@ export const TestResults = () => {
 
   return (
     <Container className='container'>
-      <Form>
-        <Form.Group widths='two'>
-          <Form.Field>
-            <Input onChange={filterDateHandler} type='date' label='Дата начала' name='start' value={filterDate.start} />
-          </Form.Field>
-          <Form.Field>
-            <Input onChange={filterDateHandler} type='date' label='Дата окончания' name='end' value={filterDate.end} />
-          </Form.Field>
-          <Form.Field>
-            <Dropdown
-              placeholder='Select Friend'
-              onChange={(e, data) => {
-                setChoosenCourse(data.value)
-              }}
-              fluid
-              selection
-              options={courses}
-            />
-          </Form.Field>
-          <Form.Field>
-            <Button
-              onClick={() => {
-                setFilterDate({ start: '', end: '' })
-                setChoosenCourse('')
-              }}
-            >
-              Очистить фильтр
-            </Button>
-          </Form.Field>
-          <Form.Field>
-            <Button>
-              <Link to='/home'>Home</Link>
-            </Button>
-          </Form.Field>
-        </Form.Group>
-      </Form>
+      <Sticky offset={50}>
+        <Form>
+          <Form.Group widths='equal'>
+            <Form.Field>
+              <Input onChange={filterDateHandler} type='date' label='Дата начала' name='start' value={filterDate.start} />
+            </Form.Field>
+            <Form.Field>
+              <Input onChange={filterDateHandler} type='date' label='Дата окончания' name='end' value={filterDate.end} />
+            </Form.Field>
+          </Form.Group>
+          <Form.Group>
+            <Form.Field>
+              <Dropdown
+                placeholder='Выберите курс'
+                onChange={(e, data) => {
+                  setChoosenCourse(data.value)
+                }}
+                fluid
+                selection
+                options={courses}
+              />
+            </Form.Field>
+            <Form.Field>
+              <Button
+                onClick={() => {
+                  setFilterDate({ start: '', end: '' })
+                  setChoosenCourse('')
+                }}
+              >
+                Очистить фильтр
+              </Button>
+            </Form.Field>
+          </Form.Group>
+        </Form>
+      </Sticky>
       {resultsForShowing ? (
         resultsForShowing.map((res, i) => {
           return <ResultItem key={i + generateId()} res={res} i={i} />

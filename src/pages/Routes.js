@@ -6,6 +6,7 @@ import { Auth } from './Auth'
 import { Home } from './Home'
 import { Test } from './Test'
 import { TestResults } from './TestResults'
+import { Admin } from './Admin'
 export const Routes = () => {
   const histories = useHistory()
 
@@ -20,6 +21,9 @@ export const Routes = () => {
         </Route>
         <Route path='/results'>
           <TestResults />
+        </Route>
+        <Route path='/admin'>
+          <Admin />
         </Route>
         <Route path='/auth'>
           <Auth />

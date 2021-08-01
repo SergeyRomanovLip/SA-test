@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { Button, Form, Container, Header, Dimmer, Loader } from 'semantic-ui-react'
+import { Button, Form, Container, Header, Dimmer, Loader, Label } from 'semantic-ui-react'
 import SearchName from '../components/SearchName'
 import { V } from '../config'
 import { RoutesContext } from '../context/RoutesContext'
@@ -11,9 +11,10 @@ export const Auth = () => {
   const [formState, setFormState] = useState({
     fio: '',
     position: '',
-    department: '',
+    department: ''
   })
   const [emplList, setEmplList] = useState([])
+  const [companyList, setCompanyList] = useState([])
 
   useEffect(() => {
     getData(V.EMPL, setEmplList, 'empl')
@@ -28,7 +29,7 @@ export const Auth = () => {
     setFormState({
       fio: data.title,
       position: data.position,
-      department: data.department,
+      department: data.department
     })
   }
 
@@ -37,21 +38,37 @@ export const Auth = () => {
       <Container fluid className='container'>
         <Header as='h2'>Добро пожаловать в тестирование!</Header>
         <Form className='form'>
-          {emplList && emplList.length !== 0 ? (
-            <SearchName source={emplList} filler={filler} />
-          ) : (
-            <Dimmer active inverted>
-              <Loader inverted />
-            </Dimmer>
-          )}
+          <Form.Field>
+            <Label>Выберите вашу компанию</Label>
+            {emplList && emplList.length !== 0 ? (
+              <SearchName source={emplList} filler={filler} />
+            ) : (
+              <Dimmer active inverted>
+                <Loader inverted />
+              </Dimmer>
+            )}
+          </Form.Field>
+          <Form.Field>
+            <Label>Ваc зовут</Label>
+            {emplList && emplList.length !== 0 ? (
+              <SearchName source={emplList} filler={filler} />
+            ) : (
+              <Dimmer active inverted>
+                <Loader inverted />
+              </Dimmer>
+            )}
+          </Form.Field>
           <div className='ui divider'></div>
           <Form.Field>
+            <Label>Ваша должность</Label>
             <input name='position' value={formState.position} onChange={changeHandler} placeholder='Ваша должность' />
           </Form.Field>
           <Form.Field>
-            <input name='position' value={formState.department} onChange={changeHandler} placeholder='Ваш отдел' />
+            <Label>Ваша отдел</Label>
+            <input name='department' value={formState.department} onChange={changeHandler} placeholder='Ваш отдел' />
           </Form.Field>
           <Button
+            disabled={formState.department && formState.fio && formState.position ? false : true}
             color='blue'
             type='submit'
             onClick={() => {

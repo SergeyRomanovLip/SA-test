@@ -1,6 +1,5 @@
-import react from 'react'
-import { List, Input, Form, Button, Accordion, Menu } from 'semantic-ui-react'
-import { useContext, useEffect, useState } from 'react'
+import { List, Accordion, Menu } from 'semantic-ui-react'
+import { useEffect, useState } from 'react'
 import { generateId } from '../misc/generateId'
 
 export const ResultItem = ({ res, i }) => {
@@ -32,12 +31,7 @@ export const ResultItem = ({ res, i }) => {
         <List.Description as='p'>{``}</List.Description>
         <Accordion as={Menu} vertical fluid>
           <Menu.Item>
-            <Accordion.Title
-              active={accordionIndex.activeIndex === 0}
-              content='Посмотреть ответы'
-              index={0}
-              onClick={accordionHandleClick}
-            />
+            <Accordion.Title active={accordionIndex.activeIndex === 0} content='Посмотреть ответы' index={0} onClick={accordionHandleClick} />
             <Accordion.Content
               active={accordionIndex.activeIndex === 0}
               content={

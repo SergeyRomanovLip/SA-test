@@ -1,6 +1,6 @@
-import react, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { List, Button, Header } from 'semantic-ui-react'
-import { addBook, addTestResult } from '../backend/firebase'
+import { addTestResult } from '../backend/firebase'
 
 export const AnsweredQuestions = ({ answers, questions, user, reloadHandler }) => {
   const [readyToSend, setReadyToSend] = useState(false)

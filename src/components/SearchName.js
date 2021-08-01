@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import react, { useReducer, useCallback, useState, useRef, useEffect } from 'react'
-import { Search, Grid, Header, Segment } from 'semantic-ui-react'
+import { useReducer, useCallback, useRef, useEffect } from 'react'
+import { Search } from 'semantic-ui-react'
 
 const initialState = {
   loading: false,
   results: [],
-  value: '',
+  value: ''
 }
 
 function exampleReducer(state, action) {
@@ -42,7 +42,7 @@ function SearchName({ source, filler }) {
       const isMatch = (result) => re.test(result.title)
       dispatch({
         type: 'FINISH_SEARCH',
-        results: _.filter(source, isMatch),
+        results: _.filter(source, isMatch)
       })
     }, 300)
   }, [])

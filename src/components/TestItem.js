@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { generateId } from '../misc/generateId'
 import { Card, List } from 'semantic-ui-react'
 
@@ -19,10 +19,7 @@ export const TestItem = ({ e, i, answerHandler, answers }) => {
               <List.Item
                 style={{
                   cursor: 'pointer',
-                  color:
-                    answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen
-                      ? 'black'
-                      : 'gray',
+                  color: answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen ? 'black' : 'gray'
                 }}
                 active={true}
                 key={i}
@@ -31,11 +28,7 @@ export const TestItem = ({ e, i, answerHandler, answers }) => {
                 }}
               >
                 <List.Icon
-                  name={
-                    answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen
-                      ? 'circle'
-                      : 'circle outline'
-                  }
+                  name={answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen ? 'circle' : 'circle outline'}
                 />
                 {a.answer}
               </List.Item>

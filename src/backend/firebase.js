@@ -1,5 +1,4 @@
-import firebase from 'firebase/app'
-import 'firebase/firestore'
+import firebase from 'firebase'
 import { generateId } from '../misc/generateId'
 
 const config = {
@@ -9,11 +8,47 @@ const config = {
   storageBucket: 'sa-test-30d4b.appspot.com',
   messagingSenderId: '155029522773',
   appId: '1:155029522773:web:f87ee3cd2450243b7907dc',
-  measurementId: 'G-HJFX1VE7G8',
+  measurementId: 'G-HJFX1VE7G8'
 }
-
 firebase.initializeApp(config)
+
 const db = firebase.firestore()
+export const createUser = async (usrData) => {
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(usrData.email, usrData.password)
+    .then((userCredential) => {
+      db.collection('users')
+        .doc(usrData.email)
+        .set({ ...usrData })
+        .then(() => {
+          console.log('Document successfully written!')
+        })
+        .catch((error) => {
+          console.error('Error writing document: ', error)
+        })
+      var user = userCredential.user
+    })
+    .catch((error) => {
+      var errorCode = error.code
+      var errorMessage = error.message
+    })
+}
+export const logOut = async () => {
+  firebase.auth().signOut()
+}
+export const logIn = async (usrData) => {
+  firebase
+    .auth()
+    .signInWithEmailAndPassword(usrData.email, usrData.password)
+    .then((userCredential) => {
+      var user = userCredential.user
+    })
+    .catch((error) => {
+      var errorCode = error.code
+      var errorMessage = error.message
+    })
+}
 
 export const addTestResult = async (results, user) => {
   const answersArray = []
@@ -35,7 +70,7 @@ export const addTestResult = async (results, user) => {
       fio: user.fio,
       department: user.department,
       position: user.position,
-      answers: answersArray,
+      answers: answersArray
     })
     .then(() => {
       console.log('Document successfully written!')

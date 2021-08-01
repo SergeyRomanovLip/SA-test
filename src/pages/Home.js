@@ -1,4 +1,3 @@
-import react from 'react'
 import { Link } from 'react-router-dom'
 import { Card, Grid, Container, Header } from 'semantic-ui-react'
 
@@ -12,10 +11,10 @@ export const Home = () => {
             <Grid columns={2} divided>
               <Grid.Row>
                 <Grid.Column>
-                  <Link to='/results'>Открыть результаты теста</Link>
+                  <Link to='/auth'>Войти в систему для сдачи теста</Link>
                 </Grid.Column>
                 <Grid.Column>
-                  <Link to='/auth'>Войти в систему для сдачи теста</Link>
+                  <Link to='/admin'>Войти в систему как администратор</Link>
                 </Grid.Column>
               </Grid.Row>
             </Grid>
