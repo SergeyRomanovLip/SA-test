@@ -16,7 +16,7 @@ export const TestResults = () => {
     setFilterDate((prev) => {
       return {
         ...prev,
-        [event.target.name]: event.target.value
+        [event.target.name]: event.target.value,
       }
     })
   }
@@ -25,7 +25,7 @@ export const TestResults = () => {
       setFilterDate((prev) => {
         return {
           ...prev,
-          end: filterDate.start
+          end: filterDate.start,
         }
       })
     }
@@ -43,7 +43,6 @@ export const TestResults = () => {
     }
     if (choosenCourse) {
       filteredArray = filteredArray.filter((element) => {
-        console.log(element.course === choosenCourse)
         return element.course === choosenCourse
       })
     }
@@ -75,10 +74,22 @@ export const TestResults = () => {
         <Form>
           <Form.Group widths='equal'>
             <Form.Field>
-              <Input onChange={filterDateHandler} type='date' label='Дата начала' name='start' value={filterDate.start} />
+              <Input
+                onChange={filterDateHandler}
+                type='date'
+                label='Дата начала'
+                name='start'
+                value={filterDate.start}
+              />
             </Form.Field>
             <Form.Field>
-              <Input onChange={filterDateHandler} type='date' label='Дата окончания' name='end' value={filterDate.end} />
+              <Input
+                onChange={filterDateHandler}
+                type='date'
+                label='Дата окончания'
+                name='end'
+                value={filterDate.end}
+              />
             </Form.Field>
           </Form.Group>
           <Form.Group>
@@ -93,6 +104,7 @@ export const TestResults = () => {
                 options={courses}
               />
             </Form.Field>
+
             <Form.Field>
               <Button
                 onClick={() => {

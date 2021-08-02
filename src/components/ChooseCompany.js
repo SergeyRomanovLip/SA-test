@@ -1,5 +1,5 @@
 import { Container, Header, Card } from 'semantic-ui-react'
-export const ChooseCourse = ({ histories, user, testTypes }) => {
+export const ChooseCompany = ({ histories }) => {
   return (
     <div className='narrowContainer'>
       <Container fluid className='container'>
@@ -11,14 +11,14 @@ export const ChooseCourse = ({ histories, user, testTypes }) => {
               <Card
                 fluid
                 onClick={() => {
-                  histories.push(e.split('_')[0])
+                  histories.push(`${e.courseName}`)
                 }}
                 key={i}
               >
                 <Card.Content>
-                  <Card.Header>{e.split('_')[0]}</Card.Header>
+                  <Card.Header>{e.courseName}</Card.Header>
                   <Card.Meta>
-                    <span className='date'>{e.split('_')[1]}</span>
+                    <span className='date'>{e.courseDescription}</span>
                   </Card.Meta>
                 </Card.Content>
               </Card>

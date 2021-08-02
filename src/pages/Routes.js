@@ -16,7 +16,7 @@ export const Routes = () => {
         <Route path='/home'>
           <Home />
         </Route>
-        <Route path='/testready/:fio?&:position?&:department?/:course?'>
+        <Route path='/testready/:company?&:fio?&:position?&:department?/:course?'>
           <Test />
         </Route>
         <Route path='/results'>

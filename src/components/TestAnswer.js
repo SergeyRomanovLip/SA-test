@@ -43,8 +43,6 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
     }
   }, [testState])
 
-  useEffect(() => {}, [answers])
-
   return (
     <Container fluid className='container'>
       <Ref innerRef={contextRef}>
@@ -55,7 +53,9 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
                 <Card.Content>
                   <Card.Header as='h2'>Добро пожаловать {user && user.fio}!</Card.Header>
                   <Card.Description>Вам необходимо ответить на все вопросы</Card.Description>
-                  <Card.Meta>Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}</Card.Meta>
+                  <Card.Meta>
+                    Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}
+                  </Card.Meta>
                 </Card.Content>
               </Card>
             </Sticky>

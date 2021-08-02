@@ -8,7 +8,7 @@ const config = {
   storageBucket: 'sa-test-30d4b.appspot.com',
   messagingSenderId: '155029522773',
   appId: '1:155029522773:web:f87ee3cd2450243b7907dc',
-  measurementId: 'G-HJFX1VE7G8'
+  measurementId: 'G-HJFX1VE7G8',
 }
 firebase.initializeApp(config)
 
@@ -49,7 +49,6 @@ export const logIn = async (usrData) => {
       var errorMessage = error.message
     })
 }
-
 export const addTestResult = async (results, user) => {
   const answersArray = []
   for (let answ in results) {
@@ -70,7 +69,7 @@ export const addTestResult = async (results, user) => {
       fio: user.fio,
       department: user.department,
       position: user.position,
-      answers: answersArray
+      answers: answersArray,
     })
     .then(() => {
       console.log('Document successfully written!')
@@ -82,7 +81,6 @@ export const addTestResult = async (results, user) => {
     })
   return res
 }
-
 export const getTestResult = async (dataId) => {
   const collection = db.collection('testResults').doc(dataId)
   try {
@@ -96,7 +94,6 @@ export const getTestResult = async (dataId) => {
     alert(e)
   }
 }
-
 export const getAllTestResults = async () => {
   const collection = await db.collection('testResults').get()
   try {
@@ -105,6 +102,75 @@ export const getAllTestResults = async () => {
       return testRes
     } else {
       alert('Произошла ошибка, пожалуйста попробуйте еще раз')
+    }
+  } catch (e) {
+    alert(e)
+  }
+}
+export const uploadNewQuestions = async (user, newQuestions, loadHandl) => {
+  try {
+    loadHandl(true)
+    const collection = await db.collection('users').get()
+    let uData = {}
+    collection.docs.forEach((el) => {
+      if (el.data().email === user.email) {
+        uData = el.data()
+      }
+    })
+    await db
+      .collection('testQuestions')
+      .doc(`${uData.company}`)
+      .set({
+        data: newQuestions,
+      })
+      .then(() => {
+        console.log('Document successfully written!')
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error)
+        return error
+      })
+    loadHandl(false)
+  } catch (e) {
+    loadHandl(false)
+    alert(e)
+  }
+}
+export const uploadNewEmployees = async (user, newEmployees, loadHandl) => {
+  try {
+    loadHandl(true)
+    const collection = await db.collection('users').get()
+    let uData = {}
+    collection.docs.forEach((el) => {
+      if (el.data().email === user.email) {
+        uData = el.data()
+      }
+    })
+    await db
+      .collection('testEmployees')
+      .doc(`${uData.company}`)
+      .set({ data: newEmployees })
+      .then(() => {
+        console.log('Document successfully written!')
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error)
+        return error
+      })
+    loadHandl(false)
+  } catch (e) {
+    loadHandl(false)
+    alert(e)
+  }
+}
+export const getData = async (type, company) => {
+  try {
+    const docRef = db.collection(type).doc(company)
+    const res = await docRef.get()
+    if (res.exists) {
+      return res.data().data
+    } else {
+      return false
     }
   } catch (e) {
     alert(e)

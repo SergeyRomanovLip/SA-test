@@ -31,7 +31,12 @@ export const ResultItem = ({ res, i }) => {
         <List.Description as='p'>{``}</List.Description>
         <Accordion as={Menu} vertical fluid>
           <Menu.Item>
-            <Accordion.Title active={accordionIndex.activeIndex === 0} content='Посмотреть ответы' index={0} onClick={accordionHandleClick} />
+            <Accordion.Title
+              active={accordionIndex.activeIndex === 0}
+              content='Посмотреть ответы'
+              index={0}
+              onClick={accordionHandleClick}
+            />
             <Accordion.Content
               active={accordionIndex.activeIndex === 0}
               content={
@@ -42,8 +47,8 @@ export const ResultItem = ({ res, i }) => {
                         <List.Icon
                           size='large'
                           verticalAlign='middle'
-                          color={e.right ? 'green' : 'red'}
-                          name={e.right ? 'check circle outline' : 'dont'}
+                          color={e.right === 'ok' ? 'green' : 'red'}
+                          name={e.right === 'ok' ? 'check circle outline' : 'dont'}
                         />
                         <List.Content>
                           <List.Header>{e.question}</List.Header>

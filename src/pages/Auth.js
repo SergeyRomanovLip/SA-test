@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Button, Form, Container, Header, Dimmer, Loader, Label } from 'semantic-ui-react'
+import { getData } from '../backend/firebase'
 import SearchName from '../components/SearchName'
-import { V } from '../config'
 import { RoutesContext } from '../context/RoutesContext'
-import { getData } from '../misc/TT'
 
 //Добавить в firebase таблицу: компания -название, урлы - для доступа к вопросам и списку сотрудников, коды - для проверки принадлежности
 export const Auth = () => {
@@ -11,15 +11,33 @@ export const Auth = () => {
   const [formState, setFormState] = useState({
     fio: '',
     position: '',
-    department: ''
+    department: '',
   })
+  const [company, setCompany] = useState()
   const [emplList, setEmplList] = useState([])
-  const [companyList, setCompanyList] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    getData(V.EMPL, setEmplList, 'empl')
-  }, [])
+    getData('testEmployees', formState.company, setEmplList)
+  }, [company])
 
+  const companyChangeHandler = async (tryCompany) => {
+    setLoading(true)
+    let res = await getData('testEmployees', tryCompany)
+    if (res) {
+      setCompany(tryCompany)
+      setEmplList(res)
+    } else {
+      alert('Такой компании нет в списке, попробуйте еще раз')
+      setFormState({
+        fio: '',
+        position: '',
+        department: '',
+        company: '',
+      })
+    }
+    setLoading(false)
+  }
   const changeHandler = (e) => {
     setFormState((prev) => {
       return { ...prev, [e.target.name]: e.target.value }
@@ -29,7 +47,7 @@ export const Auth = () => {
     setFormState({
       fio: data.title,
       position: data.position,
-      department: data.department
+      department: data.department,
     })
   }
 
@@ -38,45 +56,73 @@ export const Auth = () => {
       <Container fluid className='container'>
         <Header as='h2'>Добро пожаловать в тестирование!</Header>
         <Form className='form'>
-          <Form.Field>
-            <Label>Выберите вашу компанию</Label>
-            {emplList && emplList.length !== 0 ? (
-              <SearchName source={emplList} filler={filler} />
-            ) : (
-              <Dimmer active inverted>
-                <Loader inverted />
-              </Dimmer>
-            )}
-          </Form.Field>
-          <Form.Field>
-            <Label>Ваc зовут</Label>
-            {emplList && emplList.length !== 0 ? (
-              <SearchName source={emplList} filler={filler} />
-            ) : (
-              <Dimmer active inverted>
-                <Loader inverted />
-              </Dimmer>
-            )}
-          </Form.Field>
-          <div className='ui divider'></div>
-          <Form.Field>
-            <Label>Ваша должность</Label>
-            <input name='position' value={formState.position} onChange={changeHandler} placeholder='Ваша должность' />
-          </Form.Field>
-          <Form.Field>
-            <Label>Ваша отдел</Label>
-            <input name='department' value={formState.department} onChange={changeHandler} placeholder='Ваш отдел' />
-          </Form.Field>
-          <Button
-            disabled={formState.department && formState.fio && formState.position ? false : true}
-            color='blue'
-            type='submit'
-            onClick={() => {
-              histories.push(`/testready/${formState.fio}&${formState.position}&${formState.department}/`)
-            }}
-          >
-            Submit
-          </Button>
+          {loading && (
+            <Dimmer active inverted>
+              <Loader inverted />
+            </Dimmer>
+          )}
+          {company ? (
+            <>
+              <Form.Field>
+                <Label>Ваc зовут</Label>
+                {emplList && emplList.length !== 0 ? (
+                  <SearchName source={emplList} filler={filler} />
+                ) : (
+                  <Dimmer active inverted>
+                    <Loader inverted />
+                  </Dimmer>
+                )}
+              </Form.Field>
+              <div className='ui divider'></div>
+              <Form.Field>
+                <Label>Ваша должность</Label>
+                <input
+                  name='position'
+                  value={formState.position}
+                  onChange={changeHandler}
+                  placeholder='Ваша должность'
+                />
+              </Form.Field>
+              <Form.Field>
+                <Label>Ваша отдел</Label>
+                <input
+                  name='department'
+                  value={formState.department}
+                  onChange={changeHandler}
+                  placeholder='Ваш отдел'
+                />
+              </Form.Field>
+              <Button
+                disabled={formState.department && formState.fio && formState.position ? false : true}
+                color='blue'
+                type='submit'
+                onClick={() => {
+                  histories.push(
+                    `/testready/${company}&${formState.fio}&${formState.position}&${formState.department}/`
+                  )
+                }}
+              >
+                Submit
+              </Button>
+            </>
+          ) : (
+            <>
+              <Form.Field>
+                <Label>Укажите название вашей компании</Label>
+                <input name='company' value={formState.company} onChange={changeHandler} placeholder='Ваша компания' />
+              </Form.Field>
+
+              <Button
+                color='blue'
+                type='submit'
+                onClick={() => {
+                  companyChangeHandler(formState.company)
+                }}
+              >
+                Submit
+              </Button>
+            </>
+          )}
         </Form>
       </Container>
     </div>
