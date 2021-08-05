@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Icon, Menu, Sticky } from 'semantic-ui-react'
 import { logOut } from '../backend/firebase'

@@ -70,58 +70,48 @@ export const TestResults = () => {
 
   return (
     <Container className='container'>
-      <Sticky offset={50}>
-        <Form>
-          <Form.Group widths='equal'>
-            <Form.Field>
-              <Input
-                onChange={filterDateHandler}
-                type='date'
-                label='Дата начала'
-                name='start'
-                value={filterDate.start}
-              />
-            </Form.Field>
-            <Form.Field>
-              <Input
-                onChange={filterDateHandler}
-                type='date'
-                label='Дата окончания'
-                name='end'
-                value={filterDate.end}
-              />
-            </Form.Field>
-          </Form.Group>
-          <Form.Group>
-            <Form.Field>
-              <Dropdown
-                placeholder='Выберите курс'
-                onChange={(e, data) => {
-                  setChoosenCourse(data.value)
-                }}
-                fluid
-                selection
-                options={courses}
-              />
-            </Form.Field>
+      <Form>
+        <Form.Group widths='equal'>
+          <Form.Field>
+            <Input onChange={filterDateHandler} type='date' label='Дата начала' name='start' value={filterDate.start} />
+          </Form.Field>
+          <Form.Field>
+            <Input onChange={filterDateHandler} type='date' label='Дата окончания' name='end' value={filterDate.end} />
+          </Form.Field>
+        </Form.Group>
+        <Form.Group>
+          <Form.Field>
+            <Dropdown
+              placeholder='Выберите курс'
+              onChange={(e, data) => {
+                setChoosenCourse(data.value)
+              }}
+              fluid
+              selection
+              options={courses}
+            />
+          </Form.Field>
 
-            <Form.Field>
-              <Button
-                onClick={() => {
-                  setFilterDate({ start: '', end: '' })
-                  setChoosenCourse('')
-                }}
-              >
-                Очистить фильтр
-              </Button>
-            </Form.Field>
-          </Form.Group>
-        </Form>
-      </Sticky>
+          <Form.Field>
+            <Button
+              onClick={() => {
+                setFilterDate({ start: '', end: '' })
+                setChoosenCourse('')
+              }}
+            >
+              Очистить фильтр
+            </Button>
+          </Form.Field>
+        </Form.Group>
+      </Form>
       {resultsForShowing ? (
-        resultsForShowing.map((res, i) => {
-          return <ResultItem key={i + generateId()} res={res} i={i} />
-        })
+        resultsForShowing
+          .sort((a, b) => {
+            return b.dateId.split('_')[0] * 1 - a.dateId.split('_')[0] * 1
+          })
+          .map((res, i) => {
+            return <ResultItem key={i + generateId()} res={res} i={i} />
+          })
       ) : (
         <div>Пока нет результатов:</div>
       )}

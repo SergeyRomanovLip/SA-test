@@ -12,7 +12,9 @@ export const Auth = () => {
     fio: '',
     position: '',
     department: '',
+    key: '',
   })
+  const [empKey, setEmpKey] = useState()
   const [company, setCompany] = useState()
   const [emplList, setEmplList] = useState([])
   const [loading, setLoading] = useState(false)
@@ -49,6 +51,7 @@ export const Auth = () => {
       position: data.position,
       department: data.department,
     })
+    setEmpKey(data.key)
   }
 
   return (
@@ -77,7 +80,9 @@ export const Auth = () => {
               <Form.Field>
                 <Label>Ваша должность</Label>
                 <input
+                  readOnly
                   name='position'
+                  style={{ background: '#EAEAEA' }}
                   value={formState.position}
                   onChange={changeHandler}
                   placeholder='Ваша должность'
@@ -86,14 +91,26 @@ export const Auth = () => {
               <Form.Field>
                 <Label>Ваша отдел</Label>
                 <input
+                  readOnly
+                  style={{ background: '#EAEAEA' }}
                   name='department'
                   value={formState.department}
                   onChange={changeHandler}
                   placeholder='Ваш отдел'
                 />
               </Form.Field>
+              {formState.department && formState.fio && formState.position ? (
+                <Form.Field>
+                  <Label>Укажите ваш код</Label>
+                  <input name='key' value={formState.key} onChange={changeHandler} placeholder='Ваш код' />
+                </Form.Field>
+              ) : null}
               <Button
-                disabled={formState.department && formState.fio && formState.position ? false : true}
+                disabled={
+                  formState.department && formState.fio && formState.position && formState.key * 1 === empKey
+                    ? false
+                    : true
+                }
                 color='blue'
                 type='submit'
                 onClick={() => {
@@ -119,7 +136,7 @@ export const Auth = () => {
                   companyChangeHandler(formState.company)
                 }}
               >
-                Submit
+                Подтвердить
               </Button>
             </>
           )}
