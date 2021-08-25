@@ -51,6 +51,7 @@ export const Auth = () => {
       position: data.position,
       department: data.department,
     })
+    console.log(data.key)
     setEmpKey(data.key)
   }
 

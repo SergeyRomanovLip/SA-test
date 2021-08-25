@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getAllTestResults } from '../backend/firebase'
-import { Input, Form, Button, Container, Dropdown, Sticky } from 'semantic-ui-react'
+import { Input, Form, Button, Container, Dropdown, Sticky, Icon } from 'semantic-ui-react'
 import { ResultItem } from '../components/ResultItem'
 import { generateId } from '../misc/generateId'
-import { Link } from 'react-router-dom'
 
 export const TestResults = () => {
   const [testResults, setTestResults] = useState([])
@@ -12,6 +11,38 @@ export const TestResults = () => {
   const [courses, setCourses] = useState([])
   const [choosenCourse, setChoosenCourse] = useState('')
 
+  const downloadResults = () => {
+    let data = []
+    resultsForShowing.forEach((e) => {
+      e.answers.forEach((answ) => {
+        data.push([
+          new Date(e.dateId.split('_')[0] * 1).toLocaleDateString(),
+          e.fio,
+          e.position,
+          e.course,
+          answ.question,
+          answ.answer,
+          answ.right,
+        ])
+      })
+    })
+
+    function download_csv(data) {
+      var csv = 'Date;Name;Position;Course;Question;Answer;Right\n'
+      data.forEach(function (row) {
+        csv += row.join(';')
+        csv += '\n'
+      })
+
+      console.log(csv)
+      var hiddenElement = document.createElement('a')
+      hiddenElement.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURI(csv)
+      hiddenElement.target = '_blank'
+      hiddenElement.download = 'people.csv'
+      hiddenElement.click()
+    }
+    download_csv(data)
+  }
   const filterDateHandler = (event) => {
     setFilterDate((prev) => {
       return {
@@ -71,38 +102,46 @@ export const TestResults = () => {
   return (
     <Container className='container'>
       <Form>
-        <Form.Group widths='equal'>
-          <Form.Field>
-            <Input onChange={filterDateHandler} type='date' label='Дата начала' name='start' value={filterDate.start} />
-          </Form.Field>
-          <Form.Field>
-            <Input onChange={filterDateHandler} type='date' label='Дата окончания' name='end' value={filterDate.end} />
-          </Form.Field>
-        </Form.Group>
-        <Form.Group>
-          <Form.Field>
-            <Dropdown
-              placeholder='Выберите курс'
-              onChange={(e, data) => {
-                setChoosenCourse(data.value)
-              }}
-              fluid
-              selection
-              options={courses}
-            />
-          </Form.Field>
+        <input
+          name='start'
+          style={{ width: 170 + 'px' }}
+          onChange={filterDateHandler}
+          type='date'
+          value={filterDate.start}
+        />
+        <input
+          style={{ width: 170 + 'px' }}
+          onChange={filterDateHandler}
+          type='date'
+          name='end'
+          value={filterDate.end}
+        />
+        <Dropdown
+          placeholder='Выберите курс'
+          onChange={(e, data) => {
+            setChoosenCourse(data.value)
+          }}
+          selection
+          options={courses}
+        />
 
-          <Form.Field>
-            <Button
-              onClick={() => {
-                setFilterDate({ start: '', end: '' })
-                setChoosenCourse('')
-              }}
-            >
-              Очистить фильтр
-            </Button>
-          </Form.Field>
-        </Form.Group>
+        <Button
+          icon
+          onClick={() => {
+            setFilterDate({ start: '', end: '' })
+            setChoosenCourse('')
+          }}
+        >
+          <Icon name='remove' />
+        </Button>
+        <Button
+          icon
+          onClick={() => {
+            downloadResults()
+          }}
+        >
+          <Icon name='download' />
+        </Button>
       </Form>
       {resultsForShowing ? (
         resultsForShowing

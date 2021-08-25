@@ -15,35 +15,37 @@ export const Admin = () => {
   const { authenticated } = useContext(AppContext)
   if (authenticated) {
     return (
-      <Grid columns={2} divided>
-        <Grid.Column>
-          <TestResults />
-        </Grid.Column>
-        <Grid.Column>
-          <Form>
-            {loading ? (
-              <Segment>
-                <Dimmer active>
-                  <Loader indeterminate>Preparing Files</Loader>
-                </Dimmer>
-                <Image src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
-              </Segment>
-            ) : (
-              <ExcelUploadQuest loadingHandler={loadingHandler} />
-            )}
-            {loading ? (
-              <Segment>
-                <Dimmer active>
-                  <Loader indeterminate>Preparing Files</Loader>
-                </Dimmer>
-                <Image src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
-              </Segment>
-            ) : (
-              <ExcelUploadEmployees loadingHandler={loadingHandler} />
-            )}
-          </Form>
-        </Grid.Column>
-      </Grid>
+      <Container style={{ marginTop: 20 + 'px' }}>
+        <Grid columns={2} divided>
+          <Grid.Column width={10}>
+            <TestResults />
+          </Grid.Column>
+          <Grid.Column width={5}>
+            <Form>
+              {loading ? (
+                <Segment>
+                  <Dimmer active>
+                    <Loader indeterminate>Preparing Files</Loader>
+                  </Dimmer>
+                  <Image src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
+                </Segment>
+              ) : (
+                <ExcelUploadQuest loadingHandler={loadingHandler} />
+              )}
+              {loading ? (
+                <Segment>
+                  <Dimmer active>
+                    <Loader indeterminate>Preparing Files</Loader>
+                  </Dimmer>
+                  <Image src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
+                </Segment>
+              ) : (
+                <ExcelUploadEmployees loadingHandler={loadingHandler} />
+              )}
+            </Form>
+          </Grid.Column>
+        </Grid>
+      </Container>
     )
   } else {
     return (
