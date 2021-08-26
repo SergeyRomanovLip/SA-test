@@ -8,3 +8,7 @@
   margin: auto;
   max-width: 1200px;
 }
+.fixed {
+  position: fixed;
+  z-index: 100;
+}

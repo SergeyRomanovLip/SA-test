@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
-import { Container, Sticky, Ref, Card, Grid } from 'semantic-ui-react'
+import { Container, Sticky, Ref, Card, Grid, Rail, List } from 'semantic-ui-react'
 import { getRandom } from '../misc/getRandom'
 import { AnsweredQuestions } from './AnsweredQuestions'
 import { TestItem } from './TestItem'
 
 export const TestAnswer = ({ user, testState, reloadHandler }) => {
-  const contextRef = useRef()
   const [questionList, setQuestionList] = useState([])
   const [answers, setAnswers] = useState({})
   const answerHandler = (a, e, id) => {
@@ -45,31 +44,29 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
 
   return (
     <Container fluid className='container'>
-      <Ref innerRef={contextRef}>
-        <Grid columns={2} divided>
-          <Grid.Column>
-            <Sticky context={contextRef} offset={50}>
-              <Card color={'blue'} fluid>
-                <Card.Content>
-                  <Card.Header as='h2'>Добро пожаловать {user && user.fio}!</Card.Header>
-                  <Card.Description>Вам необходимо ответить на все вопросы</Card.Description>
-                  <Card.Meta>
-                    Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}
-                  </Card.Meta>
-                </Card.Content>
-              </Card>
-            </Sticky>
+      <Grid columns={2} divided>
+        <Grid.Column style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
+          <Sticky offset={50}>
+            <Card color={'teal'} fluid>
+              <Card.Content>
+                <Card.Header as='h2'>Добро пожаловать {user && user.fio}!</Card.Header>
+                <Card.Description>Вам необходимо ответить на все вопросы</Card.Description>
+                <Card.Meta>
+                  Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}
+                </Card.Meta>
+              </Card.Content>
+            </Card>
+          </Sticky>
+          <List>
             {questionList.map((e, i) => {
               return <TestItem key={i} e={e} i={i} answerHandler={answerHandler} answers={answers} />
             })}
-          </Grid.Column>
-          <Grid.Column>
-            <Sticky context={contextRef}>
-              <AnsweredQuestions answers={answers} questions={questionList} user={user} reloadHandler={reloadHandler} />
-            </Sticky>
-          </Grid.Column>
-        </Grid>
-      </Ref>
+          </List>
+        </Grid.Column>
+        <Grid.Column style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
+          <AnsweredQuestions answers={answers} questions={questionList} user={user} reloadHandler={reloadHandler} />
+        </Grid.Column>
+      </Grid>
     </Container>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getAllTestResults } from '../backend/firebase'
-import { Input, Form, Button, Container, Dropdown, Sticky, Icon } from 'semantic-ui-react'
+import { Form, Button, Container, Dropdown, Icon, Sticky, Menu, Input } from 'semantic-ui-react'
 import { ResultItem } from '../components/ResultItem'
 import { generateId } from '../misc/generateId'
 
@@ -77,7 +77,7 @@ export const TestResults = () => {
         return element.course === choosenCourse
       })
     }
-    console.log(filteredArray)
+
     setResultsForShowing(filteredArray)
   }, [choosenCourse, filterDate])
 
@@ -100,49 +100,51 @@ export const TestResults = () => {
   }, [])
 
   return (
-    <Container className='container'>
-      <Form>
-        <input
-          name='start'
-          style={{ width: 170 + 'px' }}
-          onChange={filterDateHandler}
-          type='date'
-          value={filterDate.start}
-        />
-        <input
-          style={{ width: 170 + 'px' }}
-          onChange={filterDateHandler}
-          type='date'
-          name='end'
-          value={filterDate.end}
-        />
-        <Dropdown
-          placeholder='Выберите курс'
-          onChange={(e, data) => {
-            setChoosenCourse(data.value)
-          }}
-          selection
-          options={courses}
-        />
+    <Container className='container' style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
+      <Sticky offset={50}>
+        <Menu secondary color='teal'>
+          <Input
+            name='start'
+            style={{ width: 170 + 'px' }}
+            onChange={filterDateHandler}
+            type='date'
+            value={filterDate.start}
+          />
+          <Input
+            style={{ width: 170 + 'px' }}
+            onChange={filterDateHandler}
+            type='date'
+            name='end'
+            value={filterDate.end}
+          />
+          <Dropdown
+            placeholder='Выберите курс'
+            onChange={(e, data) => {
+              setChoosenCourse(data.value)
+            }}
+            selection
+            options={courses}
+          />
 
-        <Button
-          icon
-          onClick={() => {
-            setFilterDate({ start: '', end: '' })
-            setChoosenCourse('')
-          }}
-        >
-          <Icon name='remove' />
-        </Button>
-        <Button
-          icon
-          onClick={() => {
-            downloadResults()
-          }}
-        >
-          <Icon name='download' />
-        </Button>
-      </Form>
+          <Button
+            icon
+            onClick={() => {
+              setFilterDate({ start: '', end: '' })
+              setChoosenCourse('')
+            }}
+          >
+            <Icon name='remove' />
+          </Button>
+          <Button
+            icon
+            onClick={() => {
+              downloadResults()
+            }}
+          >
+            <Icon name='download' />
+          </Button>
+        </Menu>
+      </Sticky>
       {resultsForShowing ? (
         resultsForShowing
           .sort((a, b) => {

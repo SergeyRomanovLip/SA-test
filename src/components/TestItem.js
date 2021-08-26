@@ -9,7 +9,7 @@ export const TestItem = ({ e, i, answerHandler, answers }) => {
   }, [])
 
   return (
-    <Card key={id} fluid={true}>
+    <Card key={id} fluid={true} color='purple'>
       <Card.Content>
         <Card.Header>{`${i + 1}. ${e.q}`}</Card.Header>
         <List animated={true}>
@@ -19,7 +19,10 @@ export const TestItem = ({ e, i, answerHandler, answers }) => {
               <List.Item
                 style={{
                   cursor: 'pointer',
-                  color: answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen ? 'black' : 'gray'
+                  color:
+                    answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen
+                      ? 'black'
+                      : 'gray',
                 }}
                 active={true}
                 key={i}
@@ -28,7 +31,11 @@ export const TestItem = ({ e, i, answerHandler, answers }) => {
                 }}
               >
                 <List.Icon
-                  name={answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen ? 'circle' : 'circle outline'}
+                  name={
+                    answers[id] && answers[id].answers[i].answer === a.answer && answers[id].answers[i].choosen
+                      ? 'circle'
+                      : 'circle outline'
+                  }
                 />
                 {a.answer}
               </List.Item>

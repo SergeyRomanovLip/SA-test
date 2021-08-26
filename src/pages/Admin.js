@@ -4,7 +4,7 @@ import { SignIn } from './../adminAuth/SignIn'
 import { SignUp } from './../adminAuth/SignUp'
 import { Container, Card, Grid, Form, Segment, Dimmer, Loader, Image } from 'semantic-ui-react'
 import { TestResults } from './TestResults'
-import { ExcelUpload, ExcelUploadQuest } from '../components/ExcelUploadQuest'
+import { ExcelUploadQuest } from '../components/ExcelUploadQuest'
 import { ExcelUploadEmployees } from '../components/ExcelUploadEmployees'
 
 export const Admin = () => {
@@ -13,6 +13,7 @@ export const Admin = () => {
     setLoading(state)
   }
   const { authenticated } = useContext(AppContext)
+
   if (authenticated) {
     return (
       <Container style={{ marginTop: 20 + 'px' }}>

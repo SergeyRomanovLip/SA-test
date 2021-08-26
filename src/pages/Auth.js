@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { Button, Form, Container, Header, Dimmer, Loader, Label } from 'semantic-ui-react'
+import { Button, Form, Container, Header, Dimmer, Loader, Label, Input } from 'semantic-ui-react'
 import { getData } from '../backend/firebase'
 import SearchName from '../components/SearchName'
 import { RoutesContext } from '../context/RoutesContext'
@@ -12,16 +11,18 @@ export const Auth = () => {
     fio: '',
     position: '',
     department: '',
-    key: '',
+    password: '',
+    company: '',
   })
-  const [empKey, setEmpKey] = useState()
+  const [empPassword, setEmpPassword] = useState()
   const [company, setCompany] = useState()
   const [emplList, setEmplList] = useState([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    getData('testEmployees', formState.company, setEmplList)
-    console.log('data is gotten')
+    if (company && formState.company) {
+      getData('testEmployees', formState.company, setEmplList)
+    }
   }, [company])
 
   const companyChangeHandler = async (tryCompany) => {
@@ -37,6 +38,7 @@ export const Auth = () => {
         position: '',
         department: '',
         company: '',
+        password: '',
       })
     }
     setLoading(false)
@@ -52,8 +54,7 @@ export const Auth = () => {
       position: data.position,
       department: data.department,
     })
-    console.log(data.key)
-    setEmpKey(data.key)
+    setEmpPassword(data.password)
   }
 
   return (
@@ -69,7 +70,7 @@ export const Auth = () => {
           {company ? (
             <>
               <Form.Field>
-                <Label>Ваc зовут</Label>
+                <Label>Вас зовут</Label>
                 {emplList && emplList.length !== 0 ? (
                   <SearchName source={emplList} filler={filler} />
                 ) : (
@@ -104,12 +105,20 @@ export const Auth = () => {
               {formState.department && formState.fio && formState.position ? (
                 <Form.Field>
                   <Label>Укажите ваш код</Label>
-                  <input name='key' value={formState.key} onChange={changeHandler} placeholder='Ваш код' />
+                  <input
+                    name='password'
+                    value={formState.password}
+                    onChange={changeHandler}
+                    placeholder='Ваш код (3 последние цифры паспорта)'
+                  />
                 </Form.Field>
               ) : null}
               <Button
                 disabled={
-                  formState.department && formState.fio && formState.position && formState.key * 1 === empKey * 1
+                  formState.department &&
+                  formState.fio &&
+                  formState.position &&
+                  formState.password * 1 === empPassword * 1
                     ? false
                     : true
                 }
@@ -121,14 +130,14 @@ export const Auth = () => {
                   )
                 }}
               >
-                Submit
+                Подтвердить
               </Button>
             </>
           ) : (
             <>
               <Form.Field>
                 <Label>Укажите название вашей компании</Label>
-                <input name='company' value={formState.company} onChange={changeHandler} placeholder='Ваша компания' />
+                <Input name='company' value={formState.company} onChange={changeHandler} placeholder='Ваша компания' />
               </Form.Field>
 
               <Button
