@@ -108,7 +108,7 @@ export const Auth = () => {
               ) : null}
               <Button
                 disabled={
-                  formState.department && formState.fio && formState.position && formState.key * 1 === empKey
+                  formState.department && formState.fio && formState.position && formState.key * 1 === empKey * 1
                     ? false
                     : true
                 }
