@@ -21,6 +21,7 @@ export const Auth = () => {
 
   useEffect(() => {
     getData('testEmployees', formState.company, setEmplList)
+    console.log('data is gotten')
   }, [company])
 
   const companyChangeHandler = async (tryCompany) => {
