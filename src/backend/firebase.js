@@ -8,7 +8,7 @@ const config = {
   storageBucket: 'sa-test-30d4b.appspot.com',
   messagingSenderId: '155029522773',
   appId: '1:155029522773:web:f87ee3cd2450243b7907dc',
-  measurementId: 'G-HJFX1VE7G8',
+  measurementId: 'G-HJFX1VE7G8'
 }
 firebase.initializeApp(config)
 
@@ -37,7 +37,8 @@ export const createUser = async (usrData) => {
 export const logOut = async () => {
   firebase.auth().signOut()
 }
-export const logIn = async (usrData) => {
+export const logIn = async (usrData, setLoading) => {
+  setLoading(true)
   firebase
     .auth()
     .signInWithEmailAndPassword(usrData.email, usrData.password)
@@ -47,6 +48,9 @@ export const logIn = async (usrData) => {
     .catch((error) => {
       var errorCode = error.code
       var errorMessage = error.message
+    })
+    .finally(() => {
+      setLoading(false)
     })
 }
 export const addTestResult = async (results, user) => {
@@ -69,7 +73,7 @@ export const addTestResult = async (results, user) => {
       fio: user.fio,
       department: user.department,
       position: user.position,
-      answers: answersArray,
+      answers: answersArray
     })
     .then(() => {
       console.log('Document successfully written!')
@@ -121,7 +125,7 @@ export const uploadNewQuestions = async (user, newQuestions, loadHandl) => {
       .collection('testQuestions')
       .doc(`${uData.company}`)
       .set({
-        data: newQuestions,
+        data: newQuestions
       })
       .then(() => {
         console.log('Document successfully written!')

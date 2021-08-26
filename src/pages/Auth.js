@@ -125,7 +125,6 @@ export const Auth = () => {
                 <Label>Укажите название вашей компании</Label>
                 <Input name='company' value={formState.company} onChange={changeHandler} placeholder='Ваша компания' />
               </Form.Field>
-
               <Button
                 color='teal'
                 type='submit'

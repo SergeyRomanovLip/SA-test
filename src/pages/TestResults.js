@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { getAllTestResults } from '../backend/firebase'
-import { Form, Button, Container, Dropdown, Icon, Sticky, Menu, Input } from 'semantic-ui-react'
+import { Button, Container, Dropdown, Icon, Sticky, Menu, Input, Dimmer, Loader } from 'semantic-ui-react'
 import { ResultItem } from '../components/ResultItem'
 import { generateId } from '../misc/generateId'
+import { AppContext } from './../context/AppContext'
 
 export const TestResults = () => {
+  const [loading, setLoading] = useState(false)
   const [testResults, setTestResults] = useState([])
   const [filterDate, setFilterDate] = useState({ start: '', end: '' })
   const [resultsForShowing, setResultsForShowing] = useState([])
@@ -15,15 +17,7 @@ export const TestResults = () => {
     let data = []
     resultsForShowing.forEach((e) => {
       e.answers.forEach((answ) => {
-        data.push([
-          new Date(e.dateId.split('_')[0] * 1).toLocaleDateString(),
-          e.fio,
-          e.position,
-          e.course,
-          answ.question,
-          answ.answer,
-          answ.right,
-        ])
+        data.push([new Date(e.dateId.split('_')[0] * 1).toLocaleDateString(), e.fio, e.position, e.course, answ.question, answ.answer, answ.right])
       })
     })
 
@@ -47,7 +41,7 @@ export const TestResults = () => {
     setFilterDate((prev) => {
       return {
         ...prev,
-        [event.target.name]: event.target.value,
+        [event.target.name]: event.target.value
       }
     })
   }
@@ -56,7 +50,7 @@ export const TestResults = () => {
       setFilterDate((prev) => {
         return {
           ...prev,
-          end: filterDate.start,
+          end: filterDate.start
         }
       })
     }
@@ -82,41 +76,34 @@ export const TestResults = () => {
   }, [choosenCourse, filterDate])
 
   useEffect(() => {
-    getAllTestResults().then((res) => {
-      setTestResults(res)
-      setResultsForShowing(res)
-      let courses = []
-      res.forEach((el) => {
-        courses.push({ key: el.course, text: el.course, value: el.course, image: null })
+    setLoading(true)
+    getAllTestResults()
+      .then((res) => {
+        setTestResults(res)
+        setResultsForShowing(res)
+        let courses = []
+        res.forEach((el) => {
+          courses.push({ key: el.course, text: el.course, value: el.course, image: null })
+        })
+        let uniqCourses = new Set()
+        let filteredArr = courses.filter((obj) => {
+          const isPresentInSet = uniqCourses.has(obj.key)
+          uniqCourses.add(obj.key)
+          return !isPresentInSet
+        })
+        setCourses(filteredArr)
       })
-      let uniqCourses = new Set()
-      let filteredArr = courses.filter((obj) => {
-        const isPresentInSet = uniqCourses.has(obj.key)
-        uniqCourses.add(obj.key)
-        return !isPresentInSet
+      .finally(() => {
+        setLoading(false)
       })
-      setCourses(filteredArr)
-    })
   }, [])
 
   return (
     <Container className='container' style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
       <Sticky offset={50}>
         <Menu secondary color='teal'>
-          <Input
-            name='start'
-            style={{ width: 170 + 'px' }}
-            onChange={filterDateHandler}
-            type='date'
-            value={filterDate.start}
-          />
-          <Input
-            style={{ width: 170 + 'px' }}
-            onChange={filterDateHandler}
-            type='date'
-            name='end'
-            value={filterDate.end}
-          />
+          <Input name='start' style={{ width: 170 + 'px' }} onChange={filterDateHandler} type='date' value={filterDate.start} />
+          <Input style={{ width: 170 + 'px' }} onChange={filterDateHandler} type='date' name='end' value={filterDate.end} />
           <Dropdown
             placeholder='Выберите курс'
             onChange={(e, data) => {
@@ -146,13 +133,19 @@ export const TestResults = () => {
         </Menu>
       </Sticky>
       {resultsForShowing ? (
-        resultsForShowing
-          .sort((a, b) => {
-            return b.dateId.split('_')[0] * 1 - a.dateId.split('_')[0] * 1
-          })
-          .map((res, i) => {
-            return <ResultItem key={i + generateId()} res={res} i={i} />
-          })
+        loading ? (
+          <Dimmer active inverted>
+            <Loader />
+          </Dimmer>
+        ) : (
+          resultsForShowing
+            .sort((a, b) => {
+              return b.dateId.split('_')[0] * 1 - a.dateId.split('_')[0] * 1
+            })
+            .map((res, i) => {
+              return <ResultItem key={i + generateId()} res={res} i={i} />
+            })
+        )
       ) : (
         <div>Пока нет результатов:</div>
       )}

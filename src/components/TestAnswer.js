@@ -1,12 +1,25 @@
-import { useEffect, useState, useRef } from 'react'
-import { Container, Sticky, Ref, Card, Grid, Rail, List } from 'semantic-ui-react'
+import { useEffect, useState, useContext } from 'react'
+import { Container, Sticky, Card, Grid, List, Button } from 'semantic-ui-react'
 import { getRandom } from '../misc/getRandom'
 import { AnsweredQuestions } from './AnsweredQuestions'
 import { TestItem } from './TestItem'
+import { AppContext } from './../context/AppContext'
+import { addTestResult } from '../backend/firebase'
 
 export const TestAnswer = ({ user, testState, reloadHandler }) => {
+  const { width, setLoading } = useContext(AppContext)
   const [questionList, setQuestionList] = useState([])
   const [answers, setAnswers] = useState({})
+  const [readyToSend, setReadyToSend] = useState(false)
+
+  useEffect(() => {
+    if (Object.keys(answers).length === questionList.length) {
+      setReadyToSend(true)
+    } else {
+      setReadyToSend(false)
+    }
+  }, [answers, questionList])
+
   const answerHandler = (a, e, id) => {
     setAnswers((prev) => {
       let answer = { question: e.q, answers: e.answers, id }
@@ -44,16 +57,29 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
 
   return (
     <Container fluid className='container'>
-      <Grid columns={2} divided>
+      <Grid columns={width > 900 ? 2 : 1} divided>
         <Grid.Column style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
           <Sticky offset={50}>
             <Card color={'teal'} fluid>
               <Card.Content>
                 <Card.Header as='h2'>Добро пожаловать {user && user.fio}!</Card.Header>
                 <Card.Description>Вам необходимо ответить на все вопросы</Card.Description>
-                <Card.Meta>
-                  Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}
-                </Card.Meta>
+                <Card.Meta>Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}</Card.Meta>
+                {readyToSend && width < 901 ? (
+                  <Button
+                    color={'teal'}
+                    onClick={() => {
+                      setLoading(true)
+                      addTestResult(answers, user)
+                        .then((res) => reloadHandler(res))
+                        .finally(() => {
+                          setLoading(false)
+                        })
+                    }}
+                  >
+                    Отправить?
+                  </Button>
+                ) : null}
               </Card.Content>
             </Card>
           </Sticky>
@@ -63,9 +89,11 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
             })}
           </List>
         </Grid.Column>
-        <Grid.Column style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
-          <AnsweredQuestions answers={answers} questions={questionList} user={user} reloadHandler={reloadHandler} />
-        </Grid.Column>
+        {width > 900 ? (
+          <Grid.Column style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
+            <AnsweredQuestions answers={answers} questions={questionList} user={user} reloadHandler={reloadHandler} readyToSend={readyToSend} />
+          </Grid.Column>
+        ) : null}
       </Grid>
     </Container>
   )
