@@ -12,7 +12,7 @@ export const Auth = () => {
     position: '',
     department: '',
     password: '',
-    company: '',
+    company: ''
   })
   const [empPassword, setEmpPassword] = useState()
   const [company, setCompany] = useState()
@@ -38,7 +38,7 @@ export const Auth = () => {
         position: '',
         department: '',
         company: '',
-        password: '',
+        password: ''
       })
     }
     setLoading(false)
@@ -52,7 +52,7 @@ export const Auth = () => {
     setFormState({
       fio: data.title,
       position: data.position,
-      department: data.department,
+      department: data.department
     })
     setEmpPassword(data.password)
   }
@@ -105,29 +105,15 @@ export const Auth = () => {
               {formState.department && formState.fio && formState.position ? (
                 <Form.Field>
                   <Label>Укажите ваш код</Label>
-                  <input
-                    name='password'
-                    value={formState.password}
-                    onChange={changeHandler}
-                    placeholder='Ваш код (3 последние цифры паспорта)'
-                  />
+                  <input name='password' value={formState.password} onChange={changeHandler} placeholder='Ваш код (3 последние цифры паспорта)' />
                 </Form.Field>
               ) : null}
               <Button
-                disabled={
-                  formState.department &&
-                  formState.fio &&
-                  formState.position &&
-                  formState.password * 1 === empPassword * 1
-                    ? false
-                    : true
-                }
+                disabled={formState.department && formState.fio && formState.position && formState.password * 1 === empPassword * 1 ? false : true}
                 color='blue'
                 type='submit'
                 onClick={() => {
-                  histories.push(
-                    `/testready/${company}&${formState.fio}&${formState.position}&${formState.department}/`
-                  )
+                  histories.push(`/testready/${company}&${formState.fio}&${formState.position}&${formState.department}/`)
                 }}
               >
                 Подтвердить
@@ -141,7 +127,7 @@ export const Auth = () => {
               </Form.Field>
 
               <Button
-                color='blue'
+                color='teal'
                 type='submit'
                 onClick={() => {
                   companyChangeHandler(formState.company)
