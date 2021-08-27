@@ -14,9 +14,7 @@ export const Test = () => {
   const [readyTests, setReadyTests] = useState([])
   const [testTypes, setTestTypes] = useState([])
   const reloadHandler = (data) => {
-    getTestResult(data).then(
-      histories.push(`/testready/${params.company}&${params.fio}&${params.position}&${params.department}/`)
-    )
+    getTestResult(data).then(histories.push(`/testready/${params.company}&${params.fio}&${params.position}&${params.department}/`))
   }
 
   const getDataHandler = async () => {

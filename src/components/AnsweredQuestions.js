@@ -2,16 +2,7 @@ import { useEffect, useState } from 'react'
 import { List, Button, Header, Sticky, Card } from 'semantic-ui-react'
 import { addTestResult } from '../backend/firebase'
 
-export const AnsweredQuestions = ({ answers, questions, user, reloadHandler }) => {
-  const [readyToSend, setReadyToSend] = useState(false)
-
-  useEffect(() => {
-    if (Object.keys(answers).length === questions.length) {
-      setReadyToSend(true)
-    } else {
-      setReadyToSend(false)
-    }
-  }, [answers, questions])
+export const AnsweredQuestions = ({ answers, questions, user, reloadHandler, readyToSend }) => {
   return (
     <>
       {readyToSend && (

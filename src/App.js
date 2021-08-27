@@ -6,12 +6,15 @@ import { useEffect, useReducer, useRef, useState } from 'react'
 import { reducer } from './reducer/reducer'
 import firebase from 'firebase'
 import { Toolbar } from './components/Toolbar'
+import { Dimmer, Loader } from 'semantic-ui-react'
 
 export const App = () => {
+  const [width, setWidth] = useState(window.innerWidth)
   const [appState, appDispatch] = useReducer(reducer, {})
   const [testTable, setTestTable] = useState('')
   const [emplList, setEmplList] = useState('')
   const [authenticated, setAuthenticated] = useState(false)
+  const [loading, setLoading] = useState(false)
   firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       setAuthenticated(user)
@@ -20,11 +23,23 @@ export const App = () => {
     }
   })
 
+  const resizeHandler = () => {
+    setWidth(window.innerWidth)
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', resizeHandler)
+    // return window.removeEventListener('resize', setWidth(window.innerWidth))
+  }, [window.innerWidth])
+
   return (
-    <AppContext.Provider
-      value={{ appState, appDispatch, emplList, setEmplList, testTable, setTestTable, authenticated }}
-    >
+    <AppContext.Provider value={{ appState, appDispatch, emplList, setEmplList, testTable, setTestTable, authenticated, width, setLoading }}>
       <Router>
+        {loading ? (
+          <Dimmer active>
+            <Loader />
+          </Dimmer>
+        ) : null}
         <Toolbar />
         <Routes />
       </Router>

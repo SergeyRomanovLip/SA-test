@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Header, Modal, Form, Label, Message } from 'semantic-ui-react'
 import { logIn } from './../backend/firebase'
+import { AppContext } from './../context/AppContext'
 
 export const SignIn = () => {
+  const { setLoading } = useContext(AppContext)
   const [open, setOpen] = useState(false)
   const [sgnUp, sgnUpState] = useState({ email: '', password: '' })
 
@@ -38,7 +40,7 @@ export const SignIn = () => {
           labelPosition='right'
           icon='checkmark'
           onClick={() => {
-            logIn(sgnUp)
+            logIn(sgnUp, setLoading)
             setOpen(false)
           }}
           positive
