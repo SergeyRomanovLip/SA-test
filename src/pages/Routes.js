@@ -3,8 +3,11 @@ import { RoutesContext } from '../context/RoutesContext'
 import { Auth } from './Auth'
 import { Home } from './Home'
 import { Test } from './Test'
-import { TestResults } from './TestResults'
 import { Admin } from './Admin'
+import { ResultItemForPrinting } from '../components/ResultItemForPrinting'
+import { AppContext } from './../context/AppContext'
+import { useContext } from 'react'
+
 export const Routes = () => {
   const histories = useHistory()
 
@@ -17,8 +20,9 @@ export const Routes = () => {
         <Route path='/testready/:company?&:fio?&:position?&:department?/:course?'>
           <Test />
         </Route>
-        <Route path='/admin'>
+        <Route path='/admin/:print?'>
           <Admin />
+          <ResultItemForPrinting />
         </Route>
         <Route path='/auth'>
           <Auth />

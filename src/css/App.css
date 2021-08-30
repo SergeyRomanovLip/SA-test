@@ -12,3 +12,51 @@
   position: fixed;
   z-index: 100;
 }
+
+.fullscreen {
+  width: 100vw !important;
+}
+
+.printPage {
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1999;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  background-color: white;
+}
+.page {
+  padding: 1cm;
+  width: 21cm;
+  height: 29.7cm;
+  background: white;
+  display: block;
+  margin: 0 auto;
+  /* margin-bottom: 0.5cm; */
+  /* box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5); */
+  page-break-after: always;
+}
+.applicant-break {
+  page-break-before: always;
+  page-break-after: always;
+  margin: 0 !important;
+}
+@media print {
+  div * {
+    float: none;
+  }
+  body * {
+    visibility: none;
+    float: none !important;
+  }
+  #section-to-print,
+  #section-to-print * {
+    visibility: visible;
+    overflow: visible;
+    float: none !important;
+  }
+}

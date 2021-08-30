@@ -1,7 +1,7 @@
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Routes } from './pages/Routes'
 import { AppContext } from './context/AppContext'
-import './css/App.css'
+
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { reducer } from './reducer/reducer'
 import firebase from 'firebase'
@@ -15,6 +15,7 @@ export const App = () => {
   const [emplList, setEmplList] = useState('')
   const [authenticated, setAuthenticated] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [resultsForPrinting, setResultsForPrinting] = useState([])
   firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       setAuthenticated(user)
@@ -29,11 +30,28 @@ export const App = () => {
 
   useEffect(() => {
     window.addEventListener('resize', resizeHandler)
-    // return window.removeEventListener('resize', setWidth(window.innerWidth))
   }, [window.innerWidth])
 
+  useEffect(() => {
+    console.log(resultsForPrinting)
+  }, [resultsForPrinting])
+
   return (
-    <AppContext.Provider value={{ appState, appDispatch, emplList, setEmplList, testTable, setTestTable, authenticated, width, setLoading }}>
+    <AppContext.Provider
+      value={{
+        appState,
+        appDispatch,
+        emplList,
+        setEmplList,
+        testTable,
+        setTestTable,
+        authenticated,
+        width,
+        setLoading,
+        resultsForPrinting,
+        setResultsForPrinting
+      }}
+    >
       <Router>
         {loading ? (
           <Dimmer active>

@@ -3,7 +3,8 @@ import { getAllTestResults } from '../backend/firebase'
 import { Button, Container, Dropdown, Icon, Sticky, Menu, Input, Dimmer, Loader } from 'semantic-ui-react'
 import { ResultItem } from '../components/ResultItem'
 import { generateId } from '../misc/generateId'
-import { AppContext } from './../context/AppContext'
+import { AppContext } from '../context/AppContext'
+import { useHistory } from 'react-router-dom'
 
 export const TestResults = () => {
   const [loading, setLoading] = useState(false)
@@ -12,6 +13,8 @@ export const TestResults = () => {
   const [resultsForShowing, setResultsForShowing] = useState([])
   const [courses, setCourses] = useState([])
   const [choosenCourse, setChoosenCourse] = useState('')
+  const { setResultsForPrinting } = useContext(AppContext)
+  const hstr = useHistory()
 
   const downloadResults = () => {
     let data = []
@@ -27,8 +30,6 @@ export const TestResults = () => {
         csv += row.join(';')
         csv += '\n'
       })
-
-      console.log(csv)
       var hiddenElement = document.createElement('a')
       hiddenElement.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURI(csv)
       hiddenElement.target = '_blank'
@@ -73,6 +74,7 @@ export const TestResults = () => {
     }
 
     setResultsForShowing(filteredArray)
+    setResultsForPrinting(filteredArray)
   }, [choosenCourse, filterDate])
 
   useEffect(() => {
@@ -81,6 +83,7 @@ export const TestResults = () => {
       .then((res) => {
         setTestResults(res)
         setResultsForShowing(res)
+        setResultsForPrinting(res)
         let courses = []
         res.forEach((el) => {
           courses.push({ key: el.course, text: el.course, value: el.course, image: null })
@@ -100,7 +103,7 @@ export const TestResults = () => {
 
   return (
     <Container className='container' style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
-      <Sticky offset={50}>
+      <Sticky offset={50} style={{ paddingLeft: 7 + 'px' }}>
         <Menu secondary color='teal'>
           <Input name='start' style={{ width: 170 + 'px' }} onChange={filterDateHandler} type='date' value={filterDate.start} />
           <Input style={{ width: 170 + 'px' }} onChange={filterDateHandler} type='date' name='end' value={filterDate.end} />
@@ -112,7 +115,8 @@ export const TestResults = () => {
             selection
             options={courses}
           />
-
+        </Menu>
+        <Menu text secondary color='teal'>
           <Button
             icon
             onClick={() => {
@@ -129,6 +133,14 @@ export const TestResults = () => {
             }}
           >
             <Icon name='download' />
+          </Button>
+          <Button
+            icon
+            onClick={() => {
+              hstr.push('/admin/print')
+            }}
+          >
+            <Icon name='print' />
           </Button>
         </Menu>
       </Sticky>
