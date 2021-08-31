@@ -20,7 +20,15 @@ export const TestResults = () => {
     let data = []
     resultsForShowing.forEach((e) => {
       e.answers.forEach((answ) => {
-        data.push([new Date(e.dateId.split('_')[0] * 1).toLocaleDateString(), e.fio, e.position, e.course, answ.question, answ.answer, answ.right])
+        data.push([
+          new Date(e.dateId.split('_')[0] * 1).toLocaleDateString(),
+          e.fio,
+          e.position,
+          e.course,
+          answ.question,
+          answ.answer,
+          answ.right,
+        ])
       })
     })
 
@@ -42,7 +50,7 @@ export const TestResults = () => {
     setFilterDate((prev) => {
       return {
         ...prev,
-        [event.target.name]: event.target.value
+        [event.target.name]: event.target.value,
       }
     })
   }
@@ -51,7 +59,7 @@ export const TestResults = () => {
       setFilterDate((prev) => {
         return {
           ...prev,
-          end: filterDate.start
+          end: filterDate.start,
         }
       })
     }
@@ -102,11 +110,23 @@ export const TestResults = () => {
   }, [])
 
   return (
-    <Container className='container' style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
+    <Container className='container' style={{ overflow: 'auto', maxHeight: 90 + 'vh', minHeight: 40 + 'vh' }}>
       <Sticky offset={50} style={{ paddingLeft: 7 + 'px' }}>
         <Menu secondary color='teal'>
-          <Input name='start' style={{ width: 170 + 'px' }} onChange={filterDateHandler} type='date' value={filterDate.start} />
-          <Input style={{ width: 170 + 'px' }} onChange={filterDateHandler} type='date' name='end' value={filterDate.end} />
+          <Input
+            name='start'
+            style={{ width: 170 + 'px' }}
+            onChange={filterDateHandler}
+            type='date'
+            value={filterDate.start}
+          />
+          <Input
+            style={{ width: 170 + 'px' }}
+            onChange={filterDateHandler}
+            type='date'
+            name='end'
+            value={filterDate.end}
+          />
           <Dropdown
             placeholder='Выберите курс'
             onChange={(e, data) => {

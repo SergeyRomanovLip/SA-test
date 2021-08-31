@@ -12,7 +12,6 @@ export const ResultItem = ({ res, i }) => {
     setAccordionIndex({ activeIndex: newIndex })
   }
   useEffect(() => {
-    // console.log(res.answers)
     let numberOfRightAnswers = 0
     res.answers.forEach((e) => {
       if (e.right === 'ok') {

@@ -1,4 +1,4 @@
-import { Switch, Route, Redirect, useHistory } from 'react-router-dom'
+import { Switch, Route, Redirect, useHistory, useParams } from 'react-router-dom'
 import { RoutesContext } from '../context/RoutesContext'
 import { Auth } from './Auth'
 import { Home } from './Home'

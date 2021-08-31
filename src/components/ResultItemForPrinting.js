@@ -10,11 +10,7 @@ export const ResultItemForPrinting = () => {
   return para.print === 'print' ? (
     <div id='section-to-print' className='printPage'>
       {resultsForPrinting.map((element, i) => {
-        return (
-          <>
-            <ResultItemPrint res={element} i={i} />
-          </>
-        )
+        return <ResultItemPrint res={element} i={i} key={i + 95} />
       })}
     </div>
   ) : null

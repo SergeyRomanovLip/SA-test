@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { Icon, Menu, Sticky, Divider } from 'semantic-ui-react'
+import { useHistory, useParams } from 'react-router-dom'
+import { Icon, Menu, Sticky, Divider, Button } from 'semantic-ui-react'
 import { logOut } from '../backend/firebase'
 import { AppContext } from '../context/AppContext'
 
@@ -18,7 +18,7 @@ export const Toolbar = () => {
 
   return (
     <>
-      <Sticky>
+      <Sticky className={'toolbar'}>
         <Menu tabular color='teal' style={{ backgroundColor: 'white' }}>
           {authenticated && (
             <Menu.Item
@@ -32,18 +32,6 @@ export const Toolbar = () => {
               Выйти
             </Menu.Item>
           )}
-          {/* <Menu.Item
-          name='home'
-          active={state.activeItem === 'home'}
-          onClick={() => {
-            setState({ activeItem: 'home' })
-            hstr.push('/home')
-          }}
-        >
-          <Icon name='home' />
-          На главную
-        </Menu.Item> */}
-
           <Menu.Item
             name='auth'
             active={state.activeItem === 'auth' || state.activeItem === 'testready'}
@@ -65,6 +53,22 @@ export const Toolbar = () => {
             <Icon name='adn' />
             Панель администратора
           </Menu.Item>
+          {hstr.location.pathname === '/admin/print' ? (
+            <Menu.Item>
+              <Button
+                position={'center'}
+                color='purple'
+                name='print'
+                active={true}
+                onClick={() => {
+                  window.print()
+                }}
+              >
+                <Icon name='print' />
+                Отправить на печать
+              </Button>
+            </Menu.Item>
+          ) : null}
           <Menu.Item position={'right'}>
             {width > 900 && (
               <>

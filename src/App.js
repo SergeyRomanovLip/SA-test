@@ -1,7 +1,6 @@
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Routes } from './pages/Routes'
 import { AppContext } from './context/AppContext'
-
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { reducer } from './reducer/reducer'
 import firebase from 'firebase'
@@ -32,10 +31,6 @@ export const App = () => {
     window.addEventListener('resize', resizeHandler)
   }, [window.innerWidth])
 
-  useEffect(() => {
-    console.log(resultsForPrinting)
-  }, [resultsForPrinting])
-
   return (
     <AppContext.Provider
       value={{
@@ -49,7 +44,7 @@ export const App = () => {
         width,
         setLoading,
         resultsForPrinting,
-        setResultsForPrinting
+        setResultsForPrinting,
       }}
     >
       <Router>

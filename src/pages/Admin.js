@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AppContext } from './../context/AppContext'
 import { SignIn } from './../adminAuth/SignIn'
 import { SignUp } from './../adminAuth/SignUp'
@@ -6,6 +6,7 @@ import { Container, Card, Grid, Form, Segment, Dimmer, Loader, Image } from 'sem
 import { TestResults } from './TestResults'
 import { ExcelUploadQuest } from '../components/ExcelUploadQuest'
 import { ExcelUploadEmployees } from '../components/ExcelUploadEmployees'
+import { useParams } from 'react-router-dom'
 
 export const Admin = () => {
   const [loading, setLoading] = useState(false)
@@ -13,10 +14,19 @@ export const Admin = () => {
     setLoading(state)
   }
   const { authenticated } = useContext(AppContext)
+  const [hidePage, setHidePage] = useState(false)
+  const para = useParams()
+  useEffect(() => {
+    if (para.print === 'print') {
+      setHidePage('none')
+    } else {
+      setHidePage('block')
+    }
+  }, [para])
 
   if (authenticated) {
     return (
-      <Container style={{ marginTop: 20 + 'px' }}>
+      <Container style={{ marginTop: 20 + 'px', display: hidePage }}>
         <Grid columns={2} divided>
           <Grid.Column width={10}>
             <TestResults />

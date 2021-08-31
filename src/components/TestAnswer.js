@@ -36,7 +36,8 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
   }
 
   const createQuestionlist = () => {
-    let questions = getRandom(testState, 10)
+    let quantity = testState[0].quantity ? testState[0].quantity : 10
+    let questions = getRandom(testState, quantity)
     let questionList = []
     for (let item in questions) {
       let readyQuestion = { q: questions[item].question, answers: [] }
@@ -64,7 +65,9 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
               <Card.Content>
                 <Card.Header as='h2'>Добро пожаловать {user && user.fio}!</Card.Header>
                 <Card.Description>Вам необходимо ответить на все вопросы</Card.Description>
-                <Card.Meta>Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}</Card.Meta>
+                <Card.Meta>
+                  Осталось вопросов {questionList.length && questionList.length - Object.keys(answers).length}
+                </Card.Meta>
                 {readyToSend && width < 901 ? (
                   <Button
                     color={'teal'}
@@ -91,7 +94,13 @@ export const TestAnswer = ({ user, testState, reloadHandler }) => {
         </Grid.Column>
         {width > 900 ? (
           <Grid.Column style={{ overflow: 'auto', maxHeight: 90 + 'vh' }}>
-            <AnsweredQuestions answers={answers} questions={questionList} user={user} reloadHandler={reloadHandler} readyToSend={readyToSend} />
+            <AnsweredQuestions
+              answers={answers}
+              questions={questionList}
+              user={user}
+              reloadHandler={reloadHandler}
+              readyToSend={readyToSend}
+            />
           </Grid.Column>
         ) : null}
       </Grid>
