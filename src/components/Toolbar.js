@@ -21,16 +21,28 @@ export const Toolbar = () => {
       <Sticky className={'toolbar'}>
         <Menu tabular color='teal' style={{ backgroundColor: 'white' }}>
           {authenticated && (
-            <Menu.Item
-              name='logout'
-              active={state.activeItem === 'logout'}
-              onClick={() => {
-                logOut()
-              }}
-            >
-              <Icon name='log out' />
-              Выйти
-            </Menu.Item>
+            <>
+              <Menu.Item
+                name='logout'
+                active={state.activeItem === 'logout'}
+                onClick={() => {
+                  logOut()
+                }}
+              >
+                <Icon name='log out' />
+                Выйти
+              </Menu.Item>
+              <Menu.Item
+                name='qr'
+                active={state.activeItem === 'qr'}
+                onClick={() => {
+                  hstr.push('qr')
+                }}
+              >
+                <Icon name='qrcode' />
+                QRCode
+              </Menu.Item>
+            </>
           )}
           <Menu.Item
             name='auth'

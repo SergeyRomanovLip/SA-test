@@ -7,6 +7,7 @@ import { Admin } from './Admin'
 import { ResultItemForPrinting } from '../components/ResultItemForPrinting'
 import { AppContext } from './../context/AppContext'
 import { useContext } from 'react'
+import { QRCodeReader } from './QRCodeReader'
 
 export const Routes = () => {
   const histories = useHistory()
@@ -23,6 +24,9 @@ export const Routes = () => {
         <Route path='/admin/:print?'>
           <Admin />
           <ResultItemForPrinting />
+        </Route>
+        <Route path='/qr'>
+          <QRCodeReader />
         </Route>
         <Route path='/auth'>
           <Auth />

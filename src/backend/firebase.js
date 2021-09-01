@@ -8,7 +8,7 @@ const config = {
   storageBucket: 'sa-test-30d4b.appspot.com',
   messagingSenderId: '155029522773',
   appId: '1:155029522773:web:f87ee3cd2450243b7907dc',
-  measurementId: 'G-HJFX1VE7G8'
+  measurementId: 'G-HJFX1VE7G8',
 }
 firebase.initializeApp(config)
 
@@ -73,7 +73,7 @@ export const addTestResult = async (results, user) => {
       fio: user.fio,
       department: user.department,
       position: user.position,
-      answers: answersArray
+      answers: answersArray,
     })
     .then(() => {
       console.log('Document successfully written!')
@@ -125,7 +125,7 @@ export const uploadNewQuestions = async (user, newQuestions, loadHandl) => {
       .collection('testQuestions')
       .doc(`${uData.company}`)
       .set({
-        data: newQuestions
+        data: newQuestions,
       })
       .then(() => {
         console.log('Document successfully written!')
@@ -173,6 +173,40 @@ export const getData = async (type, company) => {
     const res = await docRef.get()
     if (res.exists) {
       return res.data().data
+    } else {
+      return false
+    }
+  } catch (e) {
+    alert(e)
+  }
+}
+
+export const getUserData = async (auth) => {
+  try {
+    const docRef = db.collection('users').doc(auth.email)
+    const res = await docRef.get()
+    if (res.exists) {
+      return res.data()
+    } else {
+      return false
+    }
+  } catch (e) {
+    alert(e)
+  }
+}
+
+export const getQrData = async (company, code) => {
+  try {
+    const docRef = db.collection('QRCodeBase').doc(company).collection('list')
+    const res = await docRef.get()
+    let matched = null
+    res.forEach((doc) => {
+      if (doc.id === code) {
+        matched = doc.data()
+      }
+    })
+    if (matched) {
+      return matched
     } else {
       return false
     }
