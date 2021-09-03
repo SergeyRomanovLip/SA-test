@@ -36,7 +36,7 @@ export const Toolbar = () => {
                 name='qr'
                 active={state.activeItem === 'qr'}
                 onClick={() => {
-                  hstr.push('qr')
+                  hstr.push('/qr')
                 }}
               >
                 <Icon name='qrcode' />

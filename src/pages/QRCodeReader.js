@@ -3,12 +3,16 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import QrReader from 'react-qr-reader'
 import { getQrData, getUserData } from '../backend/firebase'
 import { AppContext } from '../context/AppContext'
+import { useHistory, useParams } from 'react-router'
+import { QRAdder } from '../components/QRAdder/QRAdder'
 
 const QRReaderApp = () => {
   const { authenticated } = useContext(AppContext)
   const [state, setState] = useState({ delay: 1000, result: false })
   const [checking, setChecking] = useState(false)
   const [legacyModeStat, setLegacyMode] = useState(false)
+
+  const hstr = useHistory()
   const ref = useRef()
   const handleScan = (data) => {
     if (data !== null && !checking) {
@@ -64,43 +68,55 @@ const QRReaderApp = () => {
           legacyMode={legacyModeStat}
         />
       ) : null}
+      <Divider></Divider>
       {state.result && <List>{state.result}</List>}
-      {state.result && (
+      <Button.Group>
+        {state.result && (
+          <Button
+            onClick={() => {
+              setState({ delay: 1000, result: false })
+              setLegacyMode(false)
+            }}
+          >
+            Сбросить
+          </Button>
+        )}
+        {!state.result && legacyModeStat && (
+          <Button
+            onClick={() => {
+              setState({ delay: 1000, result: false })
+              setLegacyMode(false)
+            }}
+          >
+            Сбросить
+          </Button>
+        )}
+        {!legacyModeStat && (
+          <Button
+            onClick={() => {
+              setLegacyMode((prev) => {
+                return prev ? false : true
+              })
+            }}
+          >
+            Загрузить фото
+          </Button>
+        )}
+        <Button.Or />
         <Button
           onClick={() => {
-            setState({ delay: 1000, result: false })
-            setLegacyMode(false)
+            hstr.push('/qr/add')
           }}
         >
-          Сбросить
+          Добавить в базу код
         </Button>
-      )}
-      {!state.result && legacyModeStat && (
-        <Button
-          onClick={() => {
-            setState({ delay: 1000, result: false })
-            setLegacyMode(false)
-          }}
-        >
-          Сбросить
-        </Button>
-      )}
-      {!legacyModeStat && (
-        <Button
-          onClick={() => {
-            setLegacyMode((prev) => {
-              return prev ? false : true
-            })
-          }}
-        >
-          Загрузить фото
-        </Button>
-      )}
+      </Button.Group>
     </Card.Content>
   )
 }
 
 export const QRCodeReader = () => {
+  const para = useParams()
   return (
     <div className='narrowContainer'>
       <Container fluid className='container'>
@@ -108,9 +124,7 @@ export const QRCodeReader = () => {
           <Card.Content>
             <Header as='h2'>Доброе пожаловать в QRCodeReader</Header>
             <Divider></Divider>
-            <List>
-              <QRReaderApp />
-            </List>
+            {para.add ? <QRAdder /> : <QRReaderApp />}
           </Card.Content>
         </Card>
       </Container>

@@ -214,3 +214,19 @@ export const getQrData = async (company, code) => {
     alert(e)
   }
 }
+
+export const uploadNewDataModel = (company, modelDesc, modelName) => {
+  try {
+    const docRef = db
+      .collection('QRCodeBase')
+      .doc(company)
+      .collection('dataModels')
+      .doc(modelName)
+      .set({
+        ...modelDesc,
+      })
+    console.log(docRef)
+  } catch (e) {
+    alert(e)
+  }
+}
