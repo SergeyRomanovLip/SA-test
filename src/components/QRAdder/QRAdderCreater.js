@@ -6,7 +6,7 @@ import { AppContext } from '../../context/AppContext'
 import { generateId } from '../../misc/generateId'
 
 export const QRAdderCreater = () => {
-  const { authenticated } = useContext(AppContext)
+  const { authenticated, setLoading } = useContext(AppContext)
   const para = useParams()
   const hstr = useHistory()
   const [state, setState] = useState({})
@@ -36,6 +36,10 @@ export const QRAdderCreater = () => {
     })
   }
 
+  useEffect(() => {
+    console.log(state)
+  }, [state])
+
   return (
     <List>
       <Input
@@ -49,7 +53,7 @@ export const QRAdderCreater = () => {
           return (
             <List.Item key={index * 25}>
               <Form.Group>
-                <Label circular>{index + 1}</Label>
+                <Label circular>{index}</Label>
                 <Input
                   onChange={(e) => {
                     changeElement(e.currentTarget.value, id, 'nm')
@@ -61,10 +65,12 @@ export const QRAdderCreater = () => {
                   selection
                   onChange={(e, data) => {
                     changeElement(data.value, id, 'tp')
+                    changeElement(index, id, 'index')
                   }}
                   options={[
                     { key: 'text', text: 'Текстовый элемент', value: 'text' },
                     { key: 'date', text: 'Дата', value: 'date' },
+                    { key: 'bool', text: 'да/нет', value: 'bool' },
                   ]}
                 ></Dropdown>
                 <Button
@@ -95,7 +101,11 @@ export const QRAdderCreater = () => {
             })
             status
               ? getUserData(authenticated).then((res) => {
-                  uploadNewDataModel(res.company, state, state.mn)
+                  setLoading(true)
+                  uploadNewDataModel(res.company, state, state.mn).then(() => {
+                    setLoading(false)
+                    hstr.goBack()
+                  })
                 })
               : alert('Заполни все поля которые насоздавал')
           }}

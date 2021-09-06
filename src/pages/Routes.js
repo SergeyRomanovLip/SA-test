@@ -25,7 +25,7 @@ export const Routes = () => {
           <Admin />
           <ResultItemForPrinting />
         </Route>
-        <Route path='/qr/:add?/:create?'>
+        <Route path='/qr/:add?/:create?/:model?'>
           <QRCodeReader />
         </Route>
         <Route path='/auth'>

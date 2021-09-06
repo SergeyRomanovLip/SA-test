@@ -195,6 +195,22 @@ export const getUserData = async (auth) => {
   }
 }
 
+export const uploadNewDataModel = async (company, modelDesc, modelName) => {
+  try {
+    const docRef = await db
+      .collection('QRCodeBase')
+      .doc(company)
+      .collection('dataModels')
+      .doc(modelName)
+      .set({
+        ...modelDesc,
+      })
+    console.log(docRef)
+  } catch (e) {
+    alert(e)
+  }
+}
+
 export const getQrData = async (company, code) => {
   try {
     const docRef = db.collection('QRCodeBase').doc(company).collection('list')
@@ -215,17 +231,34 @@ export const getQrData = async (company, code) => {
   }
 }
 
-export const uploadNewDataModel = (company, modelDesc, modelName) => {
+export const getDataModels = async (company) => {
   try {
-    const docRef = db
-      .collection('QRCodeBase')
-      .doc(company)
-      .collection('dataModels')
-      .doc(modelName)
-      .set({
-        ...modelDesc,
-      })
-    console.log(docRef)
+    const docRef = db.collection('QRCodeBase').doc(company).collection('dataModels')
+    const res = await docRef.get()
+    let array = []
+    res.forEach((doc) => {
+      array.push(doc.data())
+    })
+
+    if (array) {
+      return array
+    } else {
+      return false
+    }
+  } catch (e) {
+    alert(e)
+  }
+}
+
+export const getModelDescription = async (company, mn) => {
+  try {
+    const docRef = db.collection('QRCodeBase').doc(company).collection('dataModels').doc(mn)
+    const res = await docRef.get()
+    if (res) {
+      return res.data()
+    } else {
+      return false
+    }
   } catch (e) {
     alert(e)
   }

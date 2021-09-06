@@ -5,6 +5,7 @@ import { getQrData, getUserData } from '../backend/firebase'
 import { AppContext } from '../context/AppContext'
 import { useHistory, useParams } from 'react-router'
 import { QRAdder } from '../components/QRAdder/QRAdder'
+import { QRUploader } from '../components/QRAdder/QRUploader'
 
 const QRReaderApp = () => {
   const { authenticated } = useContext(AppContext)
@@ -124,7 +125,9 @@ export const QRCodeReader = () => {
           <Card.Content>
             <Header as='h2'>Доброе пожаловать в QRCodeReader</Header>
             <Divider></Divider>
-            {para.add ? <QRAdder /> : <QRReaderApp />}
+            {!para.add && !para.model && <QRReaderApp />}
+            {para.add && !para.model && <QRAdder />}
+            {para.add && para.model && <QRUploader />}
           </Card.Content>
         </Card>
       </Container>
