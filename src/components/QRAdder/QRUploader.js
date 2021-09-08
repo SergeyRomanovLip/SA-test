@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
-import { Button, Divider, List } from 'semantic-ui-react'
+import { Button, Divider, Input, List, Radio } from 'semantic-ui-react'
 import { getDataModels, getModelDescription, getUserData } from '../../backend/firebase'
 import { AppContext } from '../../context/AppContext'
 import { QRAdderCreater } from './QRAdderCreater'
@@ -12,9 +12,20 @@ export const QRUploader = () => {
   const hstr = useHistory()
   const [model, setModel] = useState([])
   const [code, setCode] = useState()
+  const [newModelState, setNemModelState] = useState({})
 
   const handler = (newCode) => {
     setCode(newCode)
+  }
+
+  useEffect(() => {
+    console.log(newModelState)
+  }, [newModelState])
+
+  const changeElement = (value, id) => {
+    setNemModelState((prev) => {
+      return { ...prev, [id]: value }
+    })
   }
 
   useEffect(() => {
@@ -59,12 +70,43 @@ export const QRUploader = () => {
         {model &&
           model.map((el, ind) => {
             if (!el.mn) {
-              return (
-                <List.Item key={ind + 96}>
-                  <p>{el.nm}</p>
-                  <p>{el.tp}</p>
-                </List.Item>
-              )
+              if (el.tp === 'text') {
+                return (
+                  <List.Item key={ind + 96}>
+                    <Input
+                      onChange={(e) => {
+                        changeElement(e.target.value, el.nm)
+                      }}
+                      value={newModelState[el.nm]}
+                      label={el.nm}
+                    />
+                  </List.Item>
+                )
+              } else if (el.tp === 'date') {
+                return (
+                  <List.Item key={ind + 96}>
+                    <Input
+                      onChange={(e) => {
+                        changeElement(e.target.value, el.nm)
+                      }}
+                      type={'date'}
+                      label={el.nm}
+                    />
+                  </List.Item>
+                )
+              } else if (el.tp === 'bool') {
+                return (
+                  <List.Item key={ind + 96}>
+                    <Radio
+                      onChange={(e, data) => {
+                        changeElement(data.checked, el.nm)
+                      }}
+                      toggle
+                      label={el.nm}
+                    />
+                  </List.Item>
+                )
+              }
             }
           })}
       </List>
