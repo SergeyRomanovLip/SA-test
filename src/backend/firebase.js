@@ -211,6 +211,23 @@ export const uploadNewDataModel = async (company, modelDesc, modelName) => {
   }
 }
 
+export const uploadNewDataFromQr = async (company, modelDesc, code, modelName) => {
+  console.log(company, modelDesc, code, modelName)
+  try {
+    const docRef = await db
+      .collection('QRCodeBase')
+      .doc(company)
+      .collection('list')
+      .doc(code)
+      .set({
+        ...modelDesc,
+        mn: modelName,
+      })
+  } catch (e) {
+    alert(e)
+  }
+}
+
 export const getQrData = async (company, code) => {
   try {
     const docRef = db.collection('QRCodeBase').doc(company).collection('list')

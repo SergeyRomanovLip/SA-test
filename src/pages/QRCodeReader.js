@@ -1,4 +1,4 @@
-import { Card, Container, Header, Button, List, Divider } from 'semantic-ui-react'
+import { Card, Container, Header, Button, List, Divider, Input, Radio } from 'semantic-ui-react'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import QrReader from 'react-qr-reader'
 import { getQrData, getUserData } from '../backend/firebase'
@@ -9,7 +9,7 @@ import { QRUploader } from '../components/QRAdder/QRUploader'
 
 const QRReaderApp = () => {
   const { authenticated } = useContext(AppContext)
-  const [state, setState] = useState({ delay: 1000, result: false })
+  const [state, setState] = useState({ delay: 50, result: false })
   const [checking, setChecking] = useState(false)
   const [legacyModeStat, setLegacyMode] = useState(false)
 
@@ -20,7 +20,6 @@ const QRReaderApp = () => {
       setChecking(true)
       getUserData(authenticated).then((res) => {
         getQrData(res.company, data).then((res) => {
-          console.log(res)
           if (res) {
             const domTree = dataParser(res)
             setState({
@@ -37,13 +36,44 @@ const QRReaderApp = () => {
   }
   const dataParser = (obj) => {
     if (typeof obj === 'object') {
-      return Object.keys(obj).map((el, i) => {
-        return (
-          <List.Item key={i}>
-            {el}: {obj[el]}
-          </List.Item>
-        )
+      let sortArray = []
+      Object.keys(obj).forEach((el) => {
+        if (!el.mn) {
+          sortArray.push({ key: el, index: obj[el].index })
+        }
       })
+      sortArray.sort((a, b) => {
+        if (a.index > b.index) {
+          return 1
+        }
+        if (a.index < b.index) {
+          return -1
+        }
+        return 0
+      })
+      let dom = sortArray.map((el, ind) => {
+        if (obj[el.key].tp === 'text') {
+          return (
+            <List.Item key={ind + 96}>
+              <Input value={obj[el.key].value} label={obj[el.key].nm} />
+            </List.Item>
+          )
+        } else if (obj[el.key].tp === 'date') {
+          return (
+            <List.Item key={ind + 96}>
+              <Input value={obj[el.key].value} type={'date'} label={obj[el.key].nm} />
+            </List.Item>
+          )
+        } else if (obj[el.key].tp === 'bool') {
+          return (
+            <List.Item key={ind + 96}>
+              <Radio checked={obj[el.key].value} toggle label={obj[el.key].nm} />
+            </List.Item>
+          )
+        }
+      })
+
+      return dom
     }
   }
   useEffect(() => {

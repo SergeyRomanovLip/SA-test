@@ -24,9 +24,7 @@ export const QRReaderAppAdder = ({ handler }) => {
   }, [legacyModeStat])
 
   useEffect(() => {
-    if (newQrCode.result) {
-      handler(newQrCode.result)
-    }
+    handler(newQrCode.result)
   }, [newQrCode])
   const handleError = (err) => {
     alert(err)

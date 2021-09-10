@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
-import { Button, Divider, Input, List, Radio } from 'semantic-ui-react'
-import { getDataModels, getModelDescription, getUserData } from '../../backend/firebase'
+import { Button, Divider, Input, Label, List, Radio } from 'semantic-ui-react'
+import { getDataModels, getModelDescription, getUserData, uploadNewDataFromQr } from '../../backend/firebase'
 import { AppContext } from '../../context/AppContext'
 import { QRAdderCreater } from './QRAdderCreater'
 import { QRReaderAppAdder } from './QRReaderAppAdder'
@@ -13,20 +13,30 @@ export const QRUploader = () => {
   const [model, setModel] = useState([])
   const [code, setCode] = useState()
   const [newModelState, setNemModelState] = useState({})
+  const [readyToUpload, setReadyToUpload] = useState(false)
+  const [modelName, setModelName] = useState('')
 
   const handler = (newCode) => {
     setCode(newCode)
   }
 
-  useEffect(() => {
-    console.log(newModelState)
-  }, [newModelState])
-
-  const changeElement = (value, id) => {
+  const changeElement = (value, id, obj) => {
     setNemModelState((prev) => {
-      return { ...prev, [id]: value }
+      return { ...prev, [id]: { value, ...obj } }
     })
   }
+
+  useEffect(() => {
+    if (code?.length > 0 && Object.keys(newModelState).length === model.length - 1) {
+      let testArray = []
+      Object.keys(newModelState).forEach((el) => {
+        if (newModelState[el].value === '') {
+          testArray.push('empty')
+        }
+      })
+      testArray.includes('empty') ? setReadyToUpload(false) : setReadyToUpload(true)
+    }
+  }, [newModelState, code])
 
   useEffect(() => {
     if (para.model && authenticated) {
@@ -35,6 +45,7 @@ export const QRUploader = () => {
         getModelDescription(auth.company, para.model).then((res) => {
           if (res) {
             let modelArray = []
+            setModelName(res?.mn)
             Object.keys(res).forEach((el) => {
               if (!res[el].mn) {
                 modelArray.push(res[el])
@@ -49,7 +60,6 @@ export const QRUploader = () => {
               }
               return 0
             })
-            console.log(modelArray)
             setModel(modelArray)
             setLoading(false)
           } else {
@@ -65,8 +75,10 @@ export const QRUploader = () => {
     <>
       <QRReaderAppAdder handler={handler} />
       <Divider></Divider>
-      <p>{code}</p>
       <List>
+        <List.Item>
+          <Label color={code ? 'teal' : 'red'}>{code ? code : 'Отсканируйте код'} </Label>
+        </List.Item>
         {model &&
           model.map((el, ind) => {
             if (!el.mn) {
@@ -75,9 +87,9 @@ export const QRUploader = () => {
                   <List.Item key={ind + 96}>
                     <Input
                       onChange={(e) => {
-                        changeElement(e.target.value, el.nm)
+                        changeElement(e.target.value, el.nm, el)
                       }}
-                      value={newModelState[el.nm]}
+                      value={newModelState[el.nm]?.value !== undefined ? newModelState[el.nm]?.value : ''}
                       label={el.nm}
                     />
                   </List.Item>
@@ -86,8 +98,9 @@ export const QRUploader = () => {
                 return (
                   <List.Item key={ind + 96}>
                     <Input
+                      value={newModelState[el.nm]?.value !== undefined ? newModelState[el.nm]?.value : ''}
                       onChange={(e) => {
-                        changeElement(e.target.value, el.nm)
+                        changeElement(e.target.value, el.nm, el)
                       }}
                       type={'date'}
                       label={el.nm}
@@ -95,11 +108,13 @@ export const QRUploader = () => {
                   </List.Item>
                 )
               } else if (el.tp === 'bool') {
+                !newModelState[el.nm] && changeElement(false, el.nm, el)
                 return (
                   <List.Item key={ind + 96}>
                     <Radio
+                      checked={newModelState[el.nm]?.value}
                       onChange={(e, data) => {
-                        changeElement(data.checked, el.nm)
+                        changeElement(data.checked, el.nm, el)
                       }}
                       toggle
                       label={el.nm}
@@ -112,11 +127,14 @@ export const QRUploader = () => {
       </List>
       <Button.Group>
         <Button
+          disabled={readyToUpload ? false : true}
           onClick={() => {
-            hstr.push('/qr/add/create')
+            getUserData(authenticated).then((data) => {
+              uploadNewDataFromQr(data.company, newModelState, code, modelName)
+            })
           }}
         >
-          Создать модель данных
+          Загрузить новые данные
         </Button>
         <Button.Or></Button.Or>
         <Button
@@ -130,3 +148,4 @@ export const QRUploader = () => {
     </>
   )
 }
+// uploadNewDataFromQr
