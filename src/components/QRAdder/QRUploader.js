@@ -7,7 +7,7 @@ import { QRAdderCreater } from './QRAdderCreater'
 import { QRReaderAppAdder } from './QRReaderAppAdder'
 
 export const QRUploader = () => {
-  const { setLoading, authenticated } = useContext(AppContext)
+  const { setLoading, authenticated, loadingPromiseHandler } = useContext(AppContext)
   const para = useParams()
   const hstr = useHistory()
   const [model, setModel] = useState([])
@@ -20,6 +20,17 @@ export const QRUploader = () => {
     setCode(newCode)
   }
 
+  const uploadHandler = () => {
+    getUserData(authenticated).then((data) => {
+      uploadNewDataFromQr(data.company, newModelState, code, modelName).then((res) => {
+        if (res) {
+          return hstr.goBack()
+        } else {
+          return alert('Что то пошло не так')
+        }
+      })
+    })
+  }
   const changeElement = (value, id, obj) => {
     setNemModelState((prev) => {
       return { ...prev, [id]: { value, ...obj } }
@@ -60,6 +71,7 @@ export const QRUploader = () => {
               }
               return 0
             })
+            console.log(modelArray)
             setModel(modelArray)
             setLoading(false)
           } else {
@@ -129,9 +141,7 @@ export const QRUploader = () => {
         <Button
           disabled={readyToUpload ? false : true}
           onClick={() => {
-            getUserData(authenticated).then((data) => {
-              uploadNewDataFromQr(data.company, newModelState, code, modelName)
-            })
+            loadingPromiseHandler(uploadHandler)
           }}
         >
           Загрузить новые данные

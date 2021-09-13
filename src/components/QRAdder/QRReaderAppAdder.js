@@ -49,7 +49,7 @@ export const QRReaderAppAdder = ({ handler }) => {
         {newQrCode.result && (
           <Button
             onClick={() => {
-              setNewQrCode({ delay: 1000, result: false })
+              setNewQrCode({ delay: 100, result: false })
               setLegacyMode(false)
             }}
           >
@@ -59,7 +59,7 @@ export const QRReaderAppAdder = ({ handler }) => {
         {!newQrCode.result && legacyModeStat && (
           <Button
             onClick={() => {
-              setNewQrCode({ delay: 1000, result: false })
+              setNewQrCode({ delay: 100, result: false })
               setLegacyMode(false)
             }}
           >

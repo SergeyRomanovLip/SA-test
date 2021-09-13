@@ -12,6 +12,7 @@ const QRReaderApp = () => {
   const [state, setState] = useState({ delay: 50, result: false })
   const [checking, setChecking] = useState(false)
   const [legacyModeStat, setLegacyMode] = useState(false)
+  const [qrModelHeader, setQrModelHeader] = useState(false)
 
   const hstr = useHistory()
   const ref = useRef()
@@ -20,6 +21,7 @@ const QRReaderApp = () => {
       setChecking(true)
       getUserData(authenticated).then((res) => {
         getQrData(res.company, data).then((res) => {
+          setQrModelHeader(res.mn)
           if (res) {
             const domTree = dataParser(res)
             setState({
@@ -99,8 +101,13 @@ const QRReaderApp = () => {
           legacyMode={legacyModeStat}
         />
       ) : null}
-      <Divider></Divider>
-      {state.result && <List>{state.result}</List>}
+
+      {state.result && (
+        <>
+          <Card.Header as={'h2'}>{qrModelHeader}</Card.Header>
+          <List>{state.result}</List>
+        </>
+      )}
       <Button.Group>
         {state.result && (
           <Button

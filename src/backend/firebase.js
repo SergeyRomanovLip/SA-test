@@ -223,8 +223,10 @@ export const uploadNewDataFromQr = async (company, modelDesc, code, modelName) =
         ...modelDesc,
         mn: modelName,
       })
+    return true
   } catch (e) {
     alert(e)
+    return false
   }
 }
 

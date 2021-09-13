@@ -41,7 +41,7 @@ export const QRAdder = () => {
               >
                 <List.Icon name='folder' />
                 <List.Content>
-                  <List.Header>{model.mn}</List.Header>
+                  <List.Header as='a'>{model.mn}</List.Header>
                 </List.Content>
               </List.Item>
             )

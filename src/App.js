@@ -27,6 +27,12 @@ export const App = () => {
     setWidth(window.innerWidth)
   }
 
+  const loadingPromiseHandler = async (promis) => {
+    setLoading(true)
+    const result = await promis()
+    setLoading(false)
+  }
+
   useEffect(() => {
     window.addEventListener('resize', resizeHandler)
   }, [window.innerWidth])
@@ -45,6 +51,7 @@ export const App = () => {
         setLoading,
         resultsForPrinting,
         setResultsForPrinting,
+        loadingPromiseHandler,
       }}
     >
       <Router>
