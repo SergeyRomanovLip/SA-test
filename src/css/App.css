@@ -1,3 +1,10 @@
+.narrowRow .row {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 0.3rem !important;
+  padding-top: 0.3rem !important;
+}
+
 .narrowContainer {
   padding: 10px;
   margin: auto;

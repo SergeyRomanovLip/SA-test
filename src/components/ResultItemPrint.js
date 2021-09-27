@@ -1,9 +1,11 @@
-import { List, Accordion, Menu, Divider } from 'semantic-ui-react'
+import { List, Accordion, Menu, Divider, Grid } from 'semantic-ui-react'
 import { useEffect, useState } from 'react'
 import { generateId } from '../misc/generateId'
 import { ComissionComponent } from './ComissionComponent'
+import QRCode from 'react-qr-code'
 
 export const ResultItemPrint = ({ forComission, res, i }) => {
+  console.log(res?.dateId?.substr(8, 5))
   const [rightAnswers, setRightAnswers] = useState(0)
   const [commission, setComission] = useState([])
   useEffect(() => {
@@ -56,41 +58,76 @@ export const ResultItemPrint = ({ forComission, res, i }) => {
   return (
     <List className='applicant-break' key={i + 42} divided>
       <List.Content>
-        <h1 style={{ textAlign: 'center', margin: 5 }}>Протокол проверки знаний {generateId()}</h1>
-        <h2 style={{ textAlign: 'center', margin: 5 }}>по направлению "{res.course}"</h2>
-        <List.Header style={{ marginTop: 30, marginBottom: 5 }} as='h4'>
-          ФИО: <p></p>
-        </List.Header>
-        <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='p'>
-          {res.fio}
-        </List.Header>
-        <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='h4'>
-          Дата проверки:
-        </List.Header>
-        <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='p'>
-          {new Date(res.dateId.split('_')[0] * 1).toLocaleDateString()}
-        </List.Header>
-        <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='h4'>
-          Время проверки:
-          <List>
-            {commission.map((el) => {
-              return el.m ? (
-                <List.Item>
-                  <List.Header>{el.m}</List.Header>
-                  <List.Description>{el.mp}</List.Description>
-                </List.Item>
-              ) : null
-            })}
-          </List>
-        </List.Header>
-        <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='p'>
-          {new Date(res.dateId.split('_')[0] * 1).toLocaleTimeString()}
-        </List.Header>
-        <List.Description as='p'>{` Правильных ответов: ${rightAnswers} из ${res.answers.length}`}</List.Description>
-        <List.Description as='p'>{``}</List.Description>
+        <Grid columns={2}>
+          <Grid.Row>
+            <Grid.Column width={12}>
+              <h2 style={{ textAlign: 'left', margin: 5 }}>Протокол проверки знаний № {res?.dateId?.substr(8, 5)}</h2>
+              <h3 style={{ textAlign: 'left', margin: 5 }}>по направлению "{res.course}"</h3>
+            </Grid.Column>
+            <Grid.Column textAlign={'right'} width={4}>
+              <QRCode size={96} value={res?.dateId} />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <Divider />
+        <Grid columns={2}>
+          <Grid.Row className='narrowRow'>
+            <Grid.Column width={7}>
+              <Grid columns={2}>
+                <Grid.Row>
+                  <Grid.Column width={16}>
+                    <b>Данные проверяемого:</b>
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column>
+                    <b>ФИО:</b>
+                  </Grid.Column>
+                  <Grid.Column>{res.fio}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column>
+                    <b>Дата проверки:</b>
+                  </Grid.Column>
+                  <Grid.Column>{new Date(res.dateId.split('_')[0] * 1).toLocaleDateString()}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column>
+                    <b>Время проверки:</b>
+                  </Grid.Column>
+                  <Grid.Column>{new Date(res.dateId.split('_')[0] * 1).toLocaleTimeString()}</Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+            <Grid.Column width={9}>
+              <Grid columns={2}>
+                <Grid.Row>
+                  <Grid.Column width={16}>
+                    <b>Комиссия:</b>
+                  </Grid.Column>
+                </Grid.Row>
+                {commission.map((el) => {
+                  return el.m ? (
+                    <Grid.Row>
+                      <Grid.Column width={12}>
+                        <List.Header>{el.m}</List.Header>
+                        <List.Description>{el.mp}</List.Description>
+                      </Grid.Column>
+                      <Grid.Column width={4} textAlign={'center'}>
+                        <small style={{ color: 'gray' }}>подпись</small>
+                      </Grid.Column>
+                    </Grid.Row>
+                  ) : null
+                })}
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+
         <ComissionComponent data={res} />
         <Divider></Divider>
-        <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='h2'>
+        <List.Description as='p'>{` Правильных ответов: ${rightAnswers} из ${res.answers.length}`}</List.Description>
+        <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='h3'>
           Результаты проверки знаний
         </List.Header>
         <List divided relaxed>
