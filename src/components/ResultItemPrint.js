@@ -91,12 +91,12 @@ export const ResultItemPrint = ({ forComission, res, i }) => {
                   </Grid.Column>
                   <Grid.Column>{new Date(res.dateId.split('_')[0] * 1).toLocaleDateString()}</Grid.Column>
                 </Grid.Row>
-                <Grid.Row>
+                {/* <Grid.Row>
                   <Grid.Column>
                     <b>Время проверки:</b>
                   </Grid.Column>
                   <Grid.Column>{new Date(res.dateId.split('_')[0] * 1).toLocaleTimeString()}</Grid.Column>
-                </Grid.Row>
+                </Grid.Row> */}
               </Grid>
             </Grid.Column>
             <Grid.Column width={9}>
