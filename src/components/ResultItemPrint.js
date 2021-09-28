@@ -1,4 +1,4 @@
-import { List, Accordion, Menu, Divider, Grid } from 'semantic-ui-react'
+import { List, Accordion, Menu, Divider, Grid, Icon, Card, Segment, Header } from 'semantic-ui-react'
 import { useEffect, useState } from 'react'
 import { generateId } from '../misc/generateId'
 import { ComissionComponent } from './ComissionComponent'
@@ -91,12 +91,26 @@ export const ResultItemPrint = ({ forComission, res, i }) => {
                   </Grid.Column>
                   <Grid.Column>{new Date(res.dateId.split('_')[0] * 1).toLocaleDateString()}</Grid.Column>
                 </Grid.Row>
-                {/* <Grid.Row>
-                  <Grid.Column>
-                    <b>Время проверки:</b>
+
+                <Grid.Row>
+                  <Grid.Column width={16} textAlign={'center'}>
+                    <Segment
+                      style={{ margin: 10, padding: 5 }}
+                      color={rightAnswers / res.answers.length > 0.7 ? 'green' : 'red'}
+                      size={'small'}
+                    >
+                      <p>
+                        <Icon
+                          size={'large'}
+                          name={rightAnswers / res.answers.length > 0.7 ? 'check circle outline' : 'dont'}
+                          color={rightAnswers / res.answers.length > 0.7 ? 'green' : 'red'}
+                        />
+                        {rightAnswers / res.answers.length > 0.7 ? 'Сдано' : 'Не сдано'}
+                        {`, правильных ответов: ${rightAnswers} из ${res.answers.length}`}
+                      </p>
+                    </Segment>
                   </Grid.Column>
-                  <Grid.Column>{new Date(res.dateId.split('_')[0] * 1).toLocaleTimeString()}</Grid.Column>
-                </Grid.Row> */}
+                </Grid.Row>
               </Grid>
             </Grid.Column>
             <Grid.Column width={9}>
@@ -126,7 +140,7 @@ export const ResultItemPrint = ({ forComission, res, i }) => {
 
         <ComissionComponent data={res} />
         <Divider></Divider>
-        <List.Description as='p'>{` Правильных ответов: ${rightAnswers} из ${res.answers.length}`}</List.Description>
+
         <List.Header style={{ marginTop: 5, marginBottom: 5 }} as='h3'>
           Результаты проверки знаний
         </List.Header>
