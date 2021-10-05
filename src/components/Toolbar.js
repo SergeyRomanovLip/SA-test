@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import { Icon, Menu, Sticky, Divider, Button } from 'semantic-ui-react'
 import { logOut } from '../backend/firebase'
 import { AppContext } from '../context/AppContext'
+import { generateDBPHP, uploadNewQuestionsPHP } from './../backend/php'
 
 export const Toolbar = () => {
   const { width } = useContext(AppContext)
@@ -88,6 +89,15 @@ export const Toolbar = () => {
                 При возникновении проблем писать в WhatsApp &nbsp;<a href='tel:+7-962-351-80-86'>+7 (962) 351-80-86 </a>
               </>
             )}
+          </Menu.Item>
+          <Menu.Item>
+            <Button
+              onClick={() => {
+                generateDBPHP()
+              }}
+            >
+              Try
+            </Button>
           </Menu.Item>
         </Menu>
       </Sticky>
