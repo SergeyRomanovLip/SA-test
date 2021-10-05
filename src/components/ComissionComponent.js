@@ -5,5 +5,6 @@ import { getData, getUserData } from '../backend/firebase'
 import { AppContext } from '../context/AppContext'
 
 export const ComissionComponent = (res) => {
+  console.log('ds')
   return null
 }
