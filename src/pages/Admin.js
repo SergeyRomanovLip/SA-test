@@ -2,11 +2,12 @@ import { useContext, useEffect, useState } from 'react'
 import { AppContext } from './../context/AppContext'
 import { SignIn } from './../adminAuth/SignIn'
 import { SignUp } from './../adminAuth/SignUp'
-import { Container, Card, Grid, Form, Segment, Dimmer, Loader, Image } from 'semantic-ui-react'
+import { Container, Card, Grid, Form, Segment, Dimmer, Loader, Image, Button } from 'semantic-ui-react'
 import { TestResults } from './TestResults'
 import { ExcelUploadQuest } from '../components/ExcelUploadQuest'
 import { ExcelUploadEmployees } from '../components/ExcelUploadEmployees'
 import { useParams } from 'react-router-dom'
+import { generateDBPHP } from '../backend/php'
 
 export const Admin = () => {
   const [loading, setLoading] = useState(false)
@@ -43,6 +44,7 @@ export const Admin = () => {
               ) : (
                 <ExcelUploadQuest loadingHandler={loadingHandler} />
               )}
+
               {loading ? (
                 <Segment>
                   <Dimmer active>
@@ -52,6 +54,24 @@ export const Admin = () => {
                 </Segment>
               ) : (
                 <ExcelUploadEmployees loadingHandler={loadingHandler} />
+              )}
+              {loading ? (
+                <Segment>
+                  <Dimmer active>
+                    <Loader indeterminate>Preparing Files</Loader>
+                  </Dimmer>
+                  <Image src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
+                </Segment>
+              ) : (
+                <Button
+                  onClick={() => {
+                    generateDBPHP().then((res) => {
+                      alert(res)
+                    })
+                  }}
+                >
+                  Создать/проверить базы данных на сервере
+                </Button>
               )}
             </Form>
           </Grid.Column>

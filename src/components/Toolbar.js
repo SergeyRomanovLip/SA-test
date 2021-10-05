@@ -90,15 +90,6 @@ export const Toolbar = () => {
               </>
             )}
           </Menu.Item>
-          <Menu.Item>
-            <Button
-              onClick={() => {
-                generateDBPHP()
-              }}
-            >
-              Try
-            </Button>
-          </Menu.Item>
         </Menu>
       </Sticky>
       {width < 901 && (

@@ -1,6 +1,7 @@
 import { useContext, useRef, useState } from 'react'
 import { Button } from 'semantic-ui-react'
 import { uploadNewQuestions } from '../backend/firebase'
+import { uploadNewQuestionsPHP } from '../backend/php'
 import { AppContext } from '../context/AppContext'
 
 export const ExcelUploadQuest = ({ loadingHandler }) => {
@@ -82,7 +83,8 @@ export const ExcelUploadQuest = ({ loadingHandler }) => {
       {dataFromExcel.length > 0 && (
         <Button
           onClick={() => {
-            uploadNewQuestions(authenticated, dataFromExcel, loadingHandler)
+            // uploadNewQuestions(authenticated, dataFromExcel, loadingHandler)
+            uploadNewQuestionsPHP(authenticated, dataFromExcel, loadingHandler)
           }}
         >
           Загрузить вопросы?
