@@ -83,8 +83,8 @@ export const ExcelUploadQuest = ({ loadingHandler }) => {
       {dataFromExcel.length > 0 && (
         <Button
           onClick={() => {
-            // uploadNewQuestions(authenticated, dataFromExcel, loadingHandler)
-            uploadNewQuestionsPHP(authenticated, dataFromExcel, loadingHandler)
+            uploadNewQuestions(authenticated, dataFromExcel, loadingHandler)
+            // uploadNewQuestionsPHP(authenticated, dataFromExcel, loadingHandler)
           }}
         >
           Загрузить вопросы?
