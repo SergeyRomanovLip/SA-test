@@ -45,7 +45,10 @@ router.post('/login', async (req, res) => {
       company: user.company,
       position: user.position
     })
-  } catch (e) {}
+  } catch (e) {
+    res.status(500).json({ message: e })
+    console.error(e)
+  }
 })
 
 module.exports = router
