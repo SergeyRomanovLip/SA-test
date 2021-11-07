@@ -7,6 +7,7 @@ import { useRoutes } from './hooks/routes.hook'
 import { Toolbar } from './components/Toolbar'
 import { Confirmation } from './components/Confirmation'
 import { Preloader } from './components/Preloader'
+import { Container } from 'semantic-ui-react'
 
 export const App = () => {
   const { token, login, logout, userId, userType, userData } = useAuth()

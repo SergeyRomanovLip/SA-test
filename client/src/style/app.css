@@ -7,6 +7,11 @@
 body {
   background-color: rgba(240, 240, 240);
 }
+
+#root {
+  width: 100vw !important;
+}
+
 .narrowFormField {
   margin: 0px !important;
 }
@@ -16,7 +21,7 @@ body {
 }
 
 .field {
-  margin: 0 !important;
+  margin: 2px !important;
 }
 
 .ui.form {
@@ -24,6 +29,9 @@ body {
 }
 
 .seven.fields {
+  margin: 0 !important;
+}
+.five.fields {
   margin: 0 !important;
 }
 
@@ -34,6 +42,7 @@ body {
 }
 
 .ui.horizontal.segments.headers {
+  margin-top: 3px;
   margin-bottom: 0;
   margin-left: 1rem;
   margin-right: 1.7rem;
@@ -43,4 +52,7 @@ body {
   padding-bottom: 2px !important;
   margin-top: 2px !important;
   margin-bottom: 2px !important;
+}
+.ui.orange.button.addOrder {
+  padding: 5px;
 }

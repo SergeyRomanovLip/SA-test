@@ -22,10 +22,12 @@ export const Filter = ({ requestFoo, setterForValue, field, array, placeholder }
   }
 
   return (
-    <>
+    <div style={{ width: 150 + 'px', display: 'flex', flexDirection: 'row' }}>
       <Dropdown
+        style={{}}
         placeholder={placeholder}
         selection
+        fluid
         value={dropDownValue || ''}
         onFocus={() => {
           dropDownDataHandler()
@@ -43,6 +45,6 @@ export const Filter = ({ requestFoo, setterForValue, field, array, placeholder }
         size='tiny'
         icon='remove'
       />
-    </>
+    </div>
   )
 }

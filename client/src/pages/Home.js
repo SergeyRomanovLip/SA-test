@@ -86,11 +86,12 @@ export const Home = (flags) => {
   return (
     // <Container>
     <>
-      <Grid columns={windowDemensions.width < 768 ? 1 : 6} divided verticalAlign='middle'>
-        <Grid.Row className='main'>
-          <Grid.Column width='two'>
+      <Form style={{ maxWidth: 800 + 'px' }}>
+        <Form.Group widths='5'>
+          <Form.Field>
             {userType === 'logisticks' ? (
               <Button
+                className='addOrder'
                 color='orange'
                 onClick={() => {
                   setopenCreateOrderModal((prev) => {
@@ -101,8 +102,8 @@ export const Home = (flags) => {
                 Добавить новую заявку
               </Button>
             ) : null}
-          </Grid.Column>
-          <Grid.Column width='three'>
+          </Form.Field>
+          <Form.Field>
             <Filter
               requestFoo={() => {
                 return dataRequest('farmers')
@@ -111,8 +112,8 @@ export const Home = (flags) => {
               setterForValue={filtersHandler}
               placeholder={'фермер'}
             />
-          </Grid.Column>
-          <Grid.Column>
+          </Form.Field>
+          <Form.Field>
             <Filter
               array={requestedData?.orders
                 ?.map((e) => {
@@ -138,8 +139,8 @@ export const Home = (flags) => {
               setterForValue={filtersHandler}
               placeholder={'статус'}
             />
-          </Grid.Column>
-          <Grid.Column>
+          </Form.Field>
+          <Form.Field>
             <Checkbox
               onChange={(e, data) => {
                 radioFilterHandler(data.checked, 'finished')
@@ -147,8 +148,8 @@ export const Home = (flags) => {
               label='Показывать завершенные'
               toggle
             ></Checkbox>
-          </Grid.Column>
-          <Grid.Column>
+          </Form.Field>
+          <Form.Field>
             <Checkbox
               onChange={(e, data) => {
                 radioFilterHandler(data.checked, 'canceled')
@@ -156,18 +157,9 @@ export const Home = (flags) => {
               label='Показывать отклоненные'
               toggle
             ></Checkbox>
-          </Grid.Column>
-          <Grid.Column>
-            <Card styleElement={{ marginTop: '70px' }}>
-              <Card.Content>
-                <Image floated='right' size='mini' src={userData?.avt || '/avatarph.png'} />
-                <p>{userData?.fname || <Loader active inline />}</p>
-                {userType && <b>{userType === 'logisticks' ? 'Терминал логистики' : 'Терминал фермера'}</b>}
-              </Card.Content>
-            </Card>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+          </Form.Field>
+        </Form.Group>
+      </Form>
 
       <Loader inverted active={loading} />
       <OrderViewport
@@ -181,6 +173,5 @@ export const Home = (flags) => {
         setopenCreateOrderModal={setopenCreateOrderModal}
       />
     </>
-    // </Container>
   )
 }
