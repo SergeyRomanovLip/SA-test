@@ -27,11 +27,9 @@ router.post('/create', auth, async (req, res) => {
     if (!user.type === 'logistiks') {
       return res.status(500).json({ message: 'Что то пошло не так' })
     }
-
     res.status(201).json({ message: 'Данные о пользователе получены', data: { user } })
   } catch (e) {
     res.status(500).json({ message: e })
-    console.error(e)
   }
 })
 
@@ -41,7 +39,6 @@ router.post('/farmers', auth, async (req, res) => {
     res.json(allFarmers)
   } catch (e) {
     res.status(500).json({ message: e })
-    console.error(e)
   }
 })
 
@@ -51,14 +48,12 @@ router.post('/potatoes', auth, async (req, res) => {
     res.json(allPotatoes)
   } catch (e) {
     res.status(500).json({ message: e })
-    console.error(e)
   }
 })
 
 router.post('/orders', auth, async (req, res) => {
   try {
     let allOrders = await Order.find().populate(['potatoes', 'farm', 'uid'])
-
     allOrders = allOrders.map((el) => {
       return {
         _id: el._id,
@@ -78,7 +73,6 @@ router.post('/orders', auth, async (req, res) => {
     res.json(allOrders)
   } catch (e) {
     res.status(500).json({ message: e })
-    console.error(e)
   }
 })
 
@@ -89,12 +83,11 @@ router.post('/addpot', auth, async (req, res) => {
     if (!candidate) {
       const potato = new Potatoe({ title })
       await potato.save()
-      res.status(201).json({ message: 'Новая номенклатура добавлена' })
+      return res.status(201).json({ message: 'Новая номенклатура добавлена' })
     }
     res.status(500).json({ message: 'Такая номенклатура уже есть' })
   } catch (e) {
     res.status(500).json({ message: e })
-    console.error(e)
   }
 })
 
@@ -115,9 +108,8 @@ router.post('/addorder', auth, async (req, res) => {
         quantity: quantity
       })
       await order.save()
-      res.status(201).json({ message: 'Новый заказ сделан' })
+      return res.status(201).json({ message: 'Новый заказ сделан' })
     }
-    res.status(500).json({ message: 'ERROR ERROR' })
   } catch (e) {
     res.status(500).json({ message: e })
     console.error(e)
@@ -131,9 +123,8 @@ router.post('/addcartoorder', auth, async (req, res) => {
     if ((_id, car)) {
       const order = await Order.findOneAndUpdate({ _id }, { car, state: 'car_defined' }, { new: true })
       await order.save()
-      res.status(201).json({ message: 'Заявка обновлена, автомобиль добавлен' })
+      return res.status(201).json({ message: 'Заявка обновлена, автомобиль добавлен' })
     }
-    res.status(500).json({ message: 'ERROR ERROR' })
   } catch (e) {
     res.status(500).json({ message: e })
     console.error(e)
@@ -147,9 +138,8 @@ router.post('/cancelorder', auth, async (req, res) => {
     if (_id) {
       const order = await Order.findOneAndUpdate({ _id }, { state: 'canceled' }, { new: true })
       await order.save()
-      res.status(201).json({ message: 'Заявка отменена' })
+      return res.status(201).json({ message: 'Заявка отменена' })
     }
-    res.status(500).json({ message: 'ERROR ERROR' })
   } catch (e) {
     res.status(500).json({ message: e })
     console.error(e)
@@ -163,9 +153,8 @@ router.post('/orderloaded', auth, async (req, res) => {
     if (_id) {
       const order = await Order.findOneAndUpdate({ _id }, { state: 'loaded', loadedDate: Date.now() }, { new: true })
       await order.save()
-      res.status(201).json({ message: 'Машина загружена' })
+      return res.status(201).json({ message: 'Машина загружена' })
     }
-    res.status(500).json({ message: 'ERROR ERROR' })
   } catch (e) {
     res.status(500).json({ message: e })
     console.error(e)
@@ -178,9 +167,8 @@ router.post('/orderfinish', auth, async (req, res) => {
     if (_id) {
       const order = await Order.findOneAndUpdate({ _id }, { state: 'finished', finishDate: Date.now() }, { new: true })
       await order.save()
-      res.status(201).json({ message: 'Заявка закрыта' })
+      return res.status(201).json({ message: 'Заявка закрыта' })
     }
-    res.status(500).json({ message: 'ERROR ERROR' })
   } catch (e) {
     res.status(500).json({ message: e })
     console.error(e)
