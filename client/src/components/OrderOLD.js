@@ -1,10 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Divider, Form, Input, Item, Label, Loader, Modal, Segment, Header, Visibility } from 'semantic-ui-react'
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Item,
+  Label,
+  Loader,
+  Modal,
+  Segment,
+  Header,
+  Visibility,
+} from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { ConfirmCtx } from '../context/ConfirmCtx'
 import { useHttp } from '../hooks/http.hook'
 
-export const Order = ({ e, updateOrders, windowDemensions }) => {
+export const Order = ({ e, updateOrders, windWidth }) => {
   const [choosen, setChoosen] = useState(false)
   const { token, userId, userType } = useContext(AuthCtx)
   const { loading, error, request } = useHttp()
@@ -41,7 +53,7 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
       'POST',
       { _id: e._id, car: addCarData.number },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     ).then(() => {
       updateOrders()
@@ -55,7 +67,7 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         }
       ).then(() => {
         updateOrders()
@@ -70,7 +82,7 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         }
       ).then(() => {
         updateOrders()
@@ -85,7 +97,7 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         }
       ).then(() => {
         updateOrders()
@@ -108,7 +120,7 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
           style={{
             backgroundColor: e.state === 'canceled' ? 'rgba(200,200,200)' : 'rgba(245,245,245)',
             paddingTop: 5 + 'px',
-            paddingBottom: 5 + 'px'
+            paddingBottom: 5 + 'px',
           }}
         >
           <Form>
@@ -129,25 +141,25 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
                 </Label>
               </Form.Field>
               <Form.Field>
-                {windowDemensions.width < 768 && <Label>Дата доставки</Label>}
+                {windWidth < 768 && <Label>Дата доставки</Label>}
                 <Input labelPosition='left' value={new Date(e.deliverDate).toLocaleDateString()}>
                   <input></input>
                 </Input>
               </Form.Field>
               <Form.Field>
-                {windowDemensions.width < 768 && <Label>Сорт</Label>}
+                {windWidth < 768 && <Label>Сорт</Label>}
                 <Input fluid labelPosition='left' value={e.potatoes?.title}>
                   <input></input>
                 </Input>
               </Form.Field>
               <Form.Field>
-                {windowDemensions.width < 768 && <Label>Количество</Label>}
+                {windWidth < 768 && <Label>Количество</Label>}
                 <Input labelPosition='left' value={e?.quantity}>
                   <input></input>
                 </Input>
               </Form.Field>
               <Form.Field>
-                {windowDemensions.width < 768 && <Label>Контрагент</Label>}
+                {windWidth < 768 && <Label>Контрагент</Label>}
                 <Input labelPosition='left' value={e.farm?.company}>
                   <input></input>
                 </Input>
@@ -155,7 +167,7 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
 
               {e?.car && (
                 <Form.Field>
-                  {windowDemensions.width < 768 && <Label>Автомобиль</Label>}
+                  {windWidth < 768 && <Label>Автомобиль</Label>}
                   <Input fluid labelPosition='left' value={e?.car}>
                     <input></input>
                   </Input>
@@ -163,10 +175,12 @@ export const Order = ({ e, updateOrders, windowDemensions }) => {
               )}
               {e.state === 'loaded' && (
                 <Form.Field>
-                  {windowDemensions.width < 768 && <Label>Дата загрузки </Label>}
+                  {windWidth < 768 && <Label>Дата загрузки </Label>}
                   <Input
                     labelPosition='left'
-                    value={new Date(e.loadedDate).toLocaleDateString() + ', ' + new Date(e.loadedDate).toLocaleTimeString()}
+                    value={
+                      new Date(e.loadedDate).toLocaleDateString() + ', ' + new Date(e.loadedDate).toLocaleTimeString()
+                    }
                   >
                     <input></input>
                   </Input>

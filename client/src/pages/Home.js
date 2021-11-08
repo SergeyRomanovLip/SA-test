@@ -1,33 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Card, Checkbox, Divider, Form, Grid, GridColumn, GridRow, Image, Label, Loader, Segment } from 'semantic-ui-react'
+import { Button, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { useHttp } from './../hooks/http.hook'
 
 import { OrderViewport } from '../components/OrderViewport'
 import { Filter } from '../components/Filter'
 import { uniqVal } from './../utils/uniqVal'
+import { useDimensions } from '../hooks/screen.hook'
+import { MessageCtx } from '../context/MessageCtx'
 
 export const Home = (flags) => {
-  const [windowDemensions, setWindowDimensions] = useState({ width: 1000 })
-  function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window
-    return {
-      width,
-      height
-    }
-  }
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions())
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
   const { userId, token, userType, userData } = useContext(AuthCtx)
+  const { messageHandler } = useContext(MessageCtx)
   const { loading, request } = useHttp()
-
+  const { windWidth } = useDimensions()
   const [openCreateOrderModal, setopenCreateOrderModal] = useState(false)
 
   const [filters, setFilters] = useState({ state: ['created', 'car_defined', 'loaded'] })
@@ -69,7 +55,7 @@ export const Home = (flags) => {
       'POST',
       { userId },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     setRequestedData((prev) => {
@@ -81,6 +67,26 @@ export const Home = (flags) => {
 
   useEffect(() => {
     dataRequest('orders')
+  }, [])
+
+  useEffect(() => {
+    const sse = new EventSource('http://localhost:5000/sseupdate', {})
+    function getRealtimeData({ data }) {
+      const resp = JSON.parse(data)
+      if (resp.message) {
+        console.log(resp)
+        messageHandler(resp.message, 'success')
+        dataRequest('orders')
+      }
+    }
+    sse.onmessage = (e) => getRealtimeData(e)
+    sse.onerror = (e) => {
+      console.log(e || 'Что то пошло не так')
+      sse.close()
+    }
+    return () => {
+      sse.close()
+    }
   }, [])
 
   return (
@@ -163,7 +169,7 @@ export const Home = (flags) => {
 
       <Loader inverted active={loading} />
       <OrderViewport
-        windowDemensions={windowDemensions}
+        windowDemensions={windWidth}
         filters={filters}
         orders={requestedData?.orders}
         update={() => {

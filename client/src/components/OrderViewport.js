@@ -6,7 +6,14 @@ import { MessageCtx } from './../context/MessageCtx'
 import { useHistory } from 'react-router'
 import { Order } from './OrderOLD'
 
-export const OrderViewport = ({ windowDemensions, filters, orders, update, openCreateOrderModal, setopenCreateOrderModal }) => {
+export const OrderViewport = ({
+  windWidth,
+  filters,
+  orders,
+  update,
+  openCreateOrderModal,
+  setopenCreateOrderModal,
+}) => {
   const hstr = useHistory()
   const { token, userId, userType } = useContext(AuthCtx)
   const { messageHandler } = useContext(MessageCtx)
@@ -19,7 +26,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
       'POST',
       { userId },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     setRequestedData((prev) => {
@@ -41,7 +48,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
       'POST',
       { ...addOrderData, uid: userId },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     ).then(() => {
       update()
@@ -60,7 +67,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
       'POST',
       { ...addPotData },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     ).then(() => {
       dataRequest('potatoes')
@@ -121,7 +128,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
                             </p>
                           </>
                         ),
-                        value: e._id
+                        value: e._id,
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -142,7 +149,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
                       return {
                         key: e._id,
                         text: e.title,
-                        value: e._id
+                        value: e._id,
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -181,7 +188,14 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
               labelPosition='right'
               icon='close'
             ></Button>
-            <Button content='Подтвердить' color='teal' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewOrder()} />
+            <Button
+              content='Подтвердить'
+              color='teal'
+              loading={loading}
+              labelPosition='right'
+              icon='checkmark'
+              onClick={() => addNewOrder()}
+            />
           </Modal.Actions>
         </Modal>
       ) : null}
@@ -214,9 +228,9 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
           </Form>
           <Header>Существующая номенклатура</Header>
           <List>
-            {requestedData?.potatoes?.map((e) => {
+            {requestedData?.potatoes?.map((e, i) => {
               return (
-                <List.Item>
+                <List.Item key={i + 'potatoes'}>
                   <List.Icon name='point' />
                   <List.Content>{e.title}</List.Content>
                 </List.Item>
@@ -235,7 +249,14 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
             labelPosition='right'
             icon='close'
           ></Button>
-          <Button content='Подтвердить' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewPot()} positive />
+          <Button
+            content='Подтвердить'
+            loading={loading}
+            labelPosition='right'
+            icon='checkmark'
+            onClick={() => addNewPot()}
+            positive
+          />
         </Modal.Actions>
       </Modal>
       <Segment.Group horizontal className={'headers'}>
@@ -243,10 +264,10 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
           style={{
             backgroundColor: 'rgba(245,245,245)',
             paddingTop: 5 + 'px',
-            paddingBottom: 5 + 'px'
+            paddingBottom: 5 + 'px',
           }}
         >
-          {windowDemensions.width > 767 && (
+          {windWidth > 767 && (
             <Form>
               <Form.Group widths='7'>
                 <Form.Field>
@@ -288,7 +309,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
             // if (filters?.state && e.state !== filters.state) {
             //   return
             // }
-            return <Order key={i + 'order'} e={e} updateOrders={update} windowDemensions={windowDemensions} />
+            return <Order key={i + 'order'} e={e} updateOrders={update} windWidth={windWidth} />
           })}
         </Item.Group>
       </Segment>
