@@ -21,8 +21,13 @@ function eventsHandler(request, response, next) {
   }
   clients.push(newClient)
   console.log(newClient.id + ' Connection opened')
+ 
+  let interval= setInterval(()=>{ 
+  console.log(`User id ${clientId} got an keep alive message`)
+  response.write("data: keep-alive\n\n")},10000)
   request.on('close', () => {
     console.log(`${clientId} Connection closed`)
+    clearInterval(interval)
     clients = clients.filter((client) => client.id !== clientId)
   })
 }
