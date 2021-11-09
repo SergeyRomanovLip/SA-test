@@ -1,4 +1,3 @@
-
 import React, { useContext, useEffect, useState } from 'react'
 import { Button, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
@@ -20,6 +19,7 @@ export const Home = () => {
 
   const [filters, setFilters] = useState({
     state: JSON.parse(localStorage.getItem(storageName))?.state || ['created', 'car_defined', 'loaded'],
+    company: JSON.parse(localStorage.getItem(storageName))?.company || []
   })
   const filtersHandler = (e, type) => {
     if (type === 'state' && e === null) {
@@ -30,16 +30,30 @@ export const Home = () => {
       setFilters((prev) => {
         return { ...prev, [type]: [e] }
       })
-    } else {
+    } else if (type === 'company' && e === null) {
       setFilters((prev) => {
-        return { ...prev, [type]: e }
+        return { ...prev, [type]: requestedData?.farmers.map((e) => e._id) }
+      })
+    } else if (type === 'company' && e !== null) {
+      setFilters((prev) => {
+        return { ...prev, [type]: [e] }
       })
     }
   }
-
   useEffect(() => {
-    dataRequest('orders', filters)
-    localStorage.setItem(storageName, JSON.stringify(filters))
+    dataRequest('farmers').then((res) => {
+      if (filters?.company?.length < 1) {
+        setFilters((prev) => {
+          return { ...prev, company: res.map((e) => e._id) }
+        })
+      }
+    })
+  }, [])
+  useEffect(() => {
+    if (filters.state && filters.company) {
+      dataRequest('orders', filters)
+      localStorage.setItem(storageName, JSON.stringify(filters))
+    }
   }, [filters])
 
   const radioFilterHandler = (e, type) => {
@@ -62,7 +76,7 @@ export const Home = () => {
       'POST',
       { userId, options },
       {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       }
     )
     setRequestedData((prev) => {
@@ -71,34 +85,38 @@ export const Home = () => {
     return res
   }
 
-  useEffect(() => {
-    dataRequest('orders', filters)
-  }, [])
+  const getRealtimeData = ({ data }) => {
+    const resp = JSON.parse(data)
+    if (resp.message) {
+      messageHandler(resp.message, 'success')
+    }
+    if (resp.update) {
+      dataRequest(resp.update, filters)
+    }
+  }
+  const getErrorFromSse = (e) => {
+    messageHandler('Соединение прервано, нажмите F5', 'error')
+    console.log('Подключение потеряно')
+  }
 
   useEffect(() => {
-    const sse = new EventSource('/sseupdate', {})
-    function getRealtimeData({ data }) {
-      const resp = JSON.parse(data)
-      if (resp.message) {
-        messageHandler(resp.message, 'success')
-        dataRequest('orders', filters)
+    if (userId) {
+      const sse = new EventSource(
+        `http://localhost:5000/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}`,
+        {}
+      )
+      sse.addEventListener('message', getRealtimeData)
+      sse.addEventListener('error', getErrorFromSse)
+      return () => {
+        sse.removeEventListener('message', getRealtimeData)
+        sse.removeEventListener('error', getErrorFromSse)
       }
     }
-    sse.onmessage = (e) => getRealtimeData(e)
-    sse.onerror = (e) => {
-      messageHandler('Соединение прервано, нажмите F5', 'error')
-      console.log(e || 'Что то пошло не так')
-      sse.close()
-    }
-    return () => {
-      sse.close()
-    }
-  }, [])
+  }, [userId])
 
   return (
-    // <Container>
     <>
-      <Form style={{ maxWidth: 800 + 'px' }}>
+      <Form style={{ maxWidth: 100 + 'vw' }}>
         <Form.Group widths='5'>
           <Form.Field>
             {userType === 'logisticks' ? (
@@ -115,17 +133,18 @@ export const Home = () => {
               </Button>
             ) : null}
           </Form.Field>
-          <Form.Field>
+          <Form.Field width='five'>
             <Filter
-              requestFoo={() => {
-                return dataRequest('farmers')
-              }}
+              array={requestedData?.farmers?.map((e) => {
+                return { key: e._id, text: e.company, value: e._id }
+              })}
               field={'company'}
               setterForValue={filtersHandler}
               placeholder={'фермер'}
+              filterValue={filters}
             />
           </Form.Field>
-          <Form.Field>
+          <Form.Field width='five'>
             <Filter
               array={requestedData?.orders
                 ?.map((e) => {
@@ -150,6 +169,7 @@ export const Home = () => {
               field={'state'}
               setterForValue={filtersHandler}
               placeholder={'статус'}
+              filterValue={filters}
             />
           </Form.Field>
           <Form.Field>
@@ -178,7 +198,6 @@ export const Home = () => {
       <Loader active={loading} />
       <OrderViewport
         windWidth={windWidth}
-        filters={filters}
         orders={requestedData?.orders}
         update={() => {
           dataRequest('orders', filters)

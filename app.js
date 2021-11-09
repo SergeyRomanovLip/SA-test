@@ -1,32 +1,48 @@
 const express = require('express')
-var cors = require('cors')
+const cors = require('cors')
+const url = require('url')
 const app = express()
 const ip = require('./utils/checkIp')
 const path = require('path')
 let clients = []
+function getClients() {
+  console.log(clients)
+  return clients
+}
+exports.getClients = getClients
 
 function eventsHandler(request, response, next) {
   const headers = {
     'Content-Type': 'text/event-stream',
     Connection: 'keep-alive',
-    'Cache-Control': 'no-cache',
+    'Cache-Control': 'no-cache'
   }
   response.writeHead(200, headers)
-  const data = `data: ${JSON.stringify({ message: 'Вы подключены к серверу LWM' })}\n\n`
-  response.write(data)
+  response.write(`data: ${JSON.stringify({ message: 'Вы подключены к серверу LWM', state: 'alive' })}\n\n`)
+
+  const reqData = url.parse(request.url, true).query
   const clientId = Date.now()
   const newClient = {
-    id: clientId,
-    response,
+    id: reqData.uid,
+    fname: reqData.fname,
+    company: reqData.company,
+    position: reqData.position,
+    response
   }
   clients.push(newClient)
-  console.log(newClient.id + ' Connection opened')
- 
-  let interval= setInterval(()=>{ 
-  console.log(`User id ${clientId} got an keep alive message`)
-  response.write("data: keep-alive\n\n")},10000)
+  clients.forEach((client) => {
+    if (client.id !== newClient.id) {
+      client.response.write(`data: ${JSON.stringify({ message: `${newClient.fname} подключился к серверу LWM`, state: 'alive' })}\n\n`)
+    }
+  })
+
+  console.log(newClient.fname + ' Connected')
+  let interval = setInterval(() => {
+    console.log(`${newClient.fname} keep`)
+    response.write(`data: ${JSON.stringify({ state: 'alive' })}\n\n`)
+  }, 10000)
   request.on('close', () => {
-    console.log(`${clientId} Connection closed`)
+    console.log(`${newClient.fname} Connection closed`)
     clearInterval(interval)
     clients = clients.filter((client) => client.id !== clientId)
   })
@@ -55,7 +71,7 @@ async function start() {
   try {
     await mongoose.connect(config.get('mongoUri'), {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true
     })
     app.listen(PORT, () => console.log(`App has been started on ${PORT}, ${ip()}`))
   } catch (e) {
@@ -63,6 +79,5 @@ async function start() {
     process.exit(1)
   }
 }
-module.exports = clients
 
 start()

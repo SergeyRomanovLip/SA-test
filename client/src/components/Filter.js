@@ -1,45 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Dropdown, Label } from 'semantic-ui-react'
 
-export const Filter = ({ requestFoo, setterForValue, field, array, placeholder }) => {
+export const Filter = ({ setterForValue, field, array, placeholder, filterValue }) => {
   const [dropDownValue, setDropDownValue] = useState(null)
-  const [dropDownData, setDropDownData] = useState([{ key: '1', text: '...', value: '' }])
   const addDropDownDataHandler = (e) => {
-    setDropDownValue(e)
     setterForValue(e, field)
   }
 
-  const dropDownDataHandler = async () => {
-    if (requestFoo) {
-      const res = await requestFoo()
-      const filterArray = res.map((e) => {
-        return { key: e._id, text: e[field], value: e._id }
-      })
-      setDropDownData(filterArray)
+  useEffect(() => {
+    if (filterValue[field]?.length === 1) {
+      setDropDownValue(filterValue[field][0])
     } else {
-      setDropDownData(array)
+      setDropDownValue(null)
     }
-  }
+  }, [array])
 
   return (
-    <div style={{ width: 150 + 'px', display: 'flex', flexDirection: 'row' }}>
+    <div style={{ width: 250 + 'px', display: 'flex', flexDirection: 'row' }}>
       <Dropdown
-        style={{}}
-        placeholder={placeholder}
+        style={{ backgroundColor: dropDownValue ? 'rgb(230,230,230)' : null }}
+        placeholder={dropDownValue ? dropDownValue : placeholder}
         selection
         fluid
-        value={dropDownValue || ''}
-        onFocus={() => {
-          dropDownDataHandler()
-        }}
+        value={dropDownValue}
         onChange={(e, val) => {
           addDropDownDataHandler(val.value)
         }}
-        options={dropDownData}
+        options={array}
       ></Dropdown>
       <Button
         onClick={() => {
-          setDropDownValue()
           setterForValue(null, field)
         }}
         size='tiny'

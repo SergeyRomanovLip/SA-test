@@ -1,48 +1,39 @@
 import React, { useEffect, useState } from 'react'
-import { Message, Transition } from 'semantic-ui-react'
-import { MessageCtx } from './../context/MessageCtx'
+import { MessageCtx } from '../context/MessageCtx'
+import { MessageComp } from './MessageComp'
 
-export const MessageC = (props) => {
-  const [messageState, setMessageState] = useState()
-  const [type, setType] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const messageHandler = (data, type) => {
-    if (!Array.isArray(data)) {
-      data = [data]
+export const MessageC = ({ children }) => {
+  const [messagesArray, setMessagesArray] = useState([])
+  const messageHandler = (text, type) => {
+    if (!Array.isArray(text)) {
+      text = [text]
     }
-    setMessageState(data)
-    setType(type)
+    let id = Date.now()
+    let msg = {
+      id,
+      text,
+      type
+    }
+    setMessagesArray((prev) => {
+      return [...prev, msg]
+    })
     setTimeout(() => {
-      setVisible(true)
-    }, 10)
-    setTimeout(() => {
-      setMessageState(false)
-    }, 3000)
-    setTimeout(() => {
-      setVisible(false)
-    }, 2000)
+      setMessagesArray((prev) => {
+        console.log()
+        return [...prev.filter((msg) => msg.id !== id)]
+      })
+    }, 4500)
   }
 
   return (
     <MessageCtx.Provider value={{ messageHandler }}>
-      {messageState ? (
-        <Transition.Group animation='fade down' duration={1000}>
-          {visible && (
-            <Message
-              style={{ zIndex: 9999999, position: 'absolute', top: 0, left: 0, right: 0 }}
-              compact
-              attached='top'
-              visible
-              error={type == 'error' ? true : false}
-              success={type == 'success' ? true : false}
-              warning={type ? false : true}
-              header={type == 'error' ? 'Возникла ошибка' : 'Уведомление'}
-              list={messageState && messageState}
-            />
-          )}
-        </Transition.Group>
-      ) : null}
-      {props.children}
+      <div className='messageContainer'>
+        {messagesArray?.length > 0 &&
+          messagesArray.map((msg) => {
+            return <MessageComp key={msg.id} msg={msg} />
+          })}
+      </div>
+      {children}
     </MessageCtx.Provider>
   )
 }

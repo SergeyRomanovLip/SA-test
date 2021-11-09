@@ -52,10 +52,11 @@ router.post('/potatoes', auth, async (req, res) => {
 })
 
 router.post('/orders', auth, async (req, res) => {
-  const filters = req.body.options.state
-
+  const filtersState = req.body.options.state
+  const filtersCompany = req.body.options.company
+  console.log(req.body.options)
   try {
-    let allOrders = await Order.find({ state: { $in: filters } }).populate(['potatoes', 'farm', 'uid'])
+    let allOrders = await Order.find({ state: { $in: filtersState }, farm: { $in: filtersCompany } }).populate(['potatoes', 'farm', 'uid'])
     allOrders = allOrders.map((el) => {
       return {
         _id: el._id,
@@ -69,7 +70,7 @@ router.post('/orders', auth, async (req, res) => {
         loadedDate: el.loadedDate,
         finishDate: el.finishDate,
         number: el.number,
-        quantity: el.quantity,
+        quantity: el.quantity
       }
     })
     res.json(allOrders)
@@ -107,7 +108,7 @@ router.post('/addorder', auth, async (req, res) => {
         potatoes: potatoe,
         state: 'created',
         uid: uid,
-        quantity: quantity,
+        quantity: quantity
       })
       await order.save()
       return res.status(201).json({ message: 'Новый заказ сделан' })
