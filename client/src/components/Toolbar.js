@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Dropdown, Icon, Image, Loader, Menu, MenuItem, Sticky } from 'semantic-ui-react'
+import { Divider, Dropdown, Icon, Image, Loader, Menu, MenuItem, Sticky } from 'semantic-ui-react'
 import { ToolbarCtx } from './../context/ToolbarCtx'
 import { useAuth } from './../hooks/auth.hook'
 import { useHistory } from 'react-router'
@@ -38,14 +38,14 @@ export const Toolbar = (props) => {
             <Dropdown.Item icon='settings' text='Account Settings' />
           </Dropdown.Menu>
         </Dropdown>
-        <Menu.Item name='Exit' position='right' active={activeItem === 'Exit'} onClick={logout}>
-          <Icon name='sign-out' />
-          {windWidth > 810 && 'Выйти'}
-        </Menu.Item>
-
-        <Menu.Item>
-          <div style={{ width: windWidth > 810 ? 200 + 'px' : 40 + 'px' }}>
-            <Image floated='right' size='mini' src={userData?.avt || '/avatarph.png'} />
+        <Menu.Item position='right'>
+          <div style={{ width: windWidth > 810 ? 250 + 'px' : 40 + 'px' }}>
+            <Image
+              floated='right'
+              size='mini'
+              style={{ margin: 0 + 'px', padding: 0 + 'px' }}
+              src={userData?.avt || '/avatarph.png'}
+            />
             {windWidth > 810 && (
               <p>
                 {userData?.fname || <Loader active inline />}
@@ -54,6 +54,10 @@ export const Toolbar = (props) => {
               </p>
             )}
           </div>
+        </Menu.Item>
+        <Menu.Item name='Exit' active={activeItem === 'Exit'} onClick={logout}>
+          <Icon name='sign-out' />
+          {windWidth > 810 && 'Выйти'}
         </Menu.Item>
       </Menu>
       {props.children}

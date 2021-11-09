@@ -1,27 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Button,
-  Divider,
-  Form,
-  Input,
-  Item,
-  Label,
-  Loader,
-  Modal,
-  Segment,
-  Header,
-  Visibility,
-} from 'semantic-ui-react'
+import { Button, Form, Input, Label, Loader, Modal, Segment, Icon } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { ConfirmCtx } from '../context/ConfirmCtx'
 import { useHttp } from '../hooks/http.hook'
 
-export const Order = ({ e, updateOrders, windWidth }) => {
+export const Order = ({ e, updateOrders, windWidth, fs }) => {
   const [choosen, setChoosen] = useState(false)
   const { token, userId, userType } = useContext(AuthCtx)
   const { loading, error, request } = useHttp()
   const { confirmHandler } = useContext(ConfirmCtx)
   const [orderState, setOrderState] = useState({ text: <Loader inline />, color: 'teal' })
+
   const orderStateHandler = () => {
     let state = {}
 
@@ -38,7 +27,6 @@ export const Order = ({ e, updateOrders, windWidth }) => {
     }
     setOrderState(state)
   }
-
   const [openAddCar, setOpenAddCar] = useState(false)
   const [addCarData, setAddCarData] = useState({})
   const addCarDataHandler = (e, type) => {
@@ -105,27 +93,91 @@ export const Order = ({ e, updateOrders, windWidth }) => {
     }
   }
 
+  const [orderButtons, setOrderButtons] = useState([])
+  const orderButtonsHandler = () => {
+    const buttonsArray = []
+    if (userType === 'logisticks') {
+      if (e.state === 'created') {
+        buttonsArray.push(
+          <Button
+            key={123}
+            loading={loading}
+            size={'tiny'}
+            onClick={() => {
+              setOpenAddCar(true)
+            }}
+            color='teal'
+          >
+            {'Назначить автомобиль'}
+          </Button>
+        )
+        buttonsArray.push(
+          <Button
+            key={124}
+            loading={loading}
+            size={'tiny'}
+            onClick={() => {
+              confirmHandler(orderCancel)
+            }}
+            color='google plus'
+          >
+            Отменить заявку
+          </Button>
+        )
+        if (e.state === 'loaded') {
+          buttonsArray.push(
+            <Button
+              key={125}
+              loading={loading}
+              size={'tiny'}
+              onClick={(e) => {
+                confirmHandler(orderFinish)
+              }}
+              color='purple'
+            >
+              Машина пришла, закрыть заявку
+            </Button>
+          )
+        }
+      }
+    } else if (userType === 'farm' && e.state === 'car_defined') {
+      buttonsArray.push(
+        <Button
+          key={126}
+          loading={loading}
+          onClick={() => {
+            confirmHandler(orderLoaded)
+          }}
+          color='yellow'
+        >
+          Отметить что машина загружена
+        </Button>
+      )
+    }
+    setOrderButtons(buttonsArray)
+  }
+
   useEffect(() => {
     orderStateHandler(e)
+    orderButtonsHandler()
   }, [e])
 
   if (!e) {
     return null
   }
   return (
-    // <Item key={e._id} >
     <>
       <Segment.Group horizontal>
         <Segment
           style={{
             backgroundColor: e.state === 'canceled' ? 'rgba(200,200,200)' : 'rgba(245,245,245)',
-            paddingTop: 5 + 'px',
-            paddingBottom: 5 + 'px',
+            paddingTop: 0 + 'px',
+            paddingBottom: 0 + 'px',
           }}
         >
           <Form>
-            <Form.Group widths='7'>
-              <Form.Field>
+            <Form.Group className='order' widths='7'>
+              <Form.Field style={{ width: fs.orderState }}>
                 <Label
                   as='a'
                   color={orderState.color}
@@ -137,111 +189,59 @@ export const Order = ({ e, updateOrders, windWidth }) => {
                     })
                   }}
                 >
+                  {orderButtons && orderButtons.length !== 0 && (
+                    <Icon name={choosen ? 'minus circle' : 'plus circle'} style={{ marginLeft: -21 + 'px' }} />
+                  )}
                   № {e.number} от {new Date(e.creationDate).toLocaleDateString()} <br /> {orderState.text}
                 </Label>
               </Form.Field>
-              <Form.Field>
-                {windWidth < 768 && <Label>Дата доставки</Label>}
+              <Form.Field style={{ width: fs.deliverDate }}>
                 <Input labelPosition='left' value={new Date(e.deliverDate).toLocaleDateString()}>
+                  {windWidth < 768 && <Label>Дата доставки</Label>}
                   <input></input>
                 </Input>
               </Form.Field>
-              <Form.Field>
-                {windWidth < 768 && <Label>Сорт</Label>}
+              <Form.Field style={{ width: fs.title }}>
                 <Input fluid labelPosition='left' value={e.potatoes?.title}>
+                  {windWidth < 768 && <Label>Сорт</Label>}
                   <input></input>
                 </Input>
               </Form.Field>
-              <Form.Field>
-                {windWidth < 768 && <Label>Количество</Label>}
+              <Form.Field style={{ width: fs.quantity }}>
                 <Input labelPosition='left' value={e?.quantity}>
+                  {windWidth < 768 && <Label>Количество</Label>}
                   <input></input>
                 </Input>
               </Form.Field>
-              <Form.Field>
-                {windWidth < 768 && <Label>Контрагент</Label>}
+              <Form.Field style={{ width: fs.company }}>
                 <Input labelPosition='left' value={e.farm?.company}>
+                  {windWidth < 768 && <Label>Контрагент</Label>}
+                  <input></input>
+                </Input>
+              </Form.Field>
+              <Form.Field style={{ width: fs.car }}>
+                <Input fluid labelPosition='left' value={e?.car ? e.car : '- - -'}>
+                  {windWidth < 768 && <Label>Автомобиль</Label>}
                   <input></input>
                 </Input>
               </Form.Field>
 
-              {e?.car && (
-                <Form.Field>
-                  {windWidth < 768 && <Label>Автомобиль</Label>}
-                  <Input fluid labelPosition='left' value={e?.car}>
-                    <input></input>
-                  </Input>
-                </Form.Field>
-              )}
-              {e.state === 'loaded' && (
-                <Form.Field>
+              <Form.Field style={{ width: fs.loadedDate }}>
+                <Input
+                  labelPosition='left'
+                  value={
+                    e.loadedDate
+                      ? new Date(e.loadedDate).toLocaleDateString() + ', ' + new Date(e.loadedDate).toLocaleTimeString()
+                      : '- - -'
+                  }
+                >
                   {windWidth < 768 && <Label>Дата загрузки </Label>}
-                  <Input
-                    labelPosition='left'
-                    value={
-                      new Date(e.loadedDate).toLocaleDateString() + ', ' + new Date(e.loadedDate).toLocaleTimeString()
-                    }
-                  >
-                    <input></input>
-                  </Input>
-                </Form.Field>
-              )}
+                  <input></input>
+                </Input>
+              </Form.Field>
             </Form.Group>
-            <div style={{ display: choosen ? 'block' : 'none', margin: 5 + 'px' }}>
-              {userType === 'logisticks' && (
-                <>
-                  {e.state === 'created' && (
-                    <Button
-                      loading={loading}
-                      size={'tiny'}
-                      onClick={() => {
-                        setOpenAddCar(true)
-                      }}
-                      color='teal'
-                    >
-                      {'Назначить автомобиль'}
-                    </Button>
-                  )}
-                  {e.state === 'created' && (
-                    <Button
-                      loading={loading}
-                      size={'tiny'}
-                      onClick={() => {
-                        confirmHandler(orderCancel)
-                      }}
-                      color='google plus'
-                    >
-                      Отменить заявку
-                    </Button>
-                  )}
-                  {e.state === 'loaded' && (
-                    <Button
-                      loading={loading}
-                      size={'tiny'}
-                      onClick={(e) => {
-                        confirmHandler(orderFinish)
-                      }}
-                      color='purple'
-                    >
-                      Машина пришла, закрыть заявку
-                    </Button>
-                  )}
-                  {/* </Button.Group> */}
-                </>
-              )}
-              {userType === 'farm' && e.state === 'car_defined' && (
-                <Button.Group>
-                  <Button
-                    loading={loading}
-                    onClick={() => {
-                      confirmHandler(orderLoaded)
-                    }}
-                    color='yellow'
-                  >
-                    Отметить что машина загружена
-                  </Button>
-                </Button.Group>
-              )}
+            <div className={choosen ? 'btnGrpAnim on' : 'btnGrpAnim off'}>
+              {orderButtons && orderButtons.length > 0 ? orderButtons : null}
             </div>
           </Form>
         </Segment>
@@ -295,6 +295,5 @@ export const Order = ({ e, updateOrders, windWidth }) => {
         </Modal.Actions>
       </Modal>
     </>
-    // </Item>
   )
 }

@@ -5,7 +5,7 @@ export const useAuth = () => {
   const [userId, setUserId] = useState(null)
   const [userType, setUserType] = useState(null)
   const [userData, setUserData] = useState(null)
-  const storageName = 'ud'
+  const storageName = 'lwmMernud'
   const login = useCallback((jwtToken, id, expire, type, fname, position, company) => {
     setToken(jwtToken)
     setUserId(id)
@@ -13,7 +13,7 @@ export const useAuth = () => {
     setUserData({
       company,
       fname,
-      position
+      position,
     })
     localStorage.setItem(
       storageName,
@@ -22,7 +22,7 @@ export const useAuth = () => {
         jwtToken,
         expire,
         type,
-        userData: { fname, position, company: company || 'LWM' }
+        userData: { fname, position, company: company || 'LWM' },
       })
     )
   }, [])
@@ -41,7 +41,15 @@ export const useAuth = () => {
         logout()
         return console.log('Токен опоздал ' + data.expire)
       } else if (new Date(data.expire).getTime() > Date.now()) {
-        login(data.jwtToken, data.id, data.expire, data.type, data.userData.fname, data.userData.position, data.userData.company)
+        login(
+          data.jwtToken,
+          data.id,
+          data.expire,
+          data.type,
+          data.userData.fname,
+          data.userData.position,
+          data.userData.company
+        )
         return console.log('Токен действительный ' + data.expire)
       }
     }
