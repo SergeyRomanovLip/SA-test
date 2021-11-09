@@ -1,3 +1,4 @@
+
 import React, { useContext, useEffect, useState } from 'react'
 import { Button, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
@@ -75,7 +76,7 @@ export const Home = () => {
   }, [])
 
   useEffect(() => {
-    const sse = new EventSource('http://lwm.smart-audit.site/home/sseupdate', {})
+    const sse = new EventSource('/sseupdate', {})
     function getRealtimeData({ data }) {
       const resp = JSON.parse(data)
       if (resp.message) {

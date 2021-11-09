@@ -123,7 +123,7 @@ export const Order = ({ e, updateOrders, windWidth, fs }) => {
           >
             Отменить заявку
           </Button>
-        )
+        )}
         if (e.state === 'loaded') {
           buttonsArray.push(
             <Button
@@ -140,7 +140,7 @@ export const Order = ({ e, updateOrders, windWidth, fs }) => {
           )
         }
       }
-    } else if (userType === 'farm' && e.state === 'car_defined') {
+     else if (userType === 'farm' && e.state === 'car_defined') {
       buttonsArray.push(
         <Button
           key={126}

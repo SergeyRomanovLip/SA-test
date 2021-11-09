@@ -33,7 +33,29 @@ Order.post('save', function (doc, next) {
       const data = `data: ${JSON.stringify({ message: `Создан новый заказ № ${doc.number}` })}\n\n`
       response.write(data)
     })
-  } else if (doc.state === 'finished') {
+  } 
+  if (doc.state === 'car_defined') {
+    clients.forEach(({ id, response }) => {
+      const data = `data: ${JSON.stringify({ message: `На заказ № ${doc.number} назначена машина` })}\n\n`
+      response.write(data)
+    })
+  } 
+  if (doc.state === 'loaded') {
+    clients.forEach(({ id, response }) => {
+      const data = `data: ${JSON.stringify({ message: `Заказ № ${doc.number} загружен` })}\n\n`
+      response.write(data)
+    })
+  } 
+  if (doc.state === 'canceled') {
+    clients.forEach(({ id, response }) => {
+      const data = `data: ${JSON.stringify({ message: `Заказ № ${doc.number} отменен` })}\n\n`
+      response.write(data)
+    })
+  } 
+  
+  
+  
+  if (doc.state === 'finished') {
     clients.forEach(({ id, response }) => {
       const data = `data: ${JSON.stringify({ message: `Заказ № ${doc.number} завершен` })}\n\n`
       response.write(data)
