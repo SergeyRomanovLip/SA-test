@@ -101,10 +101,7 @@ export const Home = () => {
 
   useEffect(() => {
     if (userId) {
-      const sse = new EventSource(
-        `http://localhost:5000/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}`,
-        {}
-      )
+      const sse = new EventSource(`/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}`, {})
       sse.addEventListener('message', getRealtimeData)
       sse.addEventListener('error', getErrorFromSse)
       return () => {
