@@ -3,6 +3,29 @@ var cors = require('cors')
 const app = express()
 const ip = require('./utils/checkIp')
 const path = require('path')
+let clients = []
+
+function eventsHandler(request, response, next) {
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    Connection: 'keep-alive',
+    'Cache-Control': 'no-cache',
+  }
+  response.writeHead(200, headers)
+  const data = `data: ${JSON.stringify({ message: 'Вы подключены к серверу LWM' })}\n\n`
+  response.write(data)
+  const clientId = Date.now()
+  const newClient = {
+    id: clientId,
+    response,
+  }
+  clients.push(newClient)
+  console.log(newClient.id + ' Connection opened')
+  request.on('close', () => {
+    console.log(`${clientId} Connection closed`)
+    clients = clients.filter((client) => client.id !== clientId)
+  })
+}
 
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
@@ -10,6 +33,7 @@ app.use(express.json())
 app.use('/api/auth', require('./routes/auth.routes'))
 app.use('/api/track', require('./routes/track.routes'))
 app.use('/api/data', require('./routes/doc.routes'))
+app.get('/sseupdate', eventsHandler)
 
 if (process.env.NODE_ENV === 'production') {
   app.use('/', express.static(path.join(__dirname, 'client', 'build')))
@@ -26,7 +50,7 @@ async function start() {
   try {
     await mongoose.connect(config.get('mongoUri'), {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
     app.listen(PORT, () => console.log(`App has been started on ${PORT}, ${ip()}`))
   } catch (e) {
@@ -34,5 +58,6 @@ async function start() {
     process.exit(1)
   }
 }
+module.exports = clients
 
 start()

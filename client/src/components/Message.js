@@ -29,7 +29,7 @@ export const MessageC = (props) => {
         <Transition.Group animation='fade down' duration={1000}>
           {visible && (
             <Message
-              style={{ zIndex: 9999999 }}
+              style={{ zIndex: 9999999, position: 'absolute', top: 0, left: 0, right: 0 }}
               compact
               attached='top'
               visible

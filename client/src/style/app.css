@@ -29,8 +29,37 @@ body {
 }
 
 .seven.fields {
-  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 10px !important;
+  margin-right: 0 !important;
 }
+.seven.fields.headers {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 10px !important;
+  margin-right: 0 !important;
+}
+
+.seven.fields.order {
+  justify-content: start !important;
+}
+.seven.fields.order input {
+  border-style: none !important;
+  border-radius: 0px !important;
+}
+.ui.left.labeled.input {
+  margin: 0px;
+  padding: 0px;
+}
+.seven.fields .field {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.seven.fields.headers > .field > .ui.label {
+  font-size: small !important;
+}
+
 .five.fields {
   margin: 0 !important;
 }
@@ -39,14 +68,25 @@ body {
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
   padding-top: 0px !important;
   margin-top: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.ui.orange.fluid.menu > div,
+a {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
 }
 
 .ui.horizontal.segments.headers {
+  width: 100vw;
   margin-top: 3px;
   margin-bottom: 0;
-  margin-left: 1rem;
-  margin-right: 1.7rem;
 }
+.ui.horizontal.segments {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
 .row.main {
   padding-top: 2px !important;
   padding-bottom: 2px !important;
@@ -55,4 +95,18 @@ body {
 }
 .ui.orange.button.addOrder {
   padding: 5px;
+}
+
+.btnGrpAnim.off {
+  opacity: 0 !important;
+  visibility: hidden;
+  max-height: 1px !important;
+  transition: all 0.2s ease-out !important;
+}
+
+.btnGrpAnim.on {
+  opacity: 100 !important;
+  visibility: visible;
+  max-height: 100px !important;
+  transition: all 0.2s ease-out !important;
 }

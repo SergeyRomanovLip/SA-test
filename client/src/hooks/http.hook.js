@@ -14,7 +14,7 @@ export const useHttp = () => {
         method,
         body,
         headers,
-        mode: 'cors'
+        mode: 'cors',
       })
       const data = await response.json()
 

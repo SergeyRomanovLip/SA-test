@@ -1,37 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Card, Checkbox, Divider, Form, Grid, GridColumn, GridRow, Image, Label, Loader, Segment } from 'semantic-ui-react'
+import { Button, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { useHttp } from './../hooks/http.hook'
 
 import { OrderViewport } from '../components/OrderViewport'
 import { Filter } from '../components/Filter'
 import { uniqVal } from './../utils/uniqVal'
+import { useDimensions } from '../hooks/screen.hook'
+import { MessageCtx } from '../context/MessageCtx'
 
-export const Home = (flags) => {
-  const [windowDemensions, setWindowDimensions] = useState({ width: 1000 })
-  function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window
-    return {
-      width,
-      height
-    }
-  }
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions())
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
+export const Home = () => {
+  const storageName = 'lwmMernFltr'
   const { userId, token, userType, userData } = useContext(AuthCtx)
+  const { messageHandler } = useContext(MessageCtx)
   const { loading, request } = useHttp()
-
+  const { windWidth } = useDimensions()
   const [openCreateOrderModal, setopenCreateOrderModal] = useState(false)
 
-  const [filters, setFilters] = useState({ state: ['created', 'car_defined', 'loaded'] })
-
+  const [filters, setFilters] = useState({
+    state: JSON.parse(localStorage.getItem(storageName))?.state || ['created', 'car_defined', 'loaded'],
+  })
   const filtersHandler = (e, type) => {
     if (type === 'state' && e === null) {
       setFilters((prev) => {
@@ -48,6 +36,11 @@ export const Home = (flags) => {
     }
   }
 
+  useEffect(() => {
+    dataRequest('orders', filters)
+    localStorage.setItem(storageName, JSON.stringify(filters))
+  }, [filters])
+
   const radioFilterHandler = (e, type) => {
     if (!e) {
       setFilters((prev) => {
@@ -62,25 +55,43 @@ export const Home = (flags) => {
   }
 
   const [requestedData, setRequestedData] = useState()
-  const dataRequest = async (what) => {
-    console.log('Обновление началось')
+  const dataRequest = async (what, options) => {
     const res = await request(
       `/api/data/${what}`,
       'POST',
-      { userId },
+      { userId, options },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     setRequestedData((prev) => {
       return { ...prev, [what]: res }
     })
-    console.log('Обновлено')
     return res
   }
 
   useEffect(() => {
-    dataRequest('orders')
+    dataRequest('orders', filters)
+  }, [])
+
+  useEffect(() => {
+    const sse = new EventSource('http://lwm.smart-audit.site/home/sseupdate', {})
+    function getRealtimeData({ data }) {
+      const resp = JSON.parse(data)
+      if (resp.message) {
+        messageHandler(resp.message, 'success')
+        dataRequest('orders', filters)
+      }
+    }
+    sse.onmessage = (e) => getRealtimeData(e)
+    sse.onerror = (e) => {
+      messageHandler('Соединение прервано, нажмите F5', 'error')
+      console.log(e || 'Что то пошло не так')
+      sse.close()
+    }
+    return () => {
+      sse.close()
+    }
   }, [])
 
   return (
@@ -142,6 +153,7 @@ export const Home = (flags) => {
           </Form.Field>
           <Form.Field>
             <Checkbox
+              checked={filters.state?.includes('finished') ? true : false}
               onChange={(e, data) => {
                 radioFilterHandler(data.checked, 'finished')
               }}
@@ -151,6 +163,7 @@ export const Home = (flags) => {
           </Form.Field>
           <Form.Field>
             <Checkbox
+              checked={filters.state?.includes('canceled') ? true : false}
               onChange={(e, data) => {
                 radioFilterHandler(data.checked, 'canceled')
               }}
@@ -161,13 +174,13 @@ export const Home = (flags) => {
         </Form.Group>
       </Form>
 
-      <Loader inverted active={loading} />
+      <Loader active={loading} />
       <OrderViewport
-        windowDemensions={windowDemensions}
+        windWidth={windWidth}
         filters={filters}
         orders={requestedData?.orders}
         update={() => {
-          dataRequest('orders')
+          dataRequest('orders', filters)
         }}
         openCreateOrderModal={openCreateOrderModal}
         setopenCreateOrderModal={setopenCreateOrderModal}

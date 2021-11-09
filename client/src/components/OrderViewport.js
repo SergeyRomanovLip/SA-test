@@ -6,20 +6,35 @@ import { MessageCtx } from './../context/MessageCtx'
 import { useHistory } from 'react-router'
 import { Order } from './OrderOLD'
 
-export const OrderViewport = ({ windowDemensions, filters, orders, update, openCreateOrderModal, setopenCreateOrderModal }) => {
+export const OrderViewport = ({
+  windWidth,
+  filters,
+  orders,
+  update,
+  openCreateOrderModal,
+  setopenCreateOrderModal,
+}) => {
   const hstr = useHistory()
   const { token, userId, userType } = useContext(AuthCtx)
   const { messageHandler } = useContext(MessageCtx)
   const { loading, error, request } = useHttp()
-
+  const fs = {
+    loadedDate: 100 + 'px',
+    car: 150 + 'px',
+    company: 250 + 'px',
+    quantity: 120 + 'px',
+    title: 250 + 'px',
+    deliverDate: 100 + 'px',
+    orderState: 150 + 'px',
+  }
   const [requestedData, setRequestedData] = useState()
-  const dataRequest = async (what) => {
+  const dataRequest = async (what, options) => {
     const res = await request(
       `/api/data/${what}`,
       'POST',
       { userId },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     setRequestedData((prev) => {
@@ -28,20 +43,20 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
     return res
   }
 
-  const [openOrder, setOpenOrder] = useState(false)
   const [addOrderData, setAddOrderData] = useState({})
   const addOrderDataHandler = (e, type) => {
     setAddOrderData((prev) => {
       return { ...prev, [type]: e }
     })
   }
+
   const addNewOrder = () => {
     request(
       `/api/data/addorder`,
       'POST',
       { ...addOrderData, uid: userId },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     ).then(() => {
       update()
@@ -54,13 +69,14 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
       return { ...prev, [type]: e }
     })
   }
+
   const addNewPot = async () => {
     const res = request(
       `/api/data/addpot`,
       'POST',
       { ...addPotData },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     ).then(() => {
       dataRequest('potatoes')
@@ -88,7 +104,6 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
           closeOnDimmerClick={false}
           onClose={() => setopenCreateOrderModal(false)}
           onMount={() => {
-            console.log('opened')
             dataRequest('farmers')
             dataRequest('potatoes')
           }}
@@ -121,7 +136,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
                             </p>
                           </>
                         ),
-                        value: e._id
+                        value: e._id,
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -142,7 +157,7 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
                       return {
                         key: e._id,
                         text: e.title,
-                        value: e._id
+                        value: e._id,
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -181,7 +196,14 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
               labelPosition='right'
               icon='close'
             ></Button>
-            <Button content='Подтвердить' color='teal' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewOrder()} />
+            <Button
+              content='Подтвердить'
+              color='teal'
+              loading={loading}
+              labelPosition='right'
+              icon='checkmark'
+              onClick={() => addNewOrder()}
+            />
           </Modal.Actions>
         </Modal>
       ) : null}
@@ -214,9 +236,9 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
           </Form>
           <Header>Существующая номенклатура</Header>
           <List>
-            {requestedData?.potatoes?.map((e) => {
+            {requestedData?.potatoes?.map((e, i) => {
               return (
-                <List.Item>
+                <List.Item key={i + 'potatoes'}>
                   <List.Icon name='point' />
                   <List.Content>{e.title}</List.Content>
                 </List.Item>
@@ -235,7 +257,14 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
             labelPosition='right'
             icon='close'
           ></Button>
-          <Button content='Подтвердить' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewPot()} positive />
+          <Button
+            content='Подтвердить'
+            loading={loading}
+            labelPosition='right'
+            icon='checkmark'
+            onClick={() => addNewPot()}
+            positive
+          />
         </Modal.Actions>
       </Modal>
       <Segment.Group horizontal className={'headers'}>
@@ -243,32 +272,32 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
           style={{
             backgroundColor: 'rgba(245,245,245)',
             paddingTop: 5 + 'px',
-            paddingBottom: 5 + 'px'
+            paddingBottom: 5 + 'px',
+            paddingLeft: 30 + 'px',
           }}
         >
-          {windowDemensions.width > 767 && (
+          {windWidth > 767 && (
             <Form>
-              <Form.Group widths='7'>
-                <Form.Field>
+              <Form.Group widths='7' className='headers'>
+                <Form.Field style={{ width: fs.orderState }}>
                   <Label>Статус</Label>
                 </Form.Field>
-                <Form.Field>
+                <Form.Field style={{ width: fs.deliverDate }}>
                   <Label>Дата доставки</Label>
                 </Form.Field>
-                <Form.Field>
+                <Form.Field style={{ width: fs.title }}>
                   <Label>Сорт</Label>
                 </Form.Field>
-                <Form.Field>
+                <Form.Field style={{ width: fs.quantity }}>
                   <Label>Количество</Label>
                 </Form.Field>
-                <Form.Field>
+                <Form.Field style={{ width: fs.company }}>
                   <Label>Контрагент</Label>
                 </Form.Field>
-
-                <Form.Field>
+                <Form.Field style={{ width: fs.car }}>
                   <Label>Автомобиль</Label>
                 </Form.Field>
-                <Form.Field>
+                <Form.Field style={{ width: fs.loadedDate }}>
                   <Label>Дата загрузки </Label>
                 </Form.Field>
               </Form.Group>
@@ -276,25 +305,24 @@ export const OrderViewport = ({ windowDemensions, filters, orders, update, openC
           )}
         </Segment>
       </Segment.Group>
-      <Segment className={'main'} style={{ overflowY: 'auto', maxHeight: 70 + 'vh', width: 100 + '%' }}>
+      <Segment className={'main'} style={{ overflowY: 'scroll', maxHeight: 80 + 'vh', width: 100 + '%' }}>
         <Item.Group>
-          {orders?.map((e, i) => {
-            if (filters?.company && e.farm._id !== filters.company) {
-              return
-            }
-            if (filters?.state && !filters?.state?.includes(e.state)) {
-              return
-            }
-            // if (filters?.state && e.state !== filters.state) {
-            //   return
-            // }
-            return <Order key={i + 'order'} e={e} updateOrders={update} windowDemensions={windowDemensions} />
-          })}
+          {orders
+            ?.sort((a, b) => {
+              //by delivery date
+              return new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
+            })
+            .map((e, i) => {
+              if (filters?.company && e.farm._id !== filters.company) {
+                return
+              }
+              if (filters?.state && !filters?.state?.includes(e.state)) {
+                return
+              }
+              return <Order key={e._id} fs={fs} e={e} updateOrders={update} windWidth={windWidth} />
+            })}
         </Item.Group>
       </Segment>
     </>
   )
 }
-// .sort((a, b) => {
-//               return new Date(a.deliverDate).getTime() - new Date(b.deliverDate).getTime()
-//             })

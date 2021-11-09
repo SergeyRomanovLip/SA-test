@@ -3,6 +3,7 @@ import { Button, Divider, Form, Input, Item, Label, Loader, Modal, Segment, Head
 import { AuthCtx } from '../context/AuthCtx'
 import { ConfirmCtx } from '../context/ConfirmCtx'
 import { useHttp } from '../hooks/http.hook'
+import { MessageCtx } from '../context/MessageCtx'
 
 // Сделать табличный вид
 // Сделать выбор строки и кнопку
@@ -43,7 +44,7 @@ export const Order = ({ e, updateOrders }) => {
       'POST',
       { _id: e._id, car: addCarData.number },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     updateOrders()
@@ -55,7 +56,7 @@ export const Order = ({ e, updateOrders }) => {
       'POST',
       { _id: e._id },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     updateOrders()
@@ -72,7 +73,7 @@ export const Order = ({ e, updateOrders }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         }
       )
       updateOrders()
@@ -86,7 +87,7 @@ export const Order = ({ e, updateOrders }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         }
       )
       updateOrders()
@@ -104,7 +105,7 @@ export const Order = ({ e, updateOrders }) => {
           style={{
             backgroundColor: e.state === 'canceled' ? 'rgba(200,200,200)' : 'rgba(245,245,245)',
             paddingTop: 5 + 'px',
-            paddingBottom: 5 + 'px'
+            paddingBottom: 5 + 'px',
           }}
         >
           <Label as='a' color={orderState.color} ribbon>
@@ -132,7 +133,9 @@ export const Order = ({ e, updateOrders }) => {
                 <Form.Field>
                   <Input
                     labelPosition='left'
-                    value={new Date(e.loadedDate).toLocaleDateString() + ', ' + new Date(e.loadedDate).toLocaleTimeString()}
+                    value={
+                      new Date(e.loadedDate).toLocaleDateString() + ', ' + new Date(e.loadedDate).toLocaleTimeString()
+                    }
                   >
                     <Label>Дата загрузки </Label>
                     <input></input>
