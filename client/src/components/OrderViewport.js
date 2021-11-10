@@ -6,7 +6,7 @@ import { MessageCtx } from './../context/MessageCtx'
 import { useHistory } from 'react-router'
 import { Order } from './OrderOLD'
 
-export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal, setopenCreateOrderModal }) => {
+export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopenCreateOrderModal }) => {
   const hstr = useHistory()
   const { token, userId, userType } = useContext(AuthCtx)
   const { messageHandler } = useContext(MessageCtx)
@@ -18,7 +18,7 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
     quantity: 120 + 'px',
     title: 250 + 'px',
     deliverDate: 100 + 'px',
-    orderState: 150 + 'px'
+    orderState: 150 + 'px',
   }
   const [requestedData, setRequestedData] = useState()
   const dataRequest = async (what, options) => {
@@ -27,7 +27,7 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
       'POST',
       { userId },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     setRequestedData((prev) => {
@@ -49,11 +49,9 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
       'POST',
       { ...addOrderData, uid: userId },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
-    ).then(() => {
-      update()
-    })
+    )
   }
   const [openAddPot, setOpenAddPot] = useState(false)
   const [addPotData, setAddPotData] = useState({})
@@ -69,7 +67,7 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
       'POST',
       { ...addPotData },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     ).then(() => {
       dataRequest('potatoes')
@@ -129,7 +127,7 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
                             </p>
                           </>
                         ),
-                        value: e._id
+                        value: e._id,
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -150,7 +148,7 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
                       return {
                         key: e._id,
                         text: e.title,
-                        value: e._id
+                        value: e._id,
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -189,7 +187,14 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
               labelPosition='right'
               icon='close'
             ></Button>
-            <Button content='Подтвердить' color='teal' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewOrder()} />
+            <Button
+              content='Подтвердить'
+              color='teal'
+              loading={loading}
+              labelPosition='right'
+              icon='checkmark'
+              onClick={() => addNewOrder()}
+            />
           </Modal.Actions>
         </Modal>
       ) : null}
@@ -243,7 +248,14 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
             labelPosition='right'
             icon='close'
           ></Button>
-          <Button content='Подтвердить' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewPot()} positive />
+          <Button
+            content='Подтвердить'
+            loading={loading}
+            labelPosition='right'
+            icon='checkmark'
+            onClick={() => addNewPot()}
+            positive
+          />
         </Modal.Actions>
       </Modal>
       <Segment.Group horizontal className={'headers'}>
@@ -252,7 +264,7 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
             backgroundColor: 'rgba(245,245,245)',
             paddingTop: 5 + 'px',
             paddingBottom: 5 + 'px',
-            paddingLeft: 30 + 'px'
+            paddingLeft: 30 + 'px',
           }}
         >
           {windWidth > 767 && (
@@ -292,7 +304,7 @@ export const OrderViewport = ({ windWidth, orders, update, openCreateOrderModal,
               return new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
             })
             .map((e, i) => {
-              return <Order key={e._id} fs={fs} e={e} updateOrders={update} windWidth={windWidth} />
+              return <Order key={e._id} fs={fs} e={e} windWidth={windWidth} />
             })}
         </Item.Group>
       </Segment>

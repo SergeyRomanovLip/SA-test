@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { useHttp } from './../hooks/http.hook'
-
 import { OrderViewport } from '../components/OrderViewport'
 import { Filter } from '../components/Filter'
 import { uniqVal } from './../utils/uniqVal'
@@ -16,59 +15,48 @@ export const Home = () => {
   const { loading, request } = useHttp()
   const { windWidth } = useDimensions()
   const [openCreateOrderModal, setopenCreateOrderModal] = useState(false)
+  const [filters, setFilters] = useState({})
+  const [rstFilters, setRstFilters] = useState({})
 
-  const [filters, setFilters] = useState({
-    state: JSON.parse(localStorage.getItem(storageName))?.state || ['created', 'car_defined', 'loaded'],
-    company: JSON.parse(localStorage.getItem(storageName))?.company || []
-  })
-  const filtersHandler = (e, type) => {
-    if (type === 'state' && e === null) {
-      setFilters((prev) => {
-        return { ...prev, [type]: ['created', 'car_defined', 'loaded'] }
-      })
-    } else if (type === 'state' && e !== null) {
-      setFilters((prev) => {
-        return { ...prev, [type]: [e] }
-      })
-    } else if (type === 'company' && e === null) {
-      setFilters((prev) => {
-        return { ...prev, [type]: requestedData?.farmers.map((e) => e._id) }
-      })
-    } else if (type === 'company' && e !== null) {
-      setFilters((prev) => {
-        return { ...prev, [type]: [e] }
-      })
+  async function init() {
+    const LSFltrs = JSON.parse(localStorage.getItem(storageName))
+    const RstFltrs = await { farm: await dataRequest('farmers'), state: ['created', 'car_defined', 'loaded'] }
+    const initFilters = {
+      state: LSFltrs?.state ? LSFltrs.state : RstFltrs.state,
+      farm: LSFltrs?.farm ? LSFltrs.farm : RstFltrs.farm,
     }
+    setRstFilters(RstFltrs)
+    setFilters(initFilters)
+    dataRequest('orders', initFilters)
   }
-  useEffect(() => {
-    dataRequest('farmers').then((res) => {
-      if (filters?.company?.length < 1) {
-        setFilters((prev) => {
-          return { ...prev, company: res.map((e) => e._id) }
-        })
-      }
+
+  const resetFltrs = (type) => {
+    setFilters((prev) => {
+      localStorage.setItem(storageName, JSON.stringify({ ...prev, [type]: rstFilters[type] }))
+      dataRequest('orders', { ...prev, [type]: rstFilters[type] })
+      return { ...prev, [type]: rstFilters[type] }
     })
-  }, [])
-  useEffect(() => {
-    if (filters.state && filters.company) {
-      dataRequest('orders', filters)
-      localStorage.setItem(storageName, JSON.stringify(filters))
-    }
-  }, [filters])
-
-  const radioFilterHandler = (e, type) => {
-    if (!e) {
-      setFilters((prev) => {
-        let newArray = prev.state.filter((e) => e !== type)
-        return { ...prev, state: newArray }
-      })
-    } else {
-      setFilters((prev) => {
-        return { ...prev, state: [...prev.state, type] }
-      })
-    }
   }
-
+  const filtersHandler = (e, type, opt) => {
+    let fltr = filters
+    if (!opt && type && e) {
+      fltr[type] = [e]
+    } else if (opt) {
+      if (filters.state?.includes(e)) {
+        fltr[type] = fltr[type].filter((el) => {
+          return el !== e
+        })
+      } else {
+        fltr[type] = [...fltr[type], e]
+      }
+    }
+    setFilters(fltr)
+    localStorage.setItem(storageName, JSON.stringify(fltr))
+    dataRequest('orders', fltr)
+  }
+  const getLSFltrs = () => {
+    return JSON.parse(localStorage.getItem(storageName))
+  }
   const [requestedData, setRequestedData] = useState()
   const dataRequest = async (what, options) => {
     const res = await request(
@@ -76,7 +64,7 @@ export const Home = () => {
       'POST',
       { userId, options },
       {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
     )
     setRequestedData((prev) => {
@@ -85,15 +73,19 @@ export const Home = () => {
     return res
   }
 
-  const getRealtimeData = ({ data }) => {
+  const getRealtimeData = async ({ data }) => {
     const resp = JSON.parse(data)
+    if (resp.state === 'connect') {
+      await init()
+    }
     if (resp.message) {
       messageHandler(resp.message, 'success')
     }
     if (resp.update) {
-      dataRequest(resp.update, filters)
+      await dataRequest('orders', getLSFltrs())
     }
   }
+
   const getErrorFromSse = (e) => {
     messageHandler('Соединение прервано, нажмите F5', 'error')
     console.log('Подключение потеряно')
@@ -101,7 +93,13 @@ export const Home = () => {
 
   useEffect(() => {
     if (userId) {
-      const sse = new EventSource(`/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}`, {})
+      const localhost = false
+      const sse = new EventSource(
+        `${localhost && 'http://localhost:5000'}/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${
+          userData?.company
+        }&position=${userData?.position}`,
+        {}
+      )
       sse.addEventListener('message', getRealtimeData)
       sse.addEventListener('error', getErrorFromSse)
       return () => {
@@ -135,8 +133,9 @@ export const Home = () => {
               array={requestedData?.farmers?.map((e) => {
                 return { key: e._id, text: e.company, value: e._id }
               })}
-              field={'company'}
+              field={'farm'}
               setterForValue={filtersHandler}
+              reset={resetFltrs}
               placeholder={'фермер'}
               filterValue={filters}
             />
@@ -164,6 +163,7 @@ export const Home = () => {
                   return newe
                 })}
               field={'state'}
+              reset={resetFltrs}
               setterForValue={filtersHandler}
               placeholder={'статус'}
               filterValue={filters}
@@ -173,7 +173,7 @@ export const Home = () => {
             <Checkbox
               checked={filters.state?.includes('finished') ? true : false}
               onChange={(e, data) => {
-                radioFilterHandler(data.checked, 'finished')
+                filtersHandler('finished', 'state', { opt: data.checked })
               }}
               label='Показывать завершенные'
               toggle
@@ -183,7 +183,7 @@ export const Home = () => {
             <Checkbox
               checked={filters.state?.includes('canceled') ? true : false}
               onChange={(e, data) => {
-                radioFilterHandler(data.checked, 'canceled')
+                filtersHandler('canceled', 'state', { opt: data.checked })
               }}
               label='Показывать отклоненные'
               toggle
@@ -193,15 +193,14 @@ export const Home = () => {
       </Form>
 
       <Loader active={loading} />
-      <OrderViewport
-        windWidth={windWidth}
-        orders={requestedData?.orders}
-        update={() => {
-          dataRequest('orders', filters)
-        }}
-        openCreateOrderModal={openCreateOrderModal}
-        setopenCreateOrderModal={setopenCreateOrderModal}
-      />
+      {requestedData?.orders?.length > 0 && (
+        <OrderViewport
+          windWidth={windWidth}
+          orders={requestedData?.orders}
+          openCreateOrderModal={openCreateOrderModal}
+          setopenCreateOrderModal={setopenCreateOrderModal}
+        />
+      )}
     </>
   )
 }

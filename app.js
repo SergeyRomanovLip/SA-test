@@ -15,10 +15,10 @@ function eventsHandler(request, response, next) {
   const headers = {
     'Content-Type': 'text/event-stream',
     Connection: 'keep-alive',
-    'Cache-Control': 'no-cache'
+    'Cache-Control': 'no-cache',
   }
   response.writeHead(200, headers)
-  response.write(`data: ${JSON.stringify({ message: 'Вы подключены к серверу LWM', state: 'alive' })}\n\n`)
+  response.write(`data: ${JSON.stringify({ message: 'Вы подключены к серверу LWM', state: 'connect' })}\n\n`)
 
   const reqData = url.parse(request.url, true).query
   const clientId = Date.now()
@@ -27,12 +27,14 @@ function eventsHandler(request, response, next) {
     fname: reqData.fname,
     company: reqData.company,
     position: reqData.position,
-    response
+    response,
   }
   clients.push(newClient)
   clients.forEach((client) => {
     if (client.id !== newClient.id) {
-      client.response.write(`data: ${JSON.stringify({ message: `${newClient.fname} подключился к серверу LWM`, state: 'alive' })}\n\n`)
+      client.response.write(
+        `data: ${JSON.stringify({ message: `${newClient.fname} подключился к серверу LWM`, state: 'alive' })}\n\n`
+      )
     }
   })
 
@@ -71,7 +73,7 @@ async function start() {
   try {
     await mongoose.connect(config.get('mongoUri'), {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
     app.listen(PORT, () => console.log(`App has been started on ${PORT}, ${ip()}`))
   } catch (e) {

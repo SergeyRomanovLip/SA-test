@@ -4,7 +4,7 @@ import { AuthCtx } from '../context/AuthCtx'
 import { ConfirmCtx } from '../context/ConfirmCtx'
 import { useHttp } from '../hooks/http.hook'
 
-export const Order = ({ e, updateOrders, windWidth, fs }) => {
+export const Order = ({ e, windWidth, fs }) => {
   const [choosen, setChoosen] = useState(false)
   const { token, userId, userType } = useContext(AuthCtx)
   const { loading, error, request } = useHttp()
@@ -43,9 +43,7 @@ export const Order = ({ e, updateOrders, windWidth, fs }) => {
       {
         Authorization: `Bearer ${token}`,
       }
-    ).then(() => {
-      updateOrders()
-    })
+    )
   }
 
   const orderLoaded = () => {
@@ -57,9 +55,7 @@ export const Order = ({ e, updateOrders, windWidth, fs }) => {
         {
           Authorization: `Bearer ${token}`,
         }
-      ).then(() => {
-        updateOrders()
-      })
+      )
     }
   }
 
@@ -72,9 +68,7 @@ export const Order = ({ e, updateOrders, windWidth, fs }) => {
         {
           Authorization: `Bearer ${token}`,
         }
-      ).then(() => {
-        updateOrders()
-      })
+      )
     }
   }
 
@@ -87,9 +81,7 @@ export const Order = ({ e, updateOrders, windWidth, fs }) => {
         {
           Authorization: `Bearer ${token}`,
         }
-      ).then(() => {
-        updateOrders()
-      })
+      )
     }
   }
 
@@ -123,24 +115,24 @@ export const Order = ({ e, updateOrders, windWidth, fs }) => {
           >
             Отменить заявку
           </Button>
-        )}
-        if (e.state === 'loaded') {
-          buttonsArray.push(
-            <Button
-              key={125}
-              loading={loading}
-              size={'tiny'}
-              onClick={(e) => {
-                confirmHandler(orderFinish)
-              }}
-              color='purple'
-            >
-              Машина пришла, закрыть заявку
-            </Button>
-          )
-        }
+        )
       }
-     else if (userType === 'farm' && e.state === 'car_defined') {
+      if (e.state === 'loaded') {
+        buttonsArray.push(
+          <Button
+            key={125}
+            loading={loading}
+            size={'tiny'}
+            onClick={(e) => {
+              confirmHandler(orderFinish)
+            }}
+            color='purple'
+          >
+            Машина пришла, закрыть заявку
+          </Button>
+        )
+      }
+    } else if (userType === 'farm' && e.state === 'car_defined') {
       buttonsArray.push(
         <Button
           key={126}

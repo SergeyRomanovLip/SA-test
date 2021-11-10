@@ -4,6 +4,7 @@ const Order = require('../models/Order')
 const Car = require('../models/Car')
 const Potatoe = require('../models/Potatoe')
 const User = require('../models/User')
+const { ObjectId } = require('bson')
 const router = Router()
 
 router.post('/user', auth, async (req, res) => {
@@ -52,11 +53,14 @@ router.post('/potatoes', auth, async (req, res) => {
 })
 
 router.post('/orders', auth, async (req, res) => {
-  const filtersState = req.body.options.state
-  const filtersCompany = req.body.options.company
-  console.log(req.body.options)
+  let filters = {}
+  Object.keys(req.body.options).forEach((key) => {
+    if (req.body?.options[key]?.length > 0) {
+      filters[key] = { $in: req.body.options[key] }
+    }
+  })
   try {
-    let allOrders = await Order.find({ state: { $in: filtersState }, farm: { $in: filtersCompany } }).populate(['potatoes', 'farm', 'uid'])
+    let allOrders = await Order.find({ ...filters }).populate(['potatoes', 'farm', 'uid'])
     allOrders = allOrders.map((el) => {
       return {
         _id: el._id,
@@ -70,7 +74,7 @@ router.post('/orders', auth, async (req, res) => {
         loadedDate: el.loadedDate,
         finishDate: el.finishDate,
         number: el.number,
-        quantity: el.quantity
+        quantity: el.quantity,
       }
     })
     res.json(allOrders)
@@ -108,7 +112,7 @@ router.post('/addorder', auth, async (req, res) => {
         potatoes: potatoe,
         state: 'created',
         uid: uid,
-        quantity: quantity
+        quantity: quantity,
       })
       await order.save()
       return res.status(201).json({ message: 'Новый заказ сделан' })
