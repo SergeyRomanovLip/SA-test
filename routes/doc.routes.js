@@ -52,11 +52,20 @@ router.post('/potatoes', auth, async (req, res) => {
   }
 })
 
+router.post('/drivers', auth, async (req, res) => {
+  try {
+    const allDrivers = await Car.find()
+    res.json(allDrivers)
+  } catch (e) {
+    res.status(500).json({ message: e })
+  }
+})
+
 router.post('/orders', auth, async (req, res) => {
   let filters = {}
   req.body.options &&
     Object.keys(req.body.options).forEach((key) => {
-      if (req.body?.options[key]?.length > 0) {
+      if (req?.body?.options[key].length > 0) {
         filters[key] = { $in: req.body.options[key] }
       }
     })
@@ -64,8 +73,11 @@ router.post('/orders', auth, async (req, res) => {
   const user = await User.findOne({ _id: req.body.userId })
 
   if (user.type !== 'logisticks' && req.body.options) {
+    filters.farm = {}
     filters.farm.$in = [user._id.toString()]
   }
+
+  console.log(filters)
 
   try {
     let allOrders = await Order.find({ ...filters }).populate(['potatoes', 'farm', 'uid', 'car'])
@@ -83,7 +95,7 @@ router.post('/orders', auth, async (req, res) => {
         loadedDate: el.loadedDate,
         finishDate: el.finishDate,
         number: el.number,
-        quantity: el.quantity,
+        quantity: el.quantity
       }
     })
     res.json(allOrders)
@@ -120,7 +132,7 @@ router.post('/addorder', auth, async (req, res) => {
         creationDate: Date.now(),
         potatoes: potatoe,
         state: 'created',
-        uid: uid,
+        uid: uid
       })
       await order.save()
       return res.status(201).json({ message: 'Новый заказ сделан' })
@@ -147,11 +159,7 @@ router.post('/addcartoorder', auth, async (req, res) => {
     }
 
     if (newCarId) {
-      const order = await Order.findOneAndUpdate(
-        { _id },
-        { car: newCarId, carNumber: car.number, state: 'car_defined' },
-        { new: true }
-      )
+      const order = await Order.findOneAndUpdate({ _id }, { car: newCarId, carNumber: car.number, state: 'car_defined' }, { new: true })
       const driver = await Car.findOneAndUpdate({ _id: newCarId }, { $push: { orders: _id } }, { new: true })
       await order.save()
       await driver.save()

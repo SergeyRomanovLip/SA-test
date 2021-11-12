@@ -6,7 +6,6 @@ const ip = require('./utils/checkIp')
 const path = require('path')
 let clients = []
 function getClients() {
-  console.log(clients)
   return clients
 }
 exports.getClients = getClients
@@ -15,7 +14,7 @@ function eventsHandler(request, response, next) {
   const headers = {
     'Content-Type': 'text/event-stream',
     Connection: 'keep-alive',
-    'Cache-Control': 'no-cache',
+    'Cache-Control': 'no-cache'
   }
   response.writeHead(200, headers)
   response.write(`data: ${JSON.stringify({ message: 'Вы подключены к серверу LWM', state: 'connect' })}\n\n`)
@@ -27,7 +26,7 @@ function eventsHandler(request, response, next) {
     fname: reqData.fname,
     company: reqData.company,
     position: reqData.position,
-    response,
+    response
   }
   clients.push(newClient)
   clients.forEach((client) => {
@@ -35,7 +34,7 @@ function eventsHandler(request, response, next) {
       client.response.write(
         `data: ${JSON.stringify({
           message: `${newClient.fname || newClient.company} подключился к серверу LWM`,
-          state: 'alive',
+          state: 'alive'
         })}\n\n`
       )
     }
@@ -76,7 +75,7 @@ async function start() {
   try {
     await mongoose.connect(config.get('mongoUri'), {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true
     })
     app.listen(PORT, () => console.log(`App has been started on ${PORT}, ${ip()}`))
   } catch (e) {

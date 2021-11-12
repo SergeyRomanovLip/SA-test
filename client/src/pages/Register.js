@@ -33,13 +33,7 @@ export const Register = () => {
 
   return (
     <>
-      <Modal
-        size='small'
-        closeOnDimmerClick={false}
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
-        open={open}
-      >
+      <Modal size='small' closeOnDimmerClick={false} onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
         <Modal.Header>Добро пожаловать!</Modal.Header>
 
         <Modal.Content>
@@ -93,8 +87,8 @@ export const Register = () => {
                   onChangeHandler(val.value, 'type')
                 }}
                 options={[
-                  { key: 'logisticks', text: 'Депатрамент логистики', value: 'logisticks' },
-                  { key: 'farm', text: 'Фермер', value: 'farm' },
+                  { key: 'logisticks', text: 'Департамент логистики', value: 'logisticks' },
+                  { key: 'farm', text: 'Фермер', value: 'farm' }
                 ]}
               />
             </Form.Field>
@@ -119,14 +113,7 @@ export const Register = () => {
               hst.push('/auth/login/')
             }}
           ></Button>
-          <Button
-            content='Зарегистрироваться!'
-            loading={loading}
-            labelPosition='right'
-            icon='checkmark'
-            onClick={() => submitForm()}
-            positive
-          />
+          <Button content='Зарегистрироваться!' loading={loading} labelPosition='right' icon='checkmark' onClick={() => submitForm()} positive />
         </Modal.Actions>
       </Modal>
     </>

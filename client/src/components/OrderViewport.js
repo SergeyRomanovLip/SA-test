@@ -14,11 +14,11 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
   const fs = {
     loadedDate: 200 + 'px',
     car: 150 + 'px',
-    company: 250 + 'px',
+    company: 330 + 'px',
     quantity: 120 + 'px',
     title: 250 + 'px',
     deliverDate: 200 + 'px',
-    orderState: 150 + 'px',
+    orderState: 150 + 'px'
   }
   const [requestedData, setRequestedData] = useState()
   const dataRequest = async (what, options) => {
@@ -27,7 +27,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
       'POST',
       { userId },
       {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       }
     )
     setRequestedData((prev) => {
@@ -49,7 +49,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
       'POST',
       { ...addOrderData, uid: userId },
       {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       }
     )
   }
@@ -67,7 +67,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
       'POST',
       { ...addPotData },
       {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       }
     ).then(() => {
       dataRequest('potatoes')
@@ -127,7 +127,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
                             </p>
                           </>
                         ),
-                        value: e._id,
+                        value: e._id
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -148,7 +148,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
                       return {
                         key: e._id,
                         text: e.title,
-                        value: e._id,
+                        value: e._id
                       }
                     }) || [{ key: '1', text: '...', value: '' }]
                   }
@@ -187,14 +187,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
               labelPosition='right'
               icon='close'
             ></Button>
-            <Button
-              content='Подтвердить'
-              color='teal'
-              loading={loading}
-              labelPosition='right'
-              icon='checkmark'
-              onClick={() => addNewOrder()}
-            />
+            <Button content='Подтвердить' color='teal' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewOrder()} />
           </Modal.Actions>
         </Modal>
       ) : null}
@@ -248,14 +241,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
             labelPosition='right'
             icon='close'
           ></Button>
-          <Button
-            content='Подтвердить'
-            loading={loading}
-            labelPosition='right'
-            icon='checkmark'
-            onClick={() => addNewPot()}
-            positive
-          />
+          <Button content='Подтвердить' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewPot()} positive />
         </Modal.Actions>
       </Modal>
       <Segment.Group horizontal className={'headers'}>
@@ -264,7 +250,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
             backgroundColor: 'rgba(245,245,245)',
             paddingTop: 5 + 'px',
             paddingBottom: 5 + 'px',
-            paddingLeft: 20 + 'px',
+            paddingLeft: 20 + 'px'
           }}
         >
           {windWidth > 767 && (

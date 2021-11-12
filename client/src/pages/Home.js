@@ -22,11 +22,11 @@ export const Home = () => {
     const LSFltrs = JSON.parse(localStorage.getItem(storageName))
     const RstFltrs = await {
       farm: await dataRequest('farmers').then((res) => res.map((farmer) => farmer._id)),
-      state: ['created', 'car_defined', 'loaded'],
+      state: ['created', 'car_defined', 'loaded']
     }
     const initFilters = {
       state: LSFltrs?.state ? LSFltrs.state : RstFltrs.state,
-      farm: LSFltrs?.farm ? LSFltrs.farm : RstFltrs.farm,
+      farm: LSFltrs?.farm ? LSFltrs.farm : RstFltrs.farm
     }
 
     setRstFilters(RstFltrs)
@@ -74,7 +74,7 @@ export const Home = () => {
       'POST',
       { userId, options },
       {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       }
     )
     setRequestedData((prev) => {
@@ -195,7 +195,7 @@ export const Home = () => {
               onChange={(e, data) => {
                 filtersHandler('canceled', 'state', { opt: data.checked })
               }}
-              label='Показывать отклоненные'
+              label='Показывать отмененные'
               toggle
             ></Checkbox>
           </Form.Field>

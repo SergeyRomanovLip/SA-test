@@ -4,6 +4,7 @@ import { AuthCtx } from '../context/AuthCtx'
 import { ConfirmCtx } from '../context/ConfirmCtx'
 import { useHttp } from '../hooks/http.hook'
 import PhoneInput from 'react-phone-number-input'
+import { DriverSearch } from './DriverSearch'
 
 export const Order = ({ e, windWidth, fs }) => {
   const [choosen, setChoosen] = useState(false)
@@ -42,7 +43,7 @@ export const Order = ({ e, windWidth, fs }) => {
       'POST',
       { _id: e._id, car: addCarData },
       {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       }
     )
   }
@@ -54,7 +55,7 @@ export const Order = ({ e, windWidth, fs }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         }
       )
     }
@@ -67,7 +68,7 @@ export const Order = ({ e, windWidth, fs }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         }
       )
     }
@@ -80,7 +81,7 @@ export const Order = ({ e, windWidth, fs }) => {
         'POST',
         { _id: e._id },
         {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         }
       )
     }
@@ -165,7 +166,7 @@ export const Order = ({ e, windWidth, fs }) => {
           style={{
             backgroundColor: e.state === 'canceled' ? 'rgba(200,200,200)' : 'rgba(245,245,245)',
             paddingTop: 0 + 'px',
-            paddingBottom: 0 + 'px',
+            paddingBottom: 0 + 'px'
           }}
         >
           <Form>
@@ -191,13 +192,7 @@ export const Order = ({ e, windWidth, fs }) => {
               <Form.Field style={{ width: fs.loadedDate }}>
                 <Input
                   labelPosition='left'
-                  value={
-                    e.loadedDate
-                      ? new Date(e.loadedDate)?.toLocaleDateString() +
-                        ', ' +
-                        new Date(e.loadedDate)?.toLocaleTimeString()
-                      : '- - -'
-                  }
+                  value={e.loadedDate ? new Date(e.loadedDate)?.toLocaleDateString() + ', ' + new Date(e.loadedDate)?.toLocaleTimeString() : '- - -'}
                 >
                   {windWidth < 768 && <Label>Дата загрузки </Label>}
                   <input></input>
@@ -231,7 +226,7 @@ export const Order = ({ e, windWidth, fs }) => {
                       <div>
                         <span>{e.driver?.fio}</span>
                         <br />
-                        <a href='tel:555-555-5555'>{e.driver?.phone}</a>
+                        <a href={e.driver?.phone}>{e.driver?.phone}</a>
                       </div>
                     }
                     trigger={
@@ -251,9 +246,7 @@ export const Order = ({ e, windWidth, fs }) => {
               <Form.Field style={{ width: fs.deliverDate }}>
                 <Input
                   labelPosition='left'
-                  value={
-                    new Date(e.deliverDate)?.toLocaleDateString() + ', ' + new Date(e.deliverDate)?.toLocaleTimeString()
-                  }
+                  value={new Date(e.deliverDate)?.toLocaleDateString() + ', ' + new Date(e.deliverDate)?.toLocaleTimeString()}
                 >
                   {windWidth < 768 && <Label>Дата доставки</Label>}
                   <input></input>
@@ -262,22 +255,14 @@ export const Order = ({ e, windWidth, fs }) => {
               <Form.Field style={{ width: fs.loadedDate }}>
                 <Input
                   labelPosition='left'
-                  value={
-                    e.finishDate
-                      ? new Date(e.finishDate)?.toLocaleDateString() +
-                        ', ' +
-                        new Date(e.finishDate)?.toLocaleTimeString()
-                      : '- - -'
-                  }
+                  value={e.finishDate ? new Date(e.finishDate)?.toLocaleDateString() + ', ' + new Date(e.finishDate)?.toLocaleTimeString() : '- - -'}
                 >
                   {windWidth < 768 && <Label>Дата загрузки </Label>}
                   <input></input>
                 </Input>
               </Form.Field>
             </Form.Group>
-            <div className={choosen ? 'btnGrpAnim on' : 'btnGrpAnim off'}>
-              {orderButtons && orderButtons.length > 0 ? orderButtons : null}
-            </div>
+            <div className={choosen ? 'btnGrpAnim on' : 'btnGrpAnim off'}>{orderButtons && orderButtons.length > 0 ? orderButtons : null}</div>
           </Form>
         </Segment>
       </Segment.Group>
@@ -296,13 +281,8 @@ export const Order = ({ e, windWidth, fs }) => {
         <Modal.Content>
           <Form>
             <Form.Field>
-              <Input
-                value={addCarData.fio || ''}
-                onChange={(e) => {
-                  addCarDataHandler(e.target.value, 'fio')
-                }}
-                placeholder='ФИО водителя'
-              />
+              <DriverSearch filler={addCarDataHandler} />
+              {/* <Input value={addCarData.fio || ''} onChange={(e) => {}} placeholder='ФИО водителя' /> */}
             </Form.Field>
             <Form.Field>
               <PhoneInput
