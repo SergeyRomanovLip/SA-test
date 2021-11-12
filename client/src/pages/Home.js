@@ -95,7 +95,7 @@ export const Home = () => {
     if (userId) {
       const localhost = false
       const sse = new EventSource(
-        `${localhost && 'http://localhost:5000'}/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${
+        `/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${
           userData?.company
         }&position=${userData?.position}`,
         {}
