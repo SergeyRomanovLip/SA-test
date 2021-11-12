@@ -67,8 +67,6 @@ router.post('/orders', auth, async (req, res) => {
     filters.farm.$in = [user._id.toString()]
   }
 
-  console.log(filters)
-
   try {
     let allOrders = await Order.find({ ...filters }).populate(['potatoes', 'farm', 'uid', 'car'])
     allOrders = allOrders.map((el) => {
