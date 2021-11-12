@@ -14,6 +14,7 @@ export const Register = () => {
   const hst = useHistory()
 
   function onChangeHandler(e, type) {
+    console.log(data)
     setData((prev) => {
       return { ...prev, [type]: e }
     })
@@ -32,7 +33,13 @@ export const Register = () => {
 
   return (
     <>
-      <Modal size='small' closeOnDimmerClick={false} onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
+      <Modal
+        size='small'
+        closeOnDimmerClick={false}
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(true)}
+        open={open}
+      >
         <Modal.Header>Добро пожаловать!</Modal.Header>
 
         <Modal.Content>
@@ -42,7 +49,7 @@ export const Register = () => {
               <Input
                 value={data.email || ''}
                 onChange={(e) => {
-                  onChangeHandler(e.target.value, 'email')
+                  onChangeHandler(e.target.value.toLowerCase(), 'email')
                 }}
                 placeholder='email'
                 type='email'
@@ -87,7 +94,7 @@ export const Register = () => {
                 }}
                 options={[
                   { key: 'logisticks', text: 'Депатрамент логистики', value: 'logisticks' },
-                  { key: 'farm', text: 'Фермер', value: 'farm' }
+                  { key: 'farm', text: 'Фермер', value: 'farm' },
                 ]}
               />
             </Form.Field>
@@ -112,7 +119,14 @@ export const Register = () => {
               hst.push('/auth/login/')
             }}
           ></Button>
-          <Button content='Зарегистрироваться!' loading={loading} labelPosition='right' icon='checkmark' onClick={() => submitForm()} positive />
+          <Button
+            content='Зарегистрироваться!'
+            loading={loading}
+            labelPosition='right'
+            icon='checkmark'
+            onClick={() => submitForm()}
+            positive
+          />
         </Modal.Actions>
       </Modal>
     </>

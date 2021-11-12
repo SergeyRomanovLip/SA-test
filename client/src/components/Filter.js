@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Dropdown, Label } from 'semantic-ui-react'
 
-export const Filter = ({ reset, setterForValue, field, array, placeholder, filterValue }) => {
+export const Filter = ({ reset, setterForValue, field, array, placeholder, filterValue, disabled }) => {
   const [dropDownValue, setDropDownValue] = useState(null)
   const addDropDownDataHandler = (e) => {
     setterForValue(e, field)
@@ -18,6 +18,7 @@ export const Filter = ({ reset, setterForValue, field, array, placeholder, filte
   return (
     <div style={{ width: 250 + 'px', display: 'flex', flexDirection: 'row' }}>
       <Dropdown
+        disabled={disabled}
         style={{ backgroundColor: dropDownValue ? 'rgb(230,230,230)' : null }}
         placeholder={dropDownValue ? dropDownValue : placeholder}
         selection
@@ -29,6 +30,7 @@ export const Filter = ({ reset, setterForValue, field, array, placeholder, filte
         options={array}
       ></Dropdown>
       <Button
+        disabled={disabled}
         onClick={() => {
           reset(field)
         }}

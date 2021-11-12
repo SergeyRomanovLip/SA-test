@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Form, Input, Label, Loader, Modal, Segment, Icon } from 'semantic-ui-react'
+import { Button, Form, Input, Label, Loader, Modal, Segment, Icon, Popup } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { ConfirmCtx } from '../context/ConfirmCtx'
 import { useHttp } from '../hooks/http.hook'
+import PhoneInput from 'react-phone-number-input'
 
 export const Order = ({ e, windWidth, fs }) => {
   const [choosen, setChoosen] = useState(false)
@@ -39,7 +40,7 @@ export const Order = ({ e, windWidth, fs }) => {
     request(
       `/api/data/addcartoorder`,
       'POST',
-      { _id: e._id, car: addCarData.number },
+      { _id: e._id, car: addCarData },
       {
         Authorization: `Bearer ${token}`,
       }
@@ -100,7 +101,7 @@ export const Order = ({ e, windWidth, fs }) => {
             }}
             color='teal'
           >
-            {'Назначить автомобиль'}
+            Назначить автомобиль
           </Button>
         )
         buttonsArray.push(
@@ -187,24 +188,34 @@ export const Order = ({ e, windWidth, fs }) => {
                   № {e.number} от {new Date(e.creationDate).toLocaleDateString()} <br /> {orderState.text}
                 </Label>
               </Form.Field>
-              <Form.Field style={{ width: fs.deliverDate }}>
-                <Input labelPosition='left' value={new Date(e.deliverDate).toLocaleDateString()}>
-                  {windWidth < 768 && <Label>Дата доставки</Label>}
+              <Form.Field style={{ width: fs.loadedDate }}>
+                <Input
+                  labelPosition='left'
+                  value={
+                    e.loadedDate
+                      ? new Date(e.loadedDate)?.toLocaleDateString() +
+                        ', ' +
+                        new Date(e.loadedDate)?.toLocaleTimeString()
+                      : '- - -'
+                  }
+                >
+                  {windWidth < 768 && <Label>Дата загрузки </Label>}
                   <input></input>
                 </Input>
               </Form.Field>
+
               <Form.Field style={{ width: fs.title }}>
                 <Input fluid labelPosition='left' value={e.potatoes?.title}>
                   {windWidth < 768 && <Label>Сорт</Label>}
                   <input></input>
                 </Input>
               </Form.Field>
-              <Form.Field style={{ width: fs.quantity }}>
+              {/* <Form.Field style={{ width: fs.quantity }}>
                 <Input labelPosition='left' value={e?.quantity}>
                   {windWidth < 768 && <Label>Количество</Label>}
                   <input></input>
                 </Input>
-              </Form.Field>
+              </Form.Field> */}
               <Form.Field style={{ width: fs.company }}>
                 <Input labelPosition='left' value={e.farm?.company}>
                   {windWidth < 768 && <Label>Контрагент</Label>}
@@ -212,18 +223,50 @@ export const Order = ({ e, windWidth, fs }) => {
                 </Input>
               </Form.Field>
               <Form.Field style={{ width: fs.car }}>
-                <Input fluid labelPosition='left' value={e?.car ? e.car : '- - -'}>
-                  {windWidth < 768 && <Label>Автомобиль</Label>}
+                {e?.car ? (
+                  <Popup
+                    flowing
+                    hoverable
+                    content={
+                      <div>
+                        <span>{e.driver?.fio}</span>
+                        <br />
+                        <a href='tel:555-555-5555'>{e.driver?.phone}</a>
+                      </div>
+                    }
+                    trigger={
+                      <Input fluid labelPosition='left' value={e?.car ? e.car : '- - -'}>
+                        {windWidth < 768 && <Label>Автомобиль</Label>}
+                        <input></input>
+                      </Input>
+                    }
+                  />
+                ) : (
+                  <Input fluid labelPosition='left' value={'- - -'}>
+                    {windWidth < 768 && <Label>Автомобиль</Label>}
+                    <input></input>
+                  </Input>
+                )}
+              </Form.Field>
+              <Form.Field style={{ width: fs.deliverDate }}>
+                <Input
+                  labelPosition='left'
+                  value={
+                    new Date(e.deliverDate)?.toLocaleDateString() + ', ' + new Date(e.deliverDate)?.toLocaleTimeString()
+                  }
+                >
+                  {windWidth < 768 && <Label>Дата доставки</Label>}
                   <input></input>
                 </Input>
               </Form.Field>
-
               <Form.Field style={{ width: fs.loadedDate }}>
                 <Input
                   labelPosition='left'
                   value={
-                    e.loadedDate
-                      ? new Date(e.loadedDate).toLocaleDateString() + ', ' + new Date(e.loadedDate).toLocaleTimeString()
+                    e.finishDate
+                      ? new Date(e.finishDate)?.toLocaleDateString() +
+                        ', ' +
+                        new Date(e.finishDate)?.toLocaleTimeString()
                       : '- - -'
                   }
                 >
@@ -252,6 +295,25 @@ export const Order = ({ e, windWidth, fs }) => {
         <Modal.Header>Добавить к заказу автомобиль</Modal.Header>
         <Modal.Content>
           <Form>
+            <Form.Field>
+              <Input
+                value={addCarData.fio || ''}
+                onChange={(e) => {
+                  addCarDataHandler(e.target.value, 'fio')
+                }}
+                placeholder='ФИО водителя'
+              />
+            </Form.Field>
+            <Form.Field>
+              <PhoneInput
+                defaultCountry='RU'
+                placeholder='номер телефона водителя'
+                value={addCarData.phone || ''}
+                onChange={(e) => {
+                  addCarDataHandler(e, 'phone')
+                }}
+              />
+            </Form.Field>
             <Form.Field>
               <Input
                 value={addCarData.number || ''}

@@ -1,12 +1,13 @@
 const { Schema, model, Types } = require('mongoose')
 const Car = new Schema({
-  number: { type: String, required: true },
+  fio: { type: String, required: true },
+  phone: { type: String, required: true },
   orders: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Order'
-    }
-  ]
+      ref: 'Order',
+    },
+  ],
 })
 
 module.exports = model('Car', Car)

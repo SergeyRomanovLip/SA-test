@@ -33,7 +33,10 @@ function eventsHandler(request, response, next) {
   clients.forEach((client) => {
     if (client.id !== newClient.id) {
       client.response.write(
-        `data: ${JSON.stringify({ message: `${newClient.fname} подключился к серверу LWM`, state: 'alive' })}\n\n`
+        `data: ${JSON.stringify({
+          message: `${newClient.fname || newClient.company} подключился к серверу LWM`,
+          state: 'alive',
+        })}\n\n`
       )
     }
   })

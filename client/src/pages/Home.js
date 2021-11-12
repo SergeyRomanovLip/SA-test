@@ -20,11 +20,15 @@ export const Home = () => {
 
   async function init() {
     const LSFltrs = JSON.parse(localStorage.getItem(storageName))
-    const RstFltrs = await { farm: await dataRequest('farmers'), state: ['created', 'car_defined', 'loaded'] }
+    const RstFltrs = await {
+      farm: await dataRequest('farmers').then((res) => res.map((farmer) => farmer._id)),
+      state: ['created', 'car_defined', 'loaded'],
+    }
     const initFilters = {
       state: LSFltrs?.state ? LSFltrs.state : RstFltrs.state,
       farm: LSFltrs?.farm ? LSFltrs.farm : RstFltrs.farm,
     }
+
     setRstFilters(RstFltrs)
     setFilters(initFilters)
     dataRequest('orders', initFilters)
@@ -55,7 +59,13 @@ export const Home = () => {
     dataRequest('orders', fltr)
   }
   const getLSFltrs = () => {
-    return JSON.parse(localStorage.getItem(storageName))
+    if (rstFilters) {
+      return rstFilters
+    } else if (JSON.parse(localStorage.getItem(storageName))) {
+      return JSON.parse(localStorage.getItem(storageName))
+    } else {
+      return null
+    }
   }
   const [requestedData, setRequestedData] = useState()
   const dataRequest = async (what, options) => {
@@ -93,11 +103,9 @@ export const Home = () => {
 
   useEffect(() => {
     if (userId) {
-      const localhost = false
+      const localhost = true
       const sse = new EventSource(
-        `/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${
-          userData?.company
-        }&position=${userData?.position}`,
+        `http://localhost:5000/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}`,
         {}
       )
       sse.addEventListener('message', getRealtimeData)
@@ -129,16 +137,18 @@ export const Home = () => {
             ) : null}
           </Form.Field>
           <Form.Field width='five'>
-            <Filter
-              array={requestedData?.farmers?.map((e) => {
-                return { key: e._id, text: e.company, value: e._id }
-              })}
-              field={'farm'}
-              setterForValue={filtersHandler}
-              reset={resetFltrs}
-              placeholder={'фермер'}
-              filterValue={filters}
-            />
+            {userType === 'logisticks' && (
+              <Filter
+                array={requestedData?.farmers?.map((e) => {
+                  return { key: e._id, text: e.company, value: e._id }
+                })}
+                field={'farm'}
+                setterForValue={filtersHandler}
+                reset={resetFltrs}
+                placeholder={'фермер'}
+                filterValue={filters}
+              />
+            )}
           </Form.Field>
           <Form.Field width='five'>
             <Filter
@@ -193,14 +203,12 @@ export const Home = () => {
       </Form>
 
       <Loader active={loading} />
-      {requestedData?.orders?.length > 0 && (
-        <OrderViewport
-          windWidth={windWidth}
-          orders={requestedData?.orders}
-          openCreateOrderModal={openCreateOrderModal}
-          setopenCreateOrderModal={setopenCreateOrderModal}
-        />
-      )}
+      <OrderViewport
+        windWidth={windWidth}
+        orders={requestedData?.orders || []}
+        openCreateOrderModal={openCreateOrderModal}
+        setopenCreateOrderModal={setopenCreateOrderModal}
+      />
     </>
   )
 }

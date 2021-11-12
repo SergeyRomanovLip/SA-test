@@ -12,12 +12,12 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
   const { messageHandler } = useContext(MessageCtx)
   const { loading, error, request } = useHttp()
   const fs = {
-    loadedDate: 100 + 'px',
+    loadedDate: 200 + 'px',
     car: 150 + 'px',
     company: 250 + 'px',
     quantity: 120 + 'px',
     title: 250 + 'px',
-    deliverDate: 100 + 'px',
+    deliverDate: 200 + 'px',
     orderState: 150 + 'px',
   }
   const [requestedData, setRequestedData] = useState()
@@ -162,10 +162,10 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
                     addOrderDataHandler(e.target.value, 'date')
                   }}
                   placeholder='дата доставки'
-                  type='date'
+                  type='datetime-local'
                 />
               </Form.Field>
-              <Form.Field>
+              {/* <Form.Field>
                 <label>Количество</label>
                 <Input
                   value={addOrderData.quantity || ''}
@@ -175,7 +175,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
                   placeholder='Количество'
                   type='number'
                 />
-              </Form.Field>
+              </Form.Field> */}
             </Form>
           </Modal.Content>
           <Modal.Actions>
@@ -264,7 +264,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
             backgroundColor: 'rgba(245,245,245)',
             paddingTop: 5 + 'px',
             paddingBottom: 5 + 'px',
-            paddingLeft: 30 + 'px',
+            paddingLeft: 20 + 'px',
           }}
         >
           {windWidth > 767 && (
@@ -273,23 +273,26 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
                 <Form.Field style={{ width: fs.orderState }}>
                   <Label>Статус</Label>
                 </Form.Field>
-                <Form.Field style={{ width: fs.deliverDate }}>
-                  <Label>Дата доставки</Label>
+                <Form.Field style={{ width: fs.loadedDate }}>
+                  <Label>Дата загрузки </Label>
                 </Form.Field>
                 <Form.Field style={{ width: fs.title }}>
                   <Label>Сорт</Label>
                 </Form.Field>
-                <Form.Field style={{ width: fs.quantity }}>
+                {/* <Form.Field style={{ width: fs.quantity }}>
                   <Label>Количество</Label>
-                </Form.Field>
+                </Form.Field> */}
                 <Form.Field style={{ width: fs.company }}>
                   <Label>Контрагент</Label>
                 </Form.Field>
                 <Form.Field style={{ width: fs.car }}>
                   <Label>Автомобиль</Label>
                 </Form.Field>
-                <Form.Field style={{ width: fs.loadedDate }}>
-                  <Label>Дата загрузки </Label>
+                <Form.Field style={{ width: fs.deliverDate }}>
+                  <Label>Дата доставки</Label>
+                </Form.Field>
+                <Form.Field style={{ width: fs.deliverDate }}>
+                  <Label>Дата разгрузки</Label>
                 </Form.Field>
               </Form.Group>
             </Form>

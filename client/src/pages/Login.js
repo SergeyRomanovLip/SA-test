@@ -14,6 +14,7 @@ export const Login = () => {
   const hst = useHistory()
 
   function onChangeHandler(e, type) {
+    console.log(data)
     setData((prev) => {
       return { ...prev, [type]: e }
     })
@@ -34,7 +35,13 @@ export const Login = () => {
 
   return (
     <>
-      <Modal size='tiny' closeOnDimmerClick={false} onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
+      <Modal
+        size='tiny'
+        closeOnDimmerClick={false}
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(true)}
+        open={open}
+      >
         <Modal.Header>Добро пожаловать!</Modal.Header>
 
         <Modal.Content>
@@ -44,9 +51,9 @@ export const Login = () => {
               <Input
                 value={data.email || ''}
                 onChange={(e) => {
-                  onChangeHandler(e.target.value, 'email')
+                  onChangeHandler(e.target.value.toLowerCase(), 'email')
                 }}
-                placeholder='email'
+                placeholder='логин'
                 type='email'
               />
             </Form.Field>
@@ -70,7 +77,14 @@ export const Login = () => {
               hst.push('/auth/reg/')
             }}
           ></Button>
-          <Button content='Авторизоваться!' loading={loading} labelPosition='right' icon='checkmark' onClick={() => submitForm()} positive />
+          <Button
+            content='Авторизоваться!'
+            loading={loading}
+            labelPosition='right'
+            icon='checkmark'
+            onClick={() => submitForm()}
+            positive
+          />
         </Modal.Actions>
       </Modal>
     </>

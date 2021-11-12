@@ -54,17 +54,28 @@ router.post('/potatoes', auth, async (req, res) => {
 
 router.post('/orders', auth, async (req, res) => {
   let filters = {}
-  Object.keys(req.body.options).forEach((key) => {
-    if (req.body?.options[key]?.length > 0) {
-      filters[key] = { $in: req.body.options[key] }
-    }
-  })
+  req.body.options &&
+    Object.keys(req.body.options).forEach((key) => {
+      if (req.body?.options[key]?.length > 0) {
+        filters[key] = { $in: req.body.options[key] }
+      }
+    })
+
+  const user = await User.findOne({ _id: req.body.userId })
+
+  if (user.type !== 'logisticks' && req.body.options) {
+    filters.farm.$in = [user._id.toString()]
+  }
+
+  console.log(filters)
+
   try {
-    let allOrders = await Order.find({ ...filters }).populate(['potatoes', 'farm', 'uid'])
+    let allOrders = await Order.find({ ...filters }).populate(['potatoes', 'farm', 'uid', 'car'])
     allOrders = allOrders.map((el) => {
       return {
         _id: el._id,
-        car: el.car,
+        car: el.carNumber,
+        driver: { phone: el.car?.phone, fio: el.car?.fio },
         creationDate: el.creationDate,
         deliverDate: el.deliverDate,
         farm: { fname: el.farm.fname, company: el.farm.company, position: el.farm.position, _id: el.farm._id },
@@ -100,10 +111,10 @@ router.post('/addpot', auth, async (req, res) => {
 
 router.post('/addorder', auth, async (req, res) => {
   try {
-    const { type, potatoe, date, uid, quantity } = req.body
+    const { type, potatoe, date, uid } = req.body
 
     const number = await Order.countDocuments()
-    if ((type, potatoe, date, uid, quantity)) {
+    if ((type, potatoe, date, uid)) {
       const order = new Order({
         number: number + 1,
         farm: type,
@@ -112,7 +123,6 @@ router.post('/addorder', auth, async (req, res) => {
         potatoes: potatoe,
         state: 'created',
         uid: uid,
-        quantity: quantity,
       })
       await order.save()
       return res.status(201).json({ message: 'Новый заказ сделан' })
@@ -126,11 +136,30 @@ router.post('/addorder', auth, async (req, res) => {
 router.post('/addcartoorder', auth, async (req, res) => {
   try {
     const { _id, car } = req.body
+    const candidate = await Car.findOne({ phone: car.phone })
 
-    if ((_id, car)) {
-      const order = await Order.findOneAndUpdate({ _id }, { car, state: 'car_defined' }, { new: true })
+    let newCarId = null
+    if (!candidate) {
+      const newCar = new Car({ fio: car.fio, phone: car.phone })
+      await newCar.save()
+      const writtenDriver = await Car.findOne({ phone: car.phone })
+      newCarId = writtenDriver._id
+    } else {
+      newCarId = candidate._id
+    }
+
+    if (newCarId) {
+      const order = await Order.findOneAndUpdate(
+        { _id },
+        { car: newCarId, carNumber: car.number, state: 'car_defined' },
+        { new: true }
+      )
+      const driver = await Car.findOneAndUpdate({ _id: newCarId }, { $push: { orders: _id } }, { new: true })
       await order.save()
+      await driver.save()
       return res.status(201).json({ message: 'Заявка обновлена, автомобиль добавлен' })
+    } else {
+      throw new Error('Не получилось добавить автомобиль к заказу, попробуйте еще раз')
     }
   } catch (e) {
     res.status(500).json({ message: e })

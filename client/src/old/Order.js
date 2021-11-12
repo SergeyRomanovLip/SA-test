@@ -8,7 +8,7 @@ import { MessageCtx } from '../context/MessageCtx'
 // Сделать табличный вид
 // Сделать выбор строки и кнопку
 
-export const Order = ({ e, updateOrders }) => {
+export const Orderfff = ({ e, updateOrders }) => {
   const { token, userId, userType } = useContext(AuthCtx)
   const { loading, error, request } = useHttp()
   const { confirmHandler } = useContext(ConfirmCtx)

@@ -8,22 +8,25 @@ const Order = new Schema(
     farm: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     deliverDate: { type: Date, required: true },
     loadedDate: { type: Date },
+    unloadedDate: { type: Date },
     creationDate: { type: Date, required: true },
     finishDate: { type: Date },
     potatoes: {
       type: Schema.Types.ObjectId,
       ref: 'Potatoe',
-      required: true
+      required: true,
     },
     state: { type: String, required: true },
     car: {
-      type: String
+      type: Schema.Types.ObjectId,
+      ref: 'Car',
     },
+    carNumber: { type: String },
     uid: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true
-    }
+      required: true,
+    },
   },
   { autoIndex: true }
 )
@@ -37,7 +40,10 @@ Order.post('save', async function (doc, next) {
     }
     if (doc.state === 'car_defined') {
       getClients().forEach(({ id, response }) => {
-        const data = `data: ${JSON.stringify({ message: `На заказ № ${doc.number} назначена машина`, update: 'orders' })}\n\n`
+        const data = `data: ${JSON.stringify({
+          message: `На заказ № ${doc.number} назначена машина`,
+          update: 'orders',
+        })}\n\n`
         response.write(data)
       })
     }
