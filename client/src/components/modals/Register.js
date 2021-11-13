@@ -1,20 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Input, Button, Form, Modal, Header, Dropdown } from 'semantic-ui-react'
-import { NewUser } from '../classes/User'
-import { MessageCtx } from '../context/MessageCtx'
-import { reqRegister } from '../backend/requests'
+import { NewUser } from '../../classes/User'
+import { MessageCtx } from '../../context/MessageCtx'
 import { useHistory } from 'react-router'
-import { useHttp } from '../hooks/http.hook'
+import { useHttp } from '../../hooks/http.hook'
 
-export const Register = () => {
+export const Register = ({ active, deactivate }) => {
   const { loading, error, request } = useHttp()
-  const [open, setOpen] = useState(true)
   const [data, setData] = useState({})
   const { messageHandler } = useContext(MessageCtx)
-  const hst = useHistory()
+  const hstr = useHistory()
 
   function onChangeHandler(e, type) {
-    console.log(data)
     setData((prev) => {
       return { ...prev, [type]: e }
     })
@@ -33,7 +30,17 @@ export const Register = () => {
 
   return (
     <>
-      <Modal size='small' closeOnDimmerClick={false} onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
+      <Modal
+        closeIcon={'close'}
+        size='small'
+        closeOnDimmerClick={true}
+        onClose={() => {
+          deactivate(false)
+          hstr.goBack()
+        }}
+        onOpen={() => deactivate(true)}
+        open={active}
+      >
         <Modal.Header>Добро пожаловать!</Modal.Header>
 
         <Modal.Content>
@@ -107,13 +114,13 @@ export const Register = () => {
         </Modal.Content>
         <Modal.Actions>
           <Button
-            content='У меня уже есть учетная запись'
-            color='blue'
-            onClick={() => {
-              hst.push('/auth/login/')
-            }}
-          ></Button>
-          <Button content='Зарегистрироваться!' loading={loading} labelPosition='right' icon='checkmark' onClick={() => submitForm()} positive />
+            content='Зарегистрировать пользователя'
+            loading={loading}
+            labelPosition='right'
+            icon='checkmark'
+            onClick={() => submitForm()}
+            positive
+          />
         </Modal.Actions>
       </Modal>
     </>

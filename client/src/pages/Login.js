@@ -35,13 +35,7 @@ export const Login = () => {
 
   return (
     <>
-      <Modal
-        size='tiny'
-        closeOnDimmerClick={false}
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
-        open={open}
-      >
+      <Modal size='tiny' closeOnDimmerClick={false} onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
         <Modal.Header>Добро пожаловать!</Modal.Header>
 
         <Modal.Content>
@@ -70,21 +64,14 @@ export const Login = () => {
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button
+          {/* <Button
             content='У меня еще нет учетной записи'
             color='blue'
             onClick={() => {
               hst.push('/auth/reg/')
             }}
-          ></Button>
-          <Button
-            content='Авторизоваться!'
-            loading={loading}
-            labelPosition='right'
-            icon='checkmark'
-            onClick={() => submitForm()}
-            positive
-          />
+          ></Button> */}
+          <Button content='Авторизоваться!' loading={loading} labelPosition='right' icon='checkmark' onClick={() => submitForm()} positive />
         </Modal.Actions>
       </Modal>
     </>

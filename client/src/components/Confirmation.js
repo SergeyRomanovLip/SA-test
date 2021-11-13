@@ -14,6 +14,9 @@ export const Confirmation = ({ children }) => {
   return (
     <ConfirmCtx.Provider value={{ confirmHandler }}>
       <Confirm
+        style={{ width: 300 + 'px' }}
+        size='tiny'
+        content='Вы уверены?'
         open={open}
         onCancel={() => {
           setOpen(false)

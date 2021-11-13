@@ -189,6 +189,7 @@ export const Order = ({ e, windWidth, fs }) => {
                   № {e.number} от {new Date(e.creationDate).toLocaleDateString()} <br /> {orderState.text}
                 </Label>
               </Form.Field>
+              <Form.Field style={{ width: fs.creator }}>{e.uid.fname}</Form.Field>
               <Form.Field style={{ width: fs.loadedDate }}>
                 <Input
                   labelPosition='left'
@@ -205,12 +206,6 @@ export const Order = ({ e, windWidth, fs }) => {
                   <input></input>
                 </Input>
               </Form.Field>
-              {/* <Form.Field style={{ width: fs.quantity }}>
-                <Input labelPosition='left' value={e?.quantity}>
-                  {windWidth < 768 && <Label>Количество</Label>}
-                  <input></input>
-                </Input>
-              </Form.Field> */}
               <Form.Field style={{ width: fs.company }}>
                 <Input labelPosition='left' value={e.farm?.company}>
                   {windWidth < 768 && <Label>Контрагент</Label>}

@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { Button, Checkbox, Dimmer, Form, Loader, Segment } from 'semantic-ui-react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { Button, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { useHttp } from './../hooks/http.hook'
 import { OrderViewport } from '../components/OrderViewport'
@@ -7,8 +7,10 @@ import { Filter } from '../components/Filter'
 import { uniqVal } from './../utils/uniqVal'
 import { useDimensions } from '../hooks/screen.hook'
 import { MessageCtx } from '../context/MessageCtx'
+import { useHistory } from 'react-router'
 
 export const Home = () => {
+  const hstr = useHistory()
   const storageName = 'lwmMernFltr'
   const { userId, token, userType, userData } = useContext(AuthCtx)
   const { messageHandler } = useContext(MessageCtx)
@@ -116,7 +118,7 @@ export const Home = () => {
     if (userId && token && userType && userData) {
       const localhost = true
       const sse = new EventSource(
-        `/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}&type=${userType}`,
+        `http://localhost:5000/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}&type=${userType}`,
         {}
       )
       sse.addEventListener('message', getRealtimeData)

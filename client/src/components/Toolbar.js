@@ -34,18 +34,18 @@ export const Toolbar = (props) => {
               }}
               text='Добавить номенклатуру'
             />
-            <Dropdown.Item icon='globe' text='Choose Language' />
-            <Dropdown.Item icon='settings' text='Account Settings' />
+            <Dropdown.Item
+              icon='add'
+              text='Добавить пользователя'
+              onClick={() => {
+                hstr.push('/home/addUser')
+              }}
+            />
           </Dropdown.Menu>
         </Dropdown>
         <Menu.Item position='right'>
           <div style={{ width: windWidth > 810 ? 250 + 'px' : 40 + 'px' }}>
-            <Image
-              floated='right'
-              size='mini'
-              style={{ margin: 0 + 'px', padding: 0 + 'px' }}
-              src={userData?.avt || '/avatarph.png'}
-            />
+            <Image floated='right' size='mini' style={{ margin: 0 + 'px', padding: 0 + 'px' }} src={userData?.avt || '/avatarph.png'} />
             {windWidth > 810 && (
               <p>
                 {userData?.fname || <Loader active inline />}

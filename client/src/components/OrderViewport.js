@@ -5,12 +5,15 @@ import { useHttp } from './../hooks/http.hook'
 import { MessageCtx } from './../context/MessageCtx'
 import { useHistory } from 'react-router'
 import { Order } from './OrderOLD'
+import { Register } from './modals/Register'
 
 export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopenCreateOrderModal }) => {
   const hstr = useHistory()
   const { token, userId, userType } = useContext(AuthCtx)
   const { messageHandler } = useContext(MessageCtx)
   const { loading, error, request } = useHttp()
+  const [openAddPot, setOpenAddPot] = useState(false)
+  const [openAddUser, setOpenAddUser] = useState(false)
   const fs = {
     loadedDate: 200 + 'px',
     car: 150 + 'px',
@@ -18,7 +21,8 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
     quantity: 120 + 'px',
     title: 250 + 'px',
     deliverDate: 200 + 'px',
-    orderState: 150 + 'px'
+    orderState: 150 + 'px',
+    creator: 200 + 'px'
   }
   const [requestedData, setRequestedData] = useState()
   const dataRequest = async (what, options) => {
@@ -53,7 +57,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
       }
     )
   }
-  const [openAddPot, setOpenAddPot] = useState(false)
+
   const [addPotData, setAddPotData] = useState({})
   const addPotDataHandler = (e, type) => {
     setAddPotData((prev) => {
@@ -80,12 +84,13 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
       switch (location.pathname) {
         case '/home/addPotato':
           setOpenAddPot(true)
+          break
+        case '/home/addUser':
+          console.log('asdfasd')
+          setOpenAddUser(true)
       }
     })
   }, [])
-
-  const [sorting, setSorting] = useState([])
-  const handleSorting = () => {}
 
   return (
     <>
@@ -165,17 +170,6 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
                   type='datetime-local'
                 />
               </Form.Field>
-              {/* <Form.Field>
-                <label>Количество</label>
-                <Input
-                  value={addOrderData.quantity || ''}
-                  onChange={(e) => {
-                    addOrderDataHandler(e.target.value, 'quantity')
-                  }}
-                  placeholder='Количество'
-                  type='number'
-                />
-              </Form.Field> */}
             </Form>
           </Modal.Content>
           <Modal.Actions>
@@ -191,7 +185,7 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
           </Modal.Actions>
         </Modal>
       ) : null}
-
+      <Register active={openAddUser} deactivate={setOpenAddUser} />
       <Modal
         size='tiny'
         closeOnDimmerClick={false}
@@ -258,6 +252,9 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
               <Form.Group widths='7' className='headers'>
                 <Form.Field style={{ width: fs.orderState }}>
                   <Label>Статус</Label>
+                </Form.Field>
+                <Form.Field style={{ width: fs.creator }}>
+                  <Label> Заявитель </Label>
                 </Form.Field>
                 <Form.Field style={{ width: fs.loadedDate }}>
                   <Label>Дата загрузки </Label>
