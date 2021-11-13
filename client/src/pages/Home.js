@@ -115,9 +115,8 @@ export const Home = () => {
   useEffect(() => {
     if (userId && token && userType && userData) {
       const localhost = true
-      console.log(userData)
       const sse = new EventSource(
-        `http://localhost:5000/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}&type=${userType}`,
+        `/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}&type=${userType}`,
         {}
       )
       sse.addEventListener('message', getRealtimeData)
