@@ -73,7 +73,6 @@ export const Home = () => {
     localStorage.setItem(storageName, JSON.stringify(fltr))
     dataRequest('orders', fltr)
   }
-
   const [requestedData, setRequestedData] = useState()
   const dataRequest = async (what, optionsPrev) => {
     let options = typeof optionsPrev === 'function' ? optionsPrev() : optionsPrev
@@ -104,12 +103,6 @@ export const Home = () => {
       messageHandler(resp.message, 'success')
     }
     if (resp.update) {
-      console.group('функция update')
-      console.log('state')
-      console.log(latestFilters.current)
-      console.log('localStorage')
-      console.log(latestRstFilters.current)
-      console.groupEnd()
       await dataRequest('orders', latestFilters.current || latestRstFilters.current)
     }
   }
@@ -140,9 +133,7 @@ export const Home = () => {
                 className='addOrder'
                 color='orange'
                 onClick={() => {
-                  setopenCreateOrderModal((prev) => {
-                    return prev ? false : true
-                  })
+                  hstr.push('/home/addOrder')
                 }}
               >
                 Добавить новую заявку
@@ -214,10 +205,6 @@ export const Home = () => {
           </Form.Field>
         </Form.Group>
       </Form>
-      {/* 
-      <Dimmer.Dimmable as={Segment} blurring dimmed={loading}>
-        <Dimmer active={loading} inverted /> */}
-
       <Loader active={loading}>Получение данных</Loader>
       <OrderViewport
         windWidth={windWidth}
@@ -225,7 +212,6 @@ export const Home = () => {
         openCreateOrderModal={openCreateOrderModal}
         setopenCreateOrderModal={setopenCreateOrderModal}
       />
-      {/* </Dimmer.Dimmable> */}
     </>
   )
 }

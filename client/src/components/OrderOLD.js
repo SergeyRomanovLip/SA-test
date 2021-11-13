@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Form, Input, Label, Loader, Modal, Segment, Icon, Popup } from 'semantic-ui-react'
+import { Button, Form, Input, Label, Loader, Segment, Icon, Popup } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { ConfirmCtx } from '../context/ConfirmCtx'
 import { useHttp } from '../hooks/http.hook'
-import PhoneInput from 'react-phone-number-input'
-import { DriverSearch } from './DriverSearch'
+import { AddDriver } from './modals/AddDriver'
+import { useHistory } from 'react-router'
 
 export const Order = ({ e, windWidth, fs }) => {
+  const hstr = useHistory()
   const [choosen, setChoosen] = useState(false)
-  const { token, userId, userType } = useContext(AuthCtx)
-  const { loading, error, request } = useHttp()
+  const { token, userType } = useContext(AuthCtx)
+  const { loading, request } = useHttp()
   const { confirmHandler } = useContext(ConfirmCtx)
   const [orderState, setOrderState] = useState({ text: <Loader inline />, color: 'teal' })
-
+  const [openAddCar, setOpenAddCar] = useState(false)
   const orderStateHandler = () => {
     let state = {}
-
     if (e.state === 'canceled') {
       state = { text: 'Отменена', color: 'grey' }
     } else if (e.state === 'created') {
@@ -28,24 +28,6 @@ export const Order = ({ e, windWidth, fs }) => {
       state = { text: `Завершена ${new Date(e.finishDate).toLocaleDateString()}`, color: 'orange' }
     }
     setOrderState(state)
-  }
-  const [openAddCar, setOpenAddCar] = useState(false)
-  const [addCarData, setAddCarData] = useState({})
-  const addCarDataHandler = (e, type) => {
-    setAddCarData((prev) => {
-      return { ...prev, [type]: e }
-    })
-  }
-
-  const addNewCar = () => {
-    request(
-      `/api/data/addcartoorder`,
-      'POST',
-      { _id: e._id, car: addCarData },
-      {
-        Authorization: `Bearer ${token}`
-      }
-    )
   }
 
   const orderLoaded = () => {
@@ -119,6 +101,21 @@ export const Order = ({ e, windWidth, fs }) => {
           </Button>
         )
       }
+      if (e.state === 'car_defined') {
+        buttonsArray.push(
+          <Button
+            key={1155}
+            loading={loading}
+            size={'tiny'}
+            onClick={(e) => {
+              confirmHandler(orderFinish)
+            }}
+            color='grey'
+          >
+            Закрыть заявку
+          </Button>
+        )
+      }
       if (e.state === 'loaded') {
         buttonsArray.push(
           <Button
@@ -161,6 +158,7 @@ export const Order = ({ e, windWidth, fs }) => {
   }
   return (
     <>
+      <AddDriver active={openAddCar} deactivate={setOpenAddCar} e={e} />
       <Segment.Group horizontal>
         <Segment
           style={{
@@ -261,68 +259,6 @@ export const Order = ({ e, windWidth, fs }) => {
           </Form>
         </Segment>
       </Segment.Group>
-      <Modal
-        size='tiny'
-        closeOnDimmerClick={false}
-        onClose={() => {
-          setOpenAddCar(false)
-        }}
-        onOpen={() => {
-          setOpenAddCar(true)
-        }}
-        open={openAddCar}
-      >
-        <Modal.Header>Добавить к заказу автомобиль</Modal.Header>
-        <Modal.Content>
-          <Form>
-            <Form.Field>
-              <DriverSearch filler={addCarDataHandler} />
-              {/* <Input value={addCarData.fio || ''} onChange={(e) => {}} placeholder='ФИО водителя' /> */}
-            </Form.Field>
-            <Form.Field>
-              <PhoneInput
-                defaultCountry='RU'
-                placeholder='номер телефона водителя'
-                value={addCarData.phone || ''}
-                onChange={(e) => {
-                  addCarDataHandler(e, 'phone')
-                }}
-              />
-            </Form.Field>
-            <Form.Field>
-              <Input
-                value={addCarData.number || ''}
-                onChange={(e) => {
-                  addCarDataHandler(e.target.value.toUpperCase(), 'number')
-                }}
-                placeholder='номер автомобиля'
-              />
-            </Form.Field>
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button
-            content='Отменить'
-            color='red'
-            onClick={() => {
-              setOpenAddCar(false)
-            }}
-            labelPosition='right'
-            icon='close'
-          ></Button>
-          <Button
-            content='Подтвердить'
-            loading={loading}
-            labelPosition='right'
-            icon='checkmark'
-            onClick={() => {
-              addNewCar()
-              setOpenAddCar(false)
-            }}
-            positive
-          />
-        </Modal.Actions>
-      </Modal>
     </>
   )
 }

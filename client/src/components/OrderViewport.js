@@ -1,18 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Header, Input, Form, Modal, Dropdown, List, Label, Item, Segment } from 'semantic-ui-react'
+import { Form, Label, Item, Segment } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
-import { useHttp } from './../hooks/http.hook'
-import { MessageCtx } from './../context/MessageCtx'
 import { useHistory } from 'react-router'
 import { Order } from './OrderOLD'
 import { Register } from './modals/Register'
+import { AddOrder } from './modals/AddOrder'
+import { AddPotato } from './modals/AddPotato'
 
-export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopenCreateOrderModal }) => {
+export const OrderViewport = ({ windWidth, orders }) => {
   const hstr = useHistory()
-  const { token, userId, userType } = useContext(AuthCtx)
-  const { messageHandler } = useContext(MessageCtx)
-  const { loading, error, request } = useHttp()
+  const { userType } = useContext(AuthCtx)
   const [openAddPot, setOpenAddPot] = useState(false)
+  const [openAddOrder, setOpenAddOrder] = useState(false)
   const [openAddUser, setOpenAddUser] = useState(false)
   const fs = {
     loadedDate: 200 + 'px',
@@ -24,220 +23,28 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
     orderState: 150 + 'px',
     creator: 200 + 'px'
   }
-  const [requestedData, setRequestedData] = useState()
-  const dataRequest = async (what, options) => {
-    const res = await request(
-      `/api/data/${what}`,
-      'POST',
-      { userId },
-      {
-        Authorization: `Bearer ${token}`
-      }
-    )
-    setRequestedData((prev) => {
-      return { ...prev, [what]: res }
-    })
-    return res
-  }
-
-  const [addOrderData, setAddOrderData] = useState({})
-  const addOrderDataHandler = (e, type) => {
-    setAddOrderData((prev) => {
-      return { ...prev, [type]: e }
-    })
-  }
-
-  const addNewOrder = () => {
-    request(
-      `/api/data/addorder`,
-      'POST',
-      { ...addOrderData, uid: userId },
-      {
-        Authorization: `Bearer ${token}`
-      }
-    )
-  }
-
-  const [addPotData, setAddPotData] = useState({})
-  const addPotDataHandler = (e, type) => {
-    setAddPotData((prev) => {
-      return { ...prev, [type]: e }
-    })
-  }
-
-  const addNewPot = async () => {
-    const res = request(
-      `/api/data/addpot`,
-      'POST',
-      { ...addPotData },
-      {
-        Authorization: `Bearer ${token}`
-      }
-    ).then(() => {
-      dataRequest('potatoes')
-    })
-  }
 
   useEffect(() => {
-    dataRequest('potatoes')
     hstr.listen((location) => {
       switch (location.pathname) {
         case '/home/addPotato':
           setOpenAddPot(true)
           break
         case '/home/addUser':
-          console.log('asdfasd')
           setOpenAddUser(true)
+          break
+        case '/home/addOrder':
+          setOpenAddOrder(true)
+          break
       }
     })
   }, [])
 
   return (
     <>
-      {userType === 'logisticks' ? (
-        <Modal
-          size='tiny'
-          closeOnDimmerClick={false}
-          onClose={() => setopenCreateOrderModal(false)}
-          onMount={() => {
-            dataRequest('farmers')
-            dataRequest('potatoes')
-          }}
-          open={openCreateOrderModal}
-        >
-          <Modal.Header>Создание заявки</Modal.Header>
-          <Modal.Content>
-            <Form>
-              <Form.Field>
-                <label>фермер</label>
-                <Dropdown
-                  placeholder='фермер'
-                  fluid
-                  selection
-                  value={addOrderData.type || ''}
-                  onChange={(e, val) => {
-                    addOrderDataHandler(val.value, 'type')
-                  }}
-                  options={
-                    requestedData?.farmers?.map((e) => {
-                      return {
-                        key: e._id,
-                        text: (
-                          <>
-                            <p>
-                              <b>{e.company}</b>
-                            </p>
-                            <p>
-                              {e.fname}, {e.position}
-                            </p>
-                          </>
-                        ),
-                        value: e._id
-                      }
-                    }) || [{ key: '1', text: '...', value: '' }]
-                  }
-                />
-              </Form.Field>
-              <Form.Field>
-                <label>номенклатура</label>
-                <Dropdown
-                  placeholder='номенклатура'
-                  fluid
-                  selection
-                  value={addOrderData?.potatoe || ''}
-                  onChange={(e, val) => {
-                    addOrderDataHandler(val.value, 'potatoe')
-                  }}
-                  options={
-                    requestedData?.potatoes?.map((e) => {
-                      return {
-                        key: e._id,
-                        text: e.title,
-                        value: e._id
-                      }
-                    }) || [{ key: '1', text: '...', value: '' }]
-                  }
-                />
-              </Form.Field>
-              <Form.Field>
-                <label>дата доставки</label>
-                <Input
-                  value={addOrderData.date || ''}
-                  onChange={(e) => {
-                    addOrderDataHandler(e.target.value, 'date')
-                  }}
-                  placeholder='дата доставки'
-                  type='datetime-local'
-                />
-              </Form.Field>
-            </Form>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button
-              content='Закрыть'
-              onClick={() => {
-                setopenCreateOrderModal(false)
-              }}
-              labelPosition='right'
-              icon='close'
-            ></Button>
-            <Button content='Подтвердить' color='teal' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewOrder()} />
-          </Modal.Actions>
-        </Modal>
-      ) : null}
+      {userType === 'logisticks' ? <AddOrder active={openAddOrder} deactivate={setOpenAddOrder} /> : null}
       <Register active={openAddUser} deactivate={setOpenAddUser} />
-      <Modal
-        size='tiny'
-        closeOnDimmerClick={false}
-        onClose={() => {
-          hstr.goBack()
-          setOpenAddPot(false)
-        }}
-        onOpen={() => {
-          dataRequest('potatoes')
-          setOpenAddPot(true)
-        }}
-        open={openAddPot}
-      >
-        <Modal.Header>Добавить новую номенклатуру</Modal.Header>
-        <Modal.Content>
-          <Form>
-            <Form.Field>
-              <Input
-                value={addPotData.title || ''}
-                onChange={(e) => {
-                  addPotDataHandler(e.target.value, 'title')
-                }}
-                placeholder='Наименование номенклатуры'
-              />
-            </Form.Field>
-          </Form>
-          <Header>Существующая номенклатура</Header>
-          <List>
-            {requestedData?.potatoes?.map((e, i) => {
-              return (
-                <List.Item key={i + 'potatoes'}>
-                  <List.Icon name='point' />
-                  <List.Content>{e.title}</List.Content>
-                </List.Item>
-              )
-            })}
-          </List>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button
-            content='Отменить'
-            color='red'
-            onClick={() => {
-              hstr.goBack()
-              setOpenAddPot(false)
-            }}
-            labelPosition='right'
-            icon='close'
-          ></Button>
-          <Button content='Подтвердить' loading={loading} labelPosition='right' icon='checkmark' onClick={() => addNewPot()} positive />
-        </Modal.Actions>
-      </Modal>
+      <AddPotato active={openAddPot} deactivate={setOpenAddPot} />
       <Segment.Group horizontal className={'headers'}>
         <Segment
           style={{
@@ -262,9 +69,6 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
                 <Form.Field style={{ width: fs.title }}>
                   <Label>Сорт</Label>
                 </Form.Field>
-                {/* <Form.Field style={{ width: fs.quantity }}>
-                  <Label>Количество</Label>
-                </Form.Field> */}
                 <Form.Field style={{ width: fs.company }}>
                   <Label>Контрагент</Label>
                 </Form.Field>
@@ -286,7 +90,6 @@ export const OrderViewport = ({ windWidth, orders, openCreateOrderModal, setopen
         <Item.Group>
           {orders
             ?.sort((a, b) => {
-              //by delivery date
               return new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
             })
             .map((e, i) => {
