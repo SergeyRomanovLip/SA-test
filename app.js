@@ -20,14 +20,16 @@ function eventsHandler(request, response, next) {
   response.write(`data: ${JSON.stringify({ message: 'Вы подключены к серверу LWM', state: 'connect' })}\n\n`)
 
   const reqData = url.parse(request.url, true).query
-  const clientId = Date.now()
   const newClient = {
     id: reqData.uid,
     fname: reqData.fname,
     company: reqData.company,
+    type: reqData.type,
     position: reqData.position,
     response
   }
+
+  clients.filter((clnt) => clnt.id !== newClient.id)
   clients.push(newClient)
   clients.forEach((client) => {
     if (client.id !== newClient.id) {
@@ -42,13 +44,12 @@ function eventsHandler(request, response, next) {
 
   console.log(newClient.fname + ' Connected')
   let interval = setInterval(() => {
-    console.log(`${newClient.fname} keep`)
     response.write(`data: ${JSON.stringify({ state: 'alive' })}\n\n`)
   }, 10000)
   request.on('close', () => {
-    console.log(`${newClient.fname} Connection closed`)
     clearInterval(interval)
-    clients = clients.filter((client) => client.id !== clientId)
+    clients = clients.filter((client) => client.id !== newClient.id)
+    console.log(`${newClient.fname} Connection closed`)
   })
 }
 

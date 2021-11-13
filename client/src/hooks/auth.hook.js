@@ -14,6 +14,7 @@ export const useAuth = () => {
       company,
       fname,
       position,
+      type
     })
     localStorage.setItem(
       storageName,
@@ -22,7 +23,7 @@ export const useAuth = () => {
         jwtToken,
         expire,
         type,
-        userData: { fname, position, company: company || 'LWM' },
+        userData: { fname, type, position, company: company || 'LWM' }
       })
     )
   }, [])
@@ -41,15 +42,7 @@ export const useAuth = () => {
         logout()
         return console.log('Токен опоздал ' + data.expire)
       } else if (new Date(data.expire).getTime() > Date.now()) {
-        login(
-          data.jwtToken,
-          data.id,
-          data.expire,
-          data.type,
-          data.userData.fname,
-          data.userData.position,
-          data.userData.company
-        )
+        login(data.jwtToken, data.id, data.expire, data.type, data.userData.fname, data.userData.position, data.userData.company)
         return console.log('Токен действительный ' + data.expire)
       }
     }

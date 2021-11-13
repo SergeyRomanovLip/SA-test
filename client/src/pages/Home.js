@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Button, Checkbox, Form, Loader } from 'semantic-ui-react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { Button, Checkbox, Dimmer, Form, Loader, Segment } from 'semantic-ui-react'
 import { AuthCtx } from '../context/AuthCtx'
 import { useHttp } from './../hooks/http.hook'
 import { OrderViewport } from '../components/OrderViewport'
@@ -17,25 +17,38 @@ export const Home = () => {
   const [openCreateOrderModal, setopenCreateOrderModal] = useState(false)
   const [filters, setFilters] = useState({})
   const [rstFilters, setRstFilters] = useState({})
+  const latestFilters = useRef(filters)
+  const latestRstFilters = useRef(rstFilters)
+  const setFiltersRef = (data) => {
+    latestFilters.current = data
+    setFilters(data)
+  }
+  const setRstFiltersRef = (data) => {
+    latestRstFilters.current = data
+    setRstFilters(data)
+  }
 
-  async function init() {
+  const init = async () => {
+    console.log('initialization...')
     const LSFltrs = JSON.parse(localStorage.getItem(storageName))
-    const RstFltrs = await {
-      farm: await dataRequest('farmers').then((res) => res.map((farmer) => farmer._id)),
-      state: ['created', 'car_defined', 'loaded']
+    const farm = await dataRequest('farmers').then((res) => res.map((farmer) => farmer._id))
+    const state = ['created', 'car_defined', 'loaded']
+    const RstFltrs = {
+      farm,
+      state
     }
     const initFilters = {
       state: LSFltrs?.state ? LSFltrs.state : RstFltrs.state,
       farm: LSFltrs?.farm ? LSFltrs.farm : RstFltrs.farm
     }
-
-    setRstFilters(RstFltrs)
-    setFilters(initFilters)
+    setRstFiltersRef(RstFltrs)
+    setFiltersRef(initFilters)
     dataRequest('orders', initFilters)
+    console.log('initialization finished')
   }
 
   const resetFltrs = (type) => {
-    setFilters((prev) => {
+    setFiltersRef((prev) => {
       localStorage.setItem(storageName, JSON.stringify({ ...prev, [type]: rstFilters[type] }))
       dataRequest('orders', { ...prev, [type]: rstFilters[type] })
       return { ...prev, [type]: rstFilters[type] }
@@ -54,21 +67,14 @@ export const Home = () => {
         fltr[type] = [...fltr[type], e]
       }
     }
-    setFilters(fltr)
+    setFiltersRef(fltr)
     localStorage.setItem(storageName, JSON.stringify(fltr))
     dataRequest('orders', fltr)
   }
-  const getLSFltrs = () => {
-    if (rstFilters) {
-      return rstFilters
-    } else if (JSON.parse(localStorage.getItem(storageName))) {
-      return JSON.parse(localStorage.getItem(storageName))
-    } else {
-      return null
-    }
-  }
+
   const [requestedData, setRequestedData] = useState()
-  const dataRequest = async (what, options) => {
+  const dataRequest = async (what, optionsPrev) => {
+    let options = typeof optionsPrev === 'function' ? optionsPrev() : optionsPrev
     const res = await request(
       `/api/data/${what}`,
       'POST',
@@ -83,6 +89,10 @@ export const Home = () => {
     return res
   }
 
+  const getErrorFromSse = (e) => {
+    messageHandler('Соединение прервано, нажмите F5', 'error')
+    console.log('Подключение потеряно')
+  }
   const getRealtimeData = async ({ data }) => {
     const resp = JSON.parse(data)
     if (resp.state === 'connect') {
@@ -92,20 +102,22 @@ export const Home = () => {
       messageHandler(resp.message, 'success')
     }
     if (resp.update) {
-      await dataRequest('orders', getLSFltrs())
+      console.group('функция update')
+      console.log('state')
+      console.log(latestFilters.current)
+      console.log('localStorage')
+      console.log(latestRstFilters.current)
+      console.groupEnd()
+      await dataRequest('orders', latestFilters.current || latestRstFilters.current)
     }
   }
 
-  const getErrorFromSse = (e) => {
-    messageHandler('Соединение прервано, нажмите F5', 'error')
-    console.log('Подключение потеряно')
-  }
-
   useEffect(() => {
-    if (userId) {
+    if (userId && token && userType && userData) {
       const localhost = true
+      console.log(userData)
       const sse = new EventSource(
-        `http://localhost:5000/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}`,
+        `/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}&type=${userType}`,
         {}
       )
       sse.addEventListener('message', getRealtimeData)
@@ -115,7 +127,7 @@ export const Home = () => {
         sse.removeEventListener('error', getErrorFromSse)
       }
     }
-  }, [userId])
+  }, [userId, token, userType, userData])
 
   return (
     <>
@@ -201,14 +213,18 @@ export const Home = () => {
           </Form.Field>
         </Form.Group>
       </Form>
+      {/* 
+      <Dimmer.Dimmable as={Segment} blurring dimmed={loading}>
+        <Dimmer active={loading} inverted /> */}
 
-      <Loader active={loading} />
+      <Loader active={loading}>Получение данных</Loader>
       <OrderViewport
         windWidth={windWidth}
         orders={requestedData?.orders || []}
         openCreateOrderModal={openCreateOrderModal}
         setopenCreateOrderModal={setopenCreateOrderModal}
       />
+      {/* </Dimmer.Dimmable> */}
     </>
   )
 }
