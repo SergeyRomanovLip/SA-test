@@ -226,7 +226,7 @@ export const Order = ({ e, windWidth, fs }) => {
                       <div>
                         <span>{e.driver?.fio}</span>
                         <br />
-                        <a href={e.driver?.phone}>{e.driver?.phone}</a>
+                        <a href={`tel:${e.driver?.phone}`}>{e.driver?.phone}</a>
                       </div>
                     }
                     trigger={

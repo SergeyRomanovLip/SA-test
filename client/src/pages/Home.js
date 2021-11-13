@@ -117,7 +117,7 @@ export const Home = () => {
       const localhost = true
       console.log(userData)
       const sse = new EventSource(
-        `/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}&type=${userType}`,
+        `http://localhost:5000/sseupdate?uid=${userId}&fname=${userData?.fname}&company=${userData?.company}&position=${userData?.position}&type=${userType}`,
         {}
       )
       sse.addEventListener('message', getRealtimeData)

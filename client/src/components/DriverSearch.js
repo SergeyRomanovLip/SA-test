@@ -58,7 +58,7 @@ export const DriverSearch = ({ filler }) => {
       <div>
         <span>{title}</span>
         <br />
-        <a href={phone}>{phone}</a>
+        <span>{phone}</span>
       </div>
     )
   }
