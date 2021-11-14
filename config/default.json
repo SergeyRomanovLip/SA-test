@@ -1,5 +1,5 @@
 {
   "port": 5000,
-  "mongoUri": "mongodb+srv://sergey:8TZlqsf6RchenUFz@cluster0.pdrxn.mongodb.net/AUDIT-SOLUTIONS-APP?retryWrites=true&w=majority",
+  "mongoUri": "mongodb+srv://test_lwm:OJvAAP6f3IxbcPEO@cluster0.rjdis.mongodb.net/lwm_test?retryWrites=true&w=majority",
   "jwtSecret": "truck-tracker"
 }

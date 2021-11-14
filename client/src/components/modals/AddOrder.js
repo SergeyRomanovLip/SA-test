@@ -80,9 +80,7 @@ export const AddOrder = ({ active, deactivate }) => {
                     text: (
                       <>
                         <p>
-                          <b>{e.company}</b>
-                        </p>
-                        <p>
+                          <b>{e.company} | </b>
                           {e.fname}, {e.position}
                         </p>
                       </>
@@ -117,9 +115,11 @@ export const AddOrder = ({ active, deactivate }) => {
           <Form.Field>
             <label>дата доставки</label>
             <Input
-              value={addOrderData.date || ''}
+              value={addOrderData.date || new Date().toISOString().substr(0, 10) + 'T13:00'}
               onChange={(e) => {
                 addOrderDataHandler(e.target.value, 'date')
+                console.log()
+                console.log(e.target.value)
               }}
               placeholder='дата доставки'
               type='datetime-local'

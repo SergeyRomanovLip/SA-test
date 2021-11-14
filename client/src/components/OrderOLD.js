@@ -104,6 +104,17 @@ export const Order = ({ e, windWidth, fs }) => {
       if (e.state === 'car_defined') {
         buttonsArray.push(
           <Button
+            key={124}
+            loading={loading}
+            size={'tiny'}
+            onClick={() => {
+              confirmHandler(orderCancel)
+            }}
+            color='google plus'
+          >
+            Отменить заявку
+          </Button>,
+          <Button
             key={1155}
             loading={loading}
             size={'tiny'}

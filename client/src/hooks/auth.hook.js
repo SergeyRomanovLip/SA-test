@@ -6,6 +6,7 @@ export const useAuth = () => {
   const [userType, setUserType] = useState(null)
   const [userData, setUserData] = useState(null)
   const storageName = 'lwmMernud'
+  const storageFilters = 'lwmMernFltr'
   const login = useCallback((jwtToken, id, expire, type, fname, position, company) => {
     setToken(jwtToken)
     setUserId(id)
@@ -32,6 +33,7 @@ export const useAuth = () => {
     setToken(null)
     setUserId(null)
     localStorage.removeItem(storageName)
+    localStorage.removeItem(storageFilters)
     window.location.reload()
   }, [])
 
