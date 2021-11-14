@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react'
 import _ from 'lodash'
-import { Search } from 'semantic-ui-react'
+import { Popup, Search } from 'semantic-ui-react'
 import { useHttp } from './../hooks/http.hook'
 import { AuthCtx } from '../context/AuthCtx'
 
@@ -43,7 +43,7 @@ export const DriverSearch = ({ filler }) => {
           return
         }
         const re = new RegExp(_.escapeRegExp(data.value), 'i')
-        const isMatch = (result) => re.test(result.title)
+        const isMatch = (result) => re.test(result.title + result.phone)
         dispatch({
           type: 'FINISH_SEARCH',
           results: _.filter(drivers, isMatch)
@@ -92,22 +92,28 @@ export const DriverSearch = ({ filler }) => {
   }, [])
 
   return (
-    <Search
-      fluid
-      loading={loading}
-      onResultSelect={(e, data) => {
-        dispatch({ type: 'UPDATE_SELECTION', selection: data.result.title })
-        filler(data.result.title, 'fio')
-        filler(data.result.phone, 'phone')
-      }}
-      onSearchChange={(e, data) => {
-        handleSearchChange(e, data)
-        filler(e.target.value, 'fio')
-      }}
-      results={results}
-      value={value}
-      resultRenderer={resRender}
-      placeholder={'Начните вводить фамилию водителя'}
+    <Popup
+      flowing
+      content='начните вводить фамилию или номер телефона без 8'
+      trigger={
+        <Search
+          fluid
+          loading={loading}
+          onResultSelect={(e, data) => {
+            dispatch({ type: 'UPDATE_SELECTION', selection: data.result.title })
+            filler(data.result.title, 'fio')
+            filler(data.result.phone, 'phone')
+          }}
+          onSearchChange={(e, data) => {
+            handleSearchChange(e, data)
+            filler(e.target.value, 'fio')
+          }}
+          results={results}
+          value={value}
+          resultRenderer={resRender}
+          placeholder={'ФИО водителя'}
+        />
+      }
     />
   )
 }

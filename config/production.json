@@ -1,5 +1,5 @@
 {
-  "port": 5000,
+  "port": 80,
   "mongoUri": "mongodb+srv://test_lwm:OJvAAP6f3IxbcPEO@cluster0.rjdis.mongodb.net/lwm_test?retryWrites=true&w=majority",
   "jwtSecret": "truck-tracker",
   "baseUrl": "http://lwm.smart-audit.site"
