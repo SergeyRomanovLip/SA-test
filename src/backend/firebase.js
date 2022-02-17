@@ -90,8 +90,26 @@ export const getTestResult = async (dataId) => {
   const collection = db.collection('testResults').doc(dataId)
   try {
     const testRes = await collection.get()
+
     if (testRes.exists) {
-      alert('Спасибо! Тест загружен в систему')
+      let questionsArray = testRes.data()
+      alert(
+        <>
+          <p>Спасибо! Тест загружен в систему. Результаты ниже:</p>
+          <ul>
+            {questionsArray.answers.map((answer, i) => {
+              return (
+                <li>
+                  <p>
+                    Вопрос № {i + 1}: {answer.question}
+                    Ответ: {answer.answer}, результат: {answer.right}
+                  </p>
+                </li>
+              )
+            })}
+          </ul>
+        </>
+      )
     } else {
       alert('Произошла ошибка, пожалуйста попробуйте еще раз')
     }

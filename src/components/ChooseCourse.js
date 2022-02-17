@@ -1,10 +1,18 @@
 import { Container, Header, Card } from 'semantic-ui-react'
 export const ChooseCourse = ({ histories, user, testTypes }) => {
+  let resultArray = []
   let arrayFilteredByDepartment = testTypes.filter((el) =>
     el.replace(/\s/g, '').includes(user.department.replace(/\s/g, ''))
   )
+  let arrayFilteredByPosition = arrayFilteredByDepartment.filter((el) =>
+    el.replace(/\s/g, '').includes(user.position.replace(/\s/g, ''))
+  )
+  resultArray = arrayFilteredByPosition
+  if (arrayFilteredByPosition.length === 0) {
+    resultArray = arrayFilteredByDepartment
+  }
   if (arrayFilteredByDepartment.length === 0) {
-    arrayFilteredByDepartment = testTypes
+    resultArray = testTypes
   }
 
   return (
@@ -15,7 +23,7 @@ export const ChooseCourse = ({ histories, user, testTypes }) => {
         <p>Департамент: {user.department}</p>
         <Header as='h3'>Пожалуйста, выберите тест</Header>
         {testTypes &&
-          arrayFilteredByDepartment.map((e, i) => {
+          resultArray.map((e, i) => {
             return (
               <Card
                 fluid
