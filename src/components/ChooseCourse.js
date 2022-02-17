@@ -1,12 +1,21 @@
 import { Container, Header, Card } from 'semantic-ui-react'
 export const ChooseCourse = ({ histories, user, testTypes }) => {
+  let arrayFilteredByDepartment = testTypes.filter((el) =>
+    el.replace(/\s/g, '').includes(user.department.replace(/\s/g, ''))
+  )
+  if (arrayFilteredByDepartment.length === 0) {
+    arrayFilteredByDepartment = testTypes
+  }
+
   return (
     <div className='narrowContainer'>
       <Container fluid className='container'>
         <Header as='h2'>Добро пожаловать {user && user.fio}!</Header>
+        <p>Должность: {user.position}</p>
+        <p>Департамент: {user.department}</p>
         <Header as='h3'>Пожалуйста, выберите тест</Header>
         {testTypes &&
-          testTypes.map((e, i) => {
+          arrayFilteredByDepartment.map((e, i) => {
             return (
               <Card
                 fluid

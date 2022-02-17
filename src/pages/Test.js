@@ -4,7 +4,7 @@ import { ChooseCourse } from '../components/ChooseCourse'
 import { TestAnswer } from '../components/TestAnswer'
 import { RoutesContext } from '../context/RoutesContext'
 import { Dimmer, Loader } from 'semantic-ui-react'
-import { getData, getTestResult } from '../backend/firebase'
+import { getAllQuestionDocs, getData, getTestResult } from '../backend/firebase'
 
 export const Test = () => {
   const params = useParams()
@@ -14,12 +14,20 @@ export const Test = () => {
   const [readyTests, setReadyTests] = useState([])
   const [testTypes, setTestTypes] = useState([])
   const reloadHandler = (data) => {
-    getTestResult(data).then(histories.push(`/testready/${params.company}&${params.fio}&${params.position}&${params.department}/`))
+    getTestResult(data).then(
+      histories.push(`/testready/${params.company}&${params.fio}&${params.position}&${params.department}/`)
+    )
   }
 
   const getDataHandler = async () => {
     setLoading(true)
-    const res = await getData('testQuestions', params.company)
+    const docNames = await getAllQuestionDocs()
+    const res = []
+    for await (let docName of docNames) {
+      let questions = await getData('testQuestions', docName)
+      res.push(...questions)
+    }
+
     if (res) {
       setTestState(res)
       let courses = []

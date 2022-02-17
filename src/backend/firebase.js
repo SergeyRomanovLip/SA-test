@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import { generateId } from '../misc/generateId'
+import { chunkArray } from '../misc/splitArray'
 
 const config = {
   apiKey: 'AIzaSyAjgQ7hZHzAe6d6wddkGhd8n3hEAMTMO0s',
@@ -111,33 +112,53 @@ export const getAllTestResults = async () => {
     alert(e)
   }
 }
+
+export const getAllQuestionDocs = async (user) => {
+  try {
+    const collection = await db.collection('testQuestions').get()
+    let docNames = []
+    collection.docs.forEach((el) => {
+      docNames.push(el.id)
+    })
+    return docNames
+  } catch (e) {
+    alert(e)
+  }
+}
+
 export const uploadNewQuestions = async (user, newQuestions, loadHandl) => {
   try {
     loadHandl(true)
-    const collection = await db.collection('users').get()
-    let uData = {}
-    collection.docs.forEach((el) => {
-      if (el.data().email === user.email) {
-        uData = el.data()
-      }
-    })
-    await db
-      .collection('testQuestions')
-      .doc(`${uData.company}`)
-      .set({
-        data: newQuestions,
-      })
-      .then(() => {
-        console.log('Document successfully written!')
-      })
-      .catch((error) => {
-        console.error('Error writing document: ', error)
-        return error
-      })
-    loadHandl(false)
+    // const collection = await db.collection('users').get()
+    // let uData = {}
+    // collection.docs.forEach((el) => {
+    //   if (el.data().email === user.email) {
+    //     uData = el.data()
+    //   }
+    // })
+
+    let chunkedQuestions = chunkArray(newQuestions, 1000)
+    let i = 0
+    for await (let chunk of chunkedQuestions) {
+      await db
+        .collection('testQuestions')
+        .doc(`KMS|${i}`)
+        .set({
+          data: chunk,
+        })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((error) => {
+          console.error('Error writing document: ', error)
+          return error
+        })
+      i++
+    }
   } catch (e) {
-    loadHandl(false)
     alert(e)
+  } finally {
+    loadHandl(false)
   }
 }
 export const uploadNewEmployees = async (user, newEmployees, loadHandl) => {

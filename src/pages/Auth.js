@@ -108,7 +108,7 @@ export const Auth = () => {
                     name='password'
                     value={formState.password}
                     onChange={changeHandler}
-                    placeholder='Ваш код (3 последние цифры паспорта)'
+                    placeholder='Ваш код (год рождения полностью)'
                   />
                 </Form.Field>
               ) : null}
@@ -137,7 +137,7 @@ export const Auth = () => {
           ) : (
             <>
               <Form.Field>
-                <Label>Трехзначный код вашей компании</Label>
+                <Label>Трехзначный код вашей компании </Label>
                 <Input name='company' value={formState.company} onChange={changeHandler} placeholder='Например KMS' />
               </Form.Field>
               <Button
