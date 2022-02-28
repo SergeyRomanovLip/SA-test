@@ -42,6 +42,7 @@ export const Test = () => {
     }
     setLoading(false)
   }
+
   const setReadyQuestionsHandler = () => {
     if (params.course && testState) {
       const readyQ = testState.filter((el) => {

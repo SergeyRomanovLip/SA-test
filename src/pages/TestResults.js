@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { getAllTestResults } from '../backend/firebase'
+import { getAllQuestionDocs, getAllTestResults, getData } from '../backend/firebase'
 import { Button, Container, Dropdown, Icon, Sticky, Menu, Input, Dimmer, Loader } from 'semantic-ui-react'
 import { ResultItem } from '../components/ResultItem'
 import { generateId } from '../misc/generateId'
@@ -13,6 +13,9 @@ export const TestResults = () => {
   const [resultsForShowing, setResultsForShowing] = useState([])
   const [courses, setCourses] = useState([])
   const [choosenCourse, setChoosenCourse] = useState('')
+
+  const [ANNUAL_LOADING, setANNUAL] = useState([])
+
   const { setResultsForPrinting } = useContext(AppContext)
   const hstr = useHistory()
 
@@ -109,6 +112,64 @@ export const TestResults = () => {
       })
   }, [])
 
+  async function annualExamProtocols() {
+    console.log()
+    setANNUAL(false)
+    const docNames = await getAllQuestionDocs()
+    const res = []
+    for await (let docName of docNames) {
+      let questions = await getData('testQuestions', docName)
+      res.push(...questions)
+    }
+    let protocols = {}
+    testResults.forEach((el) => {
+      protocols[el.position] = protocols[el.position] ? [...protocols[el.position], el] : [el]
+    })
+    Object.keys(protocols).map((position) =>
+      res.forEach((el) => {
+        if (el.type.includes(position.substring(0, position.length - 5)))
+          protocols[position].iots = protocols[position].iots ? [...protocols[position].iots, el] : [el]
+      })
+    )
+    Object.keys(protocols).forEach((el) => {
+      var collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+      if (protocols[el].iots)
+        protocols[el].iots = protocols[el].iots
+          .map((el) => el.question.split(',')[0])
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .sort(collator.compare)
+          .join(',')
+    })
+
+    let dataForCsv = []
+    Object.keys(protocols).map((position) => {
+      protocols[position].forEach((el) => {
+        dataForCsv.push([
+          el.fio,
+          el.position,
+          el.department,
+          protocols[position].iots || 'не утверждены',
+          `Ежегодная проверка знаний для ${el.position} по инструкциям:`,
+          `${el.answers.reduce((acc, item) => (item.right === 'ok' ? acc + 1 : acc + 0), 0)} из ${el.answers.length}`,
+          `${new Date(el.dateId?.split('_')[0] * 1).toLocaleDateString()}, ${new Date(
+            el.dateId?.split('_')[0] * 1
+          ).toLocaleTimeString()}`,
+        ])
+      })
+    })
+    var csv = `Fio;Position;Department;Iots;Type;Result;Date\n`
+    dataForCsv.forEach(function (row) {
+      csv += row.join(';')
+      csv += '\n'
+    })
+    var hiddenElement = document.createElement('a')
+    hiddenElement.href = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURI(csv)
+    hiddenElement.target = '_blank'
+    hiddenElement.download = 'people.csv'
+    setANNUAL(true)
+    hiddenElement.click()
+  }
+
   return (
     <Container className='container' style={{ overflow: 'auto', maxHeight: 90 + 'vh', minHeight: 40 + 'vh' }}>
       <Sticky offset={50} style={{ paddingLeft: 7 + 'px' }}>
@@ -146,14 +207,15 @@ export const TestResults = () => {
           >
             <Icon name='remove' />
           </Button>
-          <Button
-            icon
-            onClick={() => {
-              downloadResults()
-            }}
-          >
-            <Icon name='download' />
-          </Button>
+          {ANNUAL_LOADING ? (
+            <Button icon onClick={annualExamProtocols}>
+              <Icon name='download' />
+            </Button>
+          ) : (
+            <Dimmer active inverted>
+              <Loader />
+            </Dimmer>
+          )}
           <Button
             icon
             onClick={() => {

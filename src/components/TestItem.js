@@ -8,13 +8,14 @@ export const TestItem = ({ e, i, answerHandler, answers }) => {
     setId(generateId())
   }, [])
 
+  console.log(e.answers)
+
   return (
     <Card key={id} fluid={true} color='purple'>
       <Card.Content>
         <Card.Header>{`${i + 1}. ${e.q}`}</Card.Header>
         <List animated={true}>
           {e.answers.map((a, i) => {
-            // console.log(answers[id] && answers[id].answers[i].answer)
             return (
               <List.Item
                 style={{

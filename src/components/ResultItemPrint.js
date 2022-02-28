@@ -113,7 +113,7 @@ export const ResultItemPrint = ({ forComission, res, i }) => {
                 </Grid.Row>
               </Grid>
             </Grid.Column>
-            <Grid.Column width={9}>
+            {/* <Grid.Column width={9}>
               <Grid columns={2}>
                 <Grid.Row>
                   <Grid.Column width={16}>
@@ -134,7 +134,7 @@ export const ResultItemPrint = ({ forComission, res, i }) => {
                   ) : null
                 })}
               </Grid>
-            </Grid.Column>
+            </Grid.Column> */}
           </Grid.Row>
         </Grid>
 
