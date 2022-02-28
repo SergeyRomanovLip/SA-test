@@ -151,9 +151,7 @@ export const TestResults = () => {
           protocols[position].iots || 'не утверждены',
           `Ежегодная проверка знаний для ${el.position} по инструкциям:`,
           `${el.answers.reduce((acc, item) => (item.right === 'ok' ? acc + 1 : acc + 0), 0)} из ${el.answers.length}`,
-          `${new Date(el.dateId?.split('_')[0] * 1).toLocaleDateString()}, ${new Date(
-            el.dateId?.split('_')[0] * 1
-          ).toLocaleTimeString()}`,
+          `${new Date(el.dateId?.split('_')[0] * 1).toLocaleDateString()}`,
         ])
       })
     })
