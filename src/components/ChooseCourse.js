@@ -7,6 +7,9 @@ export const ChooseCourse = ({ histories, user, testTypes }) => {
   let arrayFilteredByPosition = arrayFilteredByDepartment.filter((el) =>
     el.replace(/\s/g, '').includes(user.position.replace(/\s/g, ''))
   )
+
+  let commonArray = testTypes.filter(el => el.startsWith('Общий'))
+
   resultArray = arrayFilteredByPosition
   if (arrayFilteredByPosition.length === 0) {
     resultArray = arrayFilteredByDepartment
@@ -14,6 +17,8 @@ export const ChooseCourse = ({ histories, user, testTypes }) => {
   if (arrayFilteredByDepartment.length === 0) {
     resultArray = testTypes
   }
+
+  resultArray = [...resultArray, ...commonArray]
 
   return (
     <div className='narrowContainer'>
